@@ -1,24 +1,21 @@
-import ChatInterface from '@/components/chat/ChatInterface';
+'use client';
+
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ChatPage() {
+    const { t } = useLanguage();
+
     return (
-        <div className="min-h-screen p-6 md:p-12">
-            <div className="max-w-4xl mx-auto">
-                <header className="mb-8 text-center">
-                    <h1 className="text-4xl font-bold text-emerald-800 dark:text-emerald-400 mb-4 font-arabic">
-                        المساعد الذكي
-                    </h1>
-                    <p className="text-lg text-slate-600 dark:text-slate-400">
-                        Ask questions about Islam and get answers sourced from the Quran and Sunnah.
-                    </p>
-                </header>
-
-                <ChatInterface />
-
-                <p className="text-center text-xs text-slate-400 mt-6">
-                    Nur AI may make mistakes. Always verify with a qualified scholar for important rulings.
-                </p>
-            </div>
+        <div className="min-h-[calc(100vh-4rem)] flex flex-col">
+            <iframe
+                src="https://chatilm.islamicity.org/en"
+                className="flex-1 w-full border-0"
+                title="ChatILM - Islamic AI Assistant"
+                allow="clipboard-write"
+            />
+            <p className="text-center text-xs text-slate-400 dark:text-slate-500 py-2 bg-slate-50 dark:bg-slate-950">
+                {t('chat.powered_by')} <a href="https://chatilm.islamicity.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-emerald-500 transition-colors">IslamiCity ChatILM</a>
+            </p>
         </div>
     );
 }

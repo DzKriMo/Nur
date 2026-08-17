@@ -96,6 +96,7 @@ export const translations = {
         'chat.empty_desc': 'I can answer your questions about Islam using the Quran, Hadith, and scholarly consensus.',
         'chat.error': 'Sorry, I encountered an error. Please try again.',
         'chat.disclaimer': 'Nur AI may make mistakes. Always verify with a qualified scholar for important rulings.',
+        'chat.powered_by': 'Powered by',
 
         // Learn
         'nav.learn': 'Learn Islam',
@@ -263,6 +264,7 @@ export const translations = {
         'chat.empty_desc': 'يمكنني الإجابة على أسئلتك عن الإسلام باستخدام القرآن والسنة و共识 العلماء.',
         'chat.error': 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.',
         'chat.disclaimer': 'مساعد نور قد يخطئ. تحقق دائماً مع عالم مؤهل للأحكام المهمة.',
+        'chat.powered_by': 'بدعم من',
 
         // Learn
         'nav.learn': 'تعلم الإسلام',
