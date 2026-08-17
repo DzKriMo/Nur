@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Book, Heart, MessageCircle, Info, Home, Moon, Sun, Menu, X, Clock } from 'lucide-react';
+import { Book, Heart, MessageCircle, Info, Home, Moon, Sun, Menu, X, Clock, Scroll, GraduationCap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -22,7 +22,16 @@ export default function Navbar() {
         { href: '/quran', label: t('nav.quran'), icon: Book },
         { href: '/hadith', label: t('nav.hadith'), icon: MessageCircle },
         { href: '/adhkar', label: t('nav.adhkar'), icon: Heart },
+        { href: '/stories', label: t('nav.stories'), icon: Scroll },
+        { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
         { href: '/prayer', label: t('nav.prayer'), icon: Clock },
+        { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
+    ];
+
+    const mobileLinks = links.slice(0, 5);
+
+    const extraLinks = [
+        { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
         { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
         { href: '/about', label: t('nav.about'), icon: Info },
     ];
@@ -86,7 +95,7 @@ export default function Navbar() {
             {/* Mobile Bottom Bar */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-50 safe-area-bottom">
                 <div className="flex justify-around items-center h-16 px-2">
-                    {links.slice(0, 5).map((link) => {
+                    {mobileLinks.map((link) => {
                         const Icon = link.icon;
                         return (
                             <Link
@@ -119,19 +128,25 @@ export default function Navbar() {
                 <div className="md:hidden fixed inset-0 z-[60]" onClick={() => setMobileOpen(false)}>
                     <div className="absolute inset-0 bg-black/30" />
                     <div
-                        className="absolute bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-t-2xl p-4 shadow-2xl"
+                        className="absolute bottom-16 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 rounded-t-2xl p-4 shadow-2xl max-h-[70vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="w-10 h-1 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4" />
                         <div className="space-y-1">
-                            <Link
-                                href="/about"
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-3 p-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                            >
-                                <Info size={20} />
-                                <span className="font-medium">{t('nav.about')}</span>
-                            </Link>
+                            {extraLinks.map((link) => {
+                                const Icon = link.icon;
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        onClick={() => setMobileOpen(false)}
+                                        className="flex items-center gap-3 p-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                        <Icon size={20} />
+                                        <span className="font-medium">{link.label}</span>
+                                    </Link>
+                                );
+                            })}
                             <Link
                                 href="/prayer"
                                 onClick={() => setMobileOpen(false)}

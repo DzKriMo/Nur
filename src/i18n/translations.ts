@@ -51,6 +51,7 @@ export const translations = {
         'quran.juz_verses': 'verses',
         'quran.meccan': 'Meccan',
         'quran.medinan': 'Medinan',
+        'quran.play_from_here': 'Play from here',
 
         // Hadith
         'hadith.title': 'Hadith Collections',
@@ -95,6 +96,38 @@ export const translations = {
         'chat.empty_desc': 'I can answer your questions about Islam using the Quran, Hadith, and scholarly consensus.',
         'chat.error': 'Sorry, I encountered an error. Please try again.',
         'chat.disclaimer': 'Nur AI may make mistakes. Always verify with a qualified scholar for important rulings.',
+
+        // Learn
+        'nav.learn': 'Learn Islam',
+        'learn.title': 'Learn Islam',
+        'learn.subtitle': 'Start your journey of learning',
+        'learn.new_convert': 'New Convert',
+        'learn.new_convert_desc': 'Essential knowledge for new Muslims — shahada, prayer, wudu, fasting, and more.',
+        'learn.kids_mode': 'Kids Mode',
+        'learn.kids_mode_desc': 'Fun and engaging lessons about Islam for young learners.',
+        'learn.step': 'Step',
+        'learn.of': 'of',
+        'learn.prev': 'Previous',
+        'learn.next': 'Next',
+        'learn.quiz': 'Quiz',
+        'learn.quiz_correct': 'Correct!',
+        'learn.quiz_wrong': 'Try again!',
+        'learn.back_to_topics': 'Back to Topics',
+
+        // Stories
+        'nav.stories': 'Stories',
+        'stories.title': 'Stories from Islam',
+        'stories.subtitle': 'Learn from the stories of prophets and the Quran',
+        'stories.prophets': 'Prophets Stories',
+        'stories.prophets_desc': 'The stories of the Prophets and Messengers of Allah',
+        'stories.quran_stories': 'Stories from the Quran',
+        'stories.quran_stories_desc': 'Beautiful stories mentioned in the Holy Quran',
+        'stories.back_to_stories': 'Back to Stories',
+        'stories.read_more': 'Read More',
+        'stories.source': 'Source',
+        'stories.key_lessons': 'Key Lessons',
+        'stories.characters': 'Characters',
+        'stories.old_muslims': 'Stories of the Early Muslims',
 
         // About
         'about.title': 'About Nur',
@@ -185,6 +218,7 @@ export const translations = {
         'quran.juz_verses': 'آيات',
         'quran.meccan': 'مكية',
         'quran.medinan': 'مدنية',
+        'quran.play_from_here': 'تشغيل من هنا',
 
         // Hadith
         'hadith.title': 'كتب الحديث الشريف',
@@ -229,6 +263,38 @@ export const translations = {
         'chat.empty_desc': 'يمكنني الإجابة على أسئلتك عن الإسلام باستخدام القرآن والسنة و共识 العلماء.',
         'chat.error': 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.',
         'chat.disclaimer': 'مساعد نور قد يخطئ. تحقق دائماً مع عالم مؤهل للأحكام المهمة.',
+
+        // Learn
+        'nav.learn': 'تعلم الإسلام',
+        'learn.title': 'تعلم الإسلام',
+        'learn.subtitle': 'ابدأ رحلة التعلم',
+        'learn.new_convert': 'المسلم الجدد',
+        'learn.new_convert_desc': 'المعلومات الأساسية للمسلمين الجدد — الشهادة، الصلاة، الوضوء، الصيام والمزيد.',
+        'learn.kids_mode': 'وضع الأطفال',
+        'learn.kids_mode_desc': 'دروس ممتعة ومشوقة عن الإسلام للأطفال.',
+        'learn.step': 'خطوة',
+        'learn.of': 'من',
+        'learn.prev': 'السابق',
+        'learn.next': 'التالي',
+        'learn.quiz': 'اختبار',
+        'learn.quiz_correct': 'صحيح!',
+        'learn.quiz_wrong': 'حاول مرة أخرى!',
+        'learn.back_to_topics': 'رجوع للمواضيع',
+
+        // Stories
+        'nav.stories': 'القصص',
+        'stories.title': 'قصص من الإسلام',
+        'stories.subtitle': 'تعلم من قصص الأنبياء والقرآن',
+        'stories.prophets': 'قصص الأنبياء',
+        'stories.prophets_desc': 'قصص أنبياء ورسل الله تعالى',
+        'stories.quran_stories': 'قصص من القرآن',
+        'stories.quran_stories_desc': 'قصص جميلة وردت في القرآن الكريم',
+        'stories.back_to_stories': 'رجوع للقصص',
+        'stories.read_more': 'اقرأ المزيد',
+        'stories.source': 'المصدر',
+        'stories.key_lessons': 'الدروس المستفادة',
+        'stories.characters': 'الشخصيات',
+        'stories.old_muslims': 'قصص المسلمين الأوائل',
 
         // About
         'about.title': 'عن نور',

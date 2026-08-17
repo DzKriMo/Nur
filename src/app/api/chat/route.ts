@@ -19,50 +19,40 @@ export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
 
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.GROQ_API_KEY;
         if (!apiKey) {
-            return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+            return NextResponse.json({ error: 'API key not configured. Get a free key at console.groq.com' }, { status: 500 });
         }
 
-        const contents = [
-            {
-                role: 'user',
-                parts: [{ text: SYSTEM_PROMPT }]
-            },
-            {
-                role: 'model',
-                parts: [{ text: 'Understood. I am Nur, ready to assist with Islamic knowledge using authentic sources.' }]
-            },
+        const formattedMessages = [
+            { role: 'system', content: SYSTEM_PROMPT },
             ...messages.map((m: { role: string; content: string }) => ({
-                role: m.role === 'user' ? 'user' : 'model',
-                parts: [{ text: m.content }]
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: m.content
             }))
         ];
 
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: contents,
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 2048,
-                    }
-                })
-            }
-        );
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: formattedMessages,
+                temperature: 0.7,
+                max_tokens: 2048,
+            })
+        });
 
         if (!response.ok) {
-            console.error('Gemini API error:', response.status);
+            console.error('Groq API error:', response.status);
             throw new Error('Failed to get response from AI');
         }
 
         const data = await response.json();
-        const text = data.candidates[0].content.parts[0].text;
+        const text = data.choices[0].message.content;
 
         return NextResponse.json({ text });
     } catch {

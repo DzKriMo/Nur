@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Book, Heart, MessageCircle, ArrowRight, Clock } from 'lucide-react';
+import { Book, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Home() {
@@ -11,8 +11,10 @@ export default function Home() {
         { href: '/quran', icon: Book, color: 'emerald', title: t('nav.quran'), desc: t('home.features.quran') },
         { href: '/hadith', icon: MessageCircle, color: 'amber', title: t('nav.hadith'), desc: t('home.features.hadith') },
         { href: '/adhkar', icon: Heart, color: 'rose', title: t('nav.adhkar'), desc: t('home.features.adhkar') },
+        { href: '/stories', icon: Scroll, color: 'violet', title: t('nav.stories'), desc: t('stories.subtitle') },
+        { href: '/learn', icon: GraduationCap, color: 'sky', title: t('nav.learn'), desc: t('learn.subtitle') },
         { href: '/chat', icon: MessageCircle, color: 'emerald', title: t('nav.chat'), desc: t('home.features.chat') },
-        { href: '/prayer', icon: Clock, color: 'violet', title: t('nav.prayer'), desc: t('home.features.prayer') },
+        { href: '/prayer', icon: Clock, color: 'amber', title: t('nav.prayer'), desc: t('home.features.prayer') },
     ];
 
     const colorMap: Record<string, { bg: string; icon: string; hover: string }> = {
@@ -20,6 +22,7 @@ export default function Home() {
         amber: { bg: 'bg-amber-100 dark:bg-amber-900/30', icon: 'text-amber-600 dark:text-amber-500', hover: 'group-hover:bg-amber-600 group-hover:text-white' },
         rose: { bg: 'bg-rose-100 dark:bg-rose-900/30', icon: 'text-rose-600 dark:text-rose-400', hover: 'group-hover:bg-rose-600 group-hover:text-white' },
         violet: { bg: 'bg-violet-100 dark:bg-violet-900/30', icon: 'text-violet-600 dark:text-violet-400', hover: 'group-hover:bg-violet-600 group-hover:text-white' },
+        sky: { bg: 'bg-sky-100 dark:bg-sky-900/30', icon: 'text-sky-600 dark:text-sky-400', hover: 'group-hover:bg-sky-600 group-hover:text-white' },
     };
 
     return (
