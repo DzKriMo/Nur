@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { translations, Language, TranslationKey } from '@/i18n/translations';
 
 interface LanguageContextType {
@@ -13,33 +13,34 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    // Default to Arabic as requested
     const [language, setLanguageState] = useState<Language>('ar');
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Persist language choice
+        setMounted(true);
         const savedLang = localStorage.getItem('nur-language') as Language;
         if (savedLang && (savedLang === 'en' || savedLang === 'ar')) {
             setLanguageState(savedLang);
         }
     }, []);
 
-    const setLanguage = (lang: Language) => {
+    useEffect(() => {
+        if (mounted) {
+            document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = language;
+        }
+    }, [language, mounted]);
+
+    const setLanguage = useCallback((lang: Language) => {
         setLanguageState(lang);
         localStorage.setItem('nur-language', lang);
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
         document.documentElement.lang = lang;
-    };
+    }, []);
 
-    // Initial effect to set document dir on mount
-    useEffect(() => {
-        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-        document.documentElement.lang = language;
-    }, [language]);
-
-    const t = (key: TranslationKey) => {
+    const t = useCallback((key: TranslationKey): string => {
         return translations[language][key] || key;
-    };
+    }, [language]);
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t, dir: language === 'ar' ? 'rtl' : 'ltr' }}>

@@ -18,8 +18,12 @@ Rules:
 export async function POST(req: Request) {
     try {
         const { messages } = await req.json();
-        
-        // Build contents array for Gemini API
+
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+        }
+
         const contents = [
             {
                 role: 'user',
@@ -29,14 +33,14 @@ export async function POST(req: Request) {
                 role: 'model',
                 parts: [{ text: 'Understood. I am Nur, ready to assist with Islamic knowledge using authentic sources.' }]
             },
-            ...messages.map((m: any) => ({
+            ...messages.map((m: { role: string; content: string }) => ({
                 role: m.role === 'user' ? 'user' : 'model',
                 parts: [{ text: m.content }]
             }))
         ];
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCmJhjHcEeeZQVFdloZCqycuXjmOJIFriU`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
             {
                 method: 'POST',
                 headers: {
@@ -53,20 +57,17 @@ export async function POST(req: Request) {
         );
 
         if (!response.ok) {
-            const error = await response.text();
-            console.error('Gemini API error:', error);
-            throw new Error(`Gemini API error: ${response.status} ${error}`);
+            console.error('Gemini API error:', response.status);
+            throw new Error('Failed to get response from AI');
         }
 
         const data = await response.json();
         const text = data.candidates[0].content.parts[0].text;
 
         return NextResponse.json({ text });
-    } catch (error: any) {
-        console.error('Chat error:', error);
-        return NextResponse.json({ 
-            error: 'Failed to process request',
-            details: error.message 
+    } catch {
+        return NextResponse.json({
+            error: 'Failed to process request'
         }, { status: 500 });
     }
 }

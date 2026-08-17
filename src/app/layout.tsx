@@ -9,7 +9,7 @@ const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--
 
 export const metadata: Metadata = {
   title: "Nur - Islamic App",
-  description: "Quran, Hadith, Adhkar, and AI Assistant",
+  description: "Quran, Hadith, Adhkar, Prayer Times, and AI Assistant",
 };
 
 export default function RootLayout({
@@ -18,11 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${amiri.variable} font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50`}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body className={`${inter.variable} ${amiri.variable} antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50`}>
         <ClientProviders>
           <Navbar />
-          {children}
+          <main>{children}</main>
         </ClientProviders>
       </body>
     </html>

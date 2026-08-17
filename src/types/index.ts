@@ -15,15 +15,10 @@ export interface SurahMeta {
   }[];
 }
 
-export interface Verse {
-  text: string;
-  key: string; // e.g., "verse_1"
-}
-
 export interface SurahContent {
   index: string;
   name: string;
-  verse: Record<string, string>; // verse_1: "text"
+  verse: Record<string, string>;
   count: number;
   juz: {
     index: string;
@@ -35,8 +30,8 @@ export interface SurahContent {
 }
 
 export interface TranslationContent {
-  index: number;
-  name: string;
+  index: string | number;
+  name?: string;
   verse: Record<string, string>;
   count: number;
 }
@@ -90,6 +85,32 @@ export interface AdhkarItem {
 
 export interface AdhkarCategory {
   title: string;
+  titleAr: string;
+  titleEn: string;
   content: AdhkarItem[];
-  filename: string; // Added for internal use
+  filename: string;
+}
+
+export interface BookInfo {
+  id: string;
+  name: string;
+  nameAr: string;
+  filename: string;
+  category: 'major' | 'forty' | 'other';
+}
+
+export interface Bookmark {
+  surahId: string;
+  verseNum: string;
+  surahName: string;
+  timestamp: number;
+}
+
+export interface PrayerTimes {
+  fajr: string;
+  sunrise: string;
+  dhuhr: string;
+  asr: string;
+  maghrib: string;
+  isha: string;
 }

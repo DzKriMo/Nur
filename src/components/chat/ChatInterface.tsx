@@ -3,17 +3,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
     role: 'user' | 'model';
     content: string;
 }
 
+function renderMarkdown(text: string) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code class="bg-emerald-100 dark:bg-emerald-900/30 px-1 rounded text-sm">$1</code>')
+        .replace(/\n/g, '<br />');
+}
+
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const { t } = useLanguage();
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,7 +36,7 @@ export default function ChatInterface() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!input.trim() || isLoading) return;
+        if (!input.trim() || isLoading || isDisabled) return;
 
         const userMessage = { role: 'user' as const, content: input };
         setMessages((prev) => [...prev, userMessage]);
@@ -43,9 +54,8 @@ export default function ChatInterface() {
             if (data.error) throw new Error(data.error);
 
             setMessages((prev) => [...prev, { role: 'model', content: data.text }]);
-        } catch (error) {
-            console.error('Chat error:', error);
-            setMessages((prev) => [...prev, { role: 'model', content: 'Sorry, I encountered an error. Please try again.' }]);
+        } catch {
+            setMessages((prev) => [...prev, { role: 'model', content: t('chat.error') }]);
         } finally {
             setIsLoading(false);
         }
@@ -59,9 +69,9 @@ export default function ChatInterface() {
                         <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-4 text-emerald-600 dark:text-emerald-400">
                             <Sparkles size={32} />
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Ask Nur</h3>
-                        <p className="max-w-sm">
-                            I can answer your questions about Islam using the Quran, Hadith, and scholarly consensus.
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t('chat.empty_title')}</h3>
+                        <p className="max-w-sm text-sm">
+                            {t('chat.empty_desc')}
                         </p>
                     </div>
                 )}
@@ -70,7 +80,7 @@ export default function ChatInterface() {
                     <div
                         key={index}
                         className={cn(
-                            "flex gap-4 max-w-[80%]",
+                            "flex gap-3 max-w-[85%]",
                             message.role === 'user' ? "ml-auto flex-row-reverse" : "mr-auto"
                         )}
                     >
@@ -88,12 +98,12 @@ export default function ChatInterface() {
                                 ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tr-none"
                                 : "bg-emerald-50 dark:bg-emerald-900/10 text-slate-800 dark:text-slate-200 border border-emerald-100 dark:border-emerald-900/20 rounded-tl-none"
                         )}>
-                            {message.content}
+                            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }} />
                         </div>
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="flex gap-4 mr-auto max-w-[80%]">
+                    <div className="flex gap-3 mr-auto max-w-[85%]">
                         <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
                             <Bot size={16} />
                         </div>
@@ -113,12 +123,13 @@ export default function ChatInterface() {
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask a question..."
-                        className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                        placeholder={t('chat.placeholder')}
+                        className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400 text-sm"
+                        dir="ltr"
                     />
                     <button
                         type="submit"
-                        disabled={isLoading || !input.trim()||true}
+                        disabled={isLoading || !input.trim() || isDisabled}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Send size={20} />

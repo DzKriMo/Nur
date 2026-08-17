@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, BookOpen, Info } from 'lucide-react';
+import { Play, Pause, Share2, Check } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface VerseViewProps {
     surah: SurahContent;
@@ -13,42 +14,41 @@ interface VerseViewProps {
     chapterId: string;
 }
 
-import { useLanguage } from '@/contexts/LanguageContext';
-
 export default function VerseView({ surah, translation, tafseer, chapterId }: VerseViewProps) {
     const [playingVerse, setPlayingVerse] = useState<string | null>(null);
     const [sound, setSound] = useState<Howl | null>(null);
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
+    const [copiedVerse, setCopiedVerse] = useState<string | null>(null);
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+    const soundRef = useRef<Howl | null>(null);
     const { t } = useLanguage();
 
-    // Convert verses object to array
     const verses = Object.entries(surah.verse).map(([key, text]) => {
         const verseNum = key.split('_')[1];
         return {
             key,
             verseNum,
             text,
-            translation: translation.verse[key],
-            tafseer: tafseer.verse[key]
+            translation: translation.verse[key] || '',
+            tafseer: tafseer.verse[key] || ''
         };
     });
 
-    const stopSound = () => {
-        if (sound) {
-            sound.stop();
-            sound.unload();
-            setSound(null);
+    const stopSound = useCallback(() => {
+        if (soundRef.current) {
+            soundRef.current.stop();
+            soundRef.current.unload();
+            soundRef.current = null;
         }
+        setSound(null);
         setPlayingVerse(null);
-    };
+    }, []);
 
-    const playVerse = (verseNum: string) => {
-        // Stop any currently playing sound but don't reset autoPlayRef if we are in a sequence
-        if (sound) {
-            sound.stop();
-            sound.unload();
+    const playVerse = useCallback((verseNum: string) => {
+        if (soundRef.current) {
+            soundRef.current.stop();
+            soundRef.current.unload();
         }
 
         const padSurah = chapterId.padStart(3, '0');
@@ -62,28 +62,30 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                 setPlayingVerse(null);
                 if (autoPlayRef.current) {
                     const nextVerseNum = (parseInt(verseNum) + 1).toString();
-                    // Check if next verse exists
                     if (parseInt(nextVerseNum) <= verses.length) {
-                        playVerse(nextVerseNum);
+                        setTimeout(() => playVerse(nextVerseNum), 300);
                     } else {
                         autoPlayRef.current = false;
                     }
                 }
+            },
+            onloaderror: () => {
+                setPlayingVerse(null);
+                autoPlayRef.current = false;
             }
         });
 
+        soundRef.current = newSound;
         setSound(newSound);
         setPlayingVerse(verseNum);
         newSound.play();
-    };
+    }, [chapterId, verses.length]);
 
     const togglePlay = (verseNum: string) => {
         if (playingVerse === verseNum) {
             stopSound();
             autoPlayRef.current = false;
         } else {
-            // If user manually plays a verse, we don't necessarily want auto-play unless they clicked "Play Surah"
-            // But usually manual play is just for that verse.
             autoPlayRef.current = false;
             playVerse(verseNum);
         }
@@ -96,27 +98,39 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
 
     useEffect(() => {
         return () => {
-            if (sound) sound.unload();
+            if (soundRef.current) {
+                soundRef.current.stop();
+                soundRef.current.unload();
+            }
         };
-    }, [sound]);
+    }, []);
 
-    // Auto-scroll effect
     useEffect(() => {
         if (playingVerse) {
             const element = verseRefs.current.get(playingVerse);
             if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                });
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
     }, [playingVerse]);
 
+    const shareVerse = async (verseNum: string, text: string, translation: string) => {
+        const shareText = `${surah.name} ${verseNum}: ${text}\n\n${translation}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({ text: shareText });
+            } catch {}
+        } else {
+            await navigator.clipboard.writeText(shareText);
+            setCopiedVerse(verseNum);
+            setTimeout(() => setCopiedVerse(null), 2000);
+        }
+    };
+
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 sticky top-4 z-10 backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
-                <div className="flex gap-2">
+        <div className="space-y-6">
+            <div className="flex flex-wrap justify-between items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 sticky top-16 z-10 backdrop-blur-xl">
+                <div className="flex gap-1">
                     <button
                         onClick={() => setActiveTab('translation')}
                         className={cn(
@@ -126,7 +140,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                         )}
                     >
-                        Translation
+                        {t('quran.translation')}
                     </button>
                     <button
                         onClick={() => setActiveTab('tafseer')}
@@ -137,19 +151,19 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                         )}
                     >
-                        Tafseer
+                        {t('quran.tafseer')}
                     </button>
                 </div>
                 <button
                     onClick={playChapter}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg"
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
                 >
                     <Play size={16} />
                     <span className="hidden sm:inline">{t('common.listen')}</span>
                 </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
                 {verses.map((verse) => (
                     <div
                         key={verse.key}
@@ -159,42 +173,49 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                             else verseRefs.current.delete(verse.verseNum);
                         }}
                         className={cn(
-                            "bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 shadow-sm border transition-all duration-300",
+                            "bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border transition-all duration-300",
                             playingVerse === verse.verseNum
-                                ? "border-emerald-500 ring-1 ring-emerald-500 shadow-emerald-100 dark:shadow-none"
+                                ? "border-emerald-500 ring-1 ring-emerald-500/50 shadow-emerald-100 dark:shadow-none"
                                 : "border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800"
                         )}
                     >
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 font-medium text-sm">
+                        <div className="flex justify-between items-center mb-5">
+                            <div className="flex items-center gap-2">
+                                <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-medium text-xs">
                                     {verse.verseNum}
                                 </div>
                                 <button
                                     onClick={() => togglePlay(verse.verseNum)}
                                     className={cn(
-                                        "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+                                        "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
                                         playingVerse === verse.verseNum
                                             ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
                                             : "bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:bg-slate-800 dark:hover:bg-slate-700"
                                     )}
                                 >
-                                    {playingVerse === verse.verseNum ? <Pause size={18} /> : <Play size={18} />}
+                                    {playingVerse === verse.verseNum ? <Pause size={16} /> : <Play size={16} />}
                                 </button>
                             </div>
+                            <button
+                                onClick={() => shareVerse(verse.verseNum, verse.text, verse.translation)}
+                                className="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors"
+                                title={t('quran.share_verse')}
+                            >
+                                {copiedVerse === verse.verseNum ? <Check size={16} className="text-emerald-500" /> : <Share2 size={16} />}
+                            </button>
                         </div>
 
-                        <div className="text-right mb-8">
-                            <p className="text-3xl md:text-4xl leading-[2] font-serif text-slate-800 dark:text-slate-100 font-arabic">
+                        <div className="text-right mb-6">
+                            <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic">
                                 {verse.text}
                             </p>
                         </div>
 
-                        <div className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-6">
+                        <div className="text-base text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-5">
                             {activeTab === 'translation' ? (
                                 <p>{verse.translation}</p>
                             ) : (
-                                <div className="text-right font-arabic text-slate-700 dark:text-slate-300">
+                                <div className="text-right font-arabic text-slate-700 dark:text-slate-300 leading-loose">
                                     {verse.tafseer}
                                 </div>
                             )}

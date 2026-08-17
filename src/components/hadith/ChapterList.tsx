@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { BookOpen, Search } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -15,10 +15,12 @@ export default function ChapterList({ bookId, chapters }: ChapterListProps) {
     const [query, setQuery] = useState('');
     const { t } = useLanguage();
 
-    const filteredChapters = chapters.filter((chapter) =>
-        chapter.english.toLowerCase().includes(query.toLowerCase()) ||
-        chapter.arabic.includes(query)
-    );
+    const filteredChapters = useMemo(() => {
+        return chapters.filter((chapter) =>
+            chapter.english.toLowerCase().includes(query.toLowerCase()) ||
+            chapter.arabic.includes(query)
+        );
+    }, [chapters, query]);
 
     return (
         <div className="space-y-6">
@@ -30,40 +32,40 @@ export default function ChapterList({ bookId, chapters }: ChapterListProps) {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder={t('hadith.search_hadiths')} // Reusing hadith search placeholder or general search
+                    placeholder={t('hadith.search_chapters')}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
                 />
             </div>
 
-            <div className="grid gap-4">
-                {filteredChapters.length > 0 ? (
-                    filteredChapters.map((chapter) => (
-                        <Link
-                            href={`/hadith/${bookId}/${chapter.id}`}
-                            key={chapter.id}
-                            className="bg-white dark:bg-stone-900 p-6 rounded-xl shadow-sm border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-800 transition-all hover:shadow-md group"
-                        >
-                            <div className="flex items-start gap-4">
-                                <div className="mt-1 text-amber-600 dark:text-amber-500 group-hover:scale-110 transition-transform">
-                                    <BookOpen size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-stone-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">
-                                        {chapter.english}
-                                    </h3>
-                                    <p className="text-lg font-arabic text-stone-600 dark:text-stone-400 mt-1 text-right" dir="rtl">
-                                        {chapter.arabic}
-                                    </p>
-                                </div>
+            <div className="grid gap-3">
+                {filteredChapters.map((chapter) => (
+                    <Link
+                        href={`/hadith/${bookId}/${chapter.id}`}
+                        key={chapter.id}
+                        className="bg-white dark:bg-stone-900 p-5 rounded-xl shadow-sm border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-800 transition-all hover:shadow-md group"
+                    >
+                        <div className="flex items-start gap-3">
+                            <div className="mt-1 text-amber-600 dark:text-amber-500 group-hover:scale-110 transition-transform">
+                                <BookOpen size={18} />
                             </div>
-                        </Link>
-                    ))
-                ) : (
-                    <div className="text-center py-12 text-stone-500 dark:text-stone-400">
-                        No chapters found.
-                    </div>
-                )}
+                            <div className="min-w-0 flex-1">
+                                <h3 className="font-bold text-stone-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-500 transition-colors">
+                                    {chapter.english}
+                                </h3>
+                                <p className="text-base font-arabic text-stone-600 dark:text-stone-400 mt-1 text-right" dir="rtl">
+                                    {chapter.arabic}
+                                </p>
+                            </div>
+                        </div>
+                    </Link>
+                ))}
             </div>
+
+            {filteredChapters.length === 0 && (
+                <div className="text-center py-12 text-stone-500 dark:text-stone-400">
+                    {t('hadith.no_chapters')}
+                </div>
+            )}
         </div>
     );
 }
