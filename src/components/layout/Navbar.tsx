@@ -26,12 +26,14 @@ export default function Navbar() {
         { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
         { href: '/prayer', label: t('nav.prayer'), icon: Clock },
         { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
+        { href: '/about', label: t('nav.about'), icon: Info },
     ];
 
     const mobileLinks = links.slice(0, 5);
 
     const extraLinks = [
         { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
+        { href: '/stories', label: t('nav.stories'), icon: Scroll },
         { href: '/chat', label: t('nav.chat'), icon: MessageCircle },
         { href: '/about', label: t('nav.about'), icon: Info },
     ];

@@ -65,3 +65,34 @@ html {
   background-color: rgba(5, 150, 105, 0.2);
   color: inherit;
 }
+
+/* Adhkar completion animation */
+@keyframes completionPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes completionGlow {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.animate-completion {
+  animation: completionPulse 0.5s ease-in-out;
+}
+
+.animate-glow {
+  animation: completionGlow 1s ease-out;
+}
+
+/* Safe area for mobile bottom bar */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Prevent content from hiding behind bottom bar */
+.pb-safe {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0));
+}

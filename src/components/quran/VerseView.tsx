@@ -132,7 +132,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap justify-between items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 sticky top-[120px] md:top-[80px] z-10 backdrop-blur-xl">
+            <div className="flex flex-wrap justify-between items-center gap-3 bg-white/95 dark:bg-slate-900/95 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 backdrop-blur-xl">
                 <div className="flex gap-1">
                     <button
                         onClick={() => setActiveTab('translation')}

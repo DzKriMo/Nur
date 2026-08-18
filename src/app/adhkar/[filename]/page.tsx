@@ -1,5 +1,6 @@
 import { getAdhkar } from '@/lib/data';
 import AdhkarCard from '@/components/adhkar/AdhkarCard';
+import AdhkarProgress from '@/components/adhkar/AdhkarProgress';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
@@ -32,9 +33,17 @@ export default async function AdhkarCategoryPage({ params }: PageProps) {
                 </div>
             </div>
 
-            <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+            <main className="max-w-4xl mx-auto px-4 py-4 space-y-4">
+                <AdhkarProgress totalItems={category.content.length} categoryFilename={filename} />
+
                 {category.content.map((item, index) => (
-                    <AdhkarCard key={index} item={item} index={index} categoryFilename={filename} />
+                    <AdhkarCard
+                        key={index}
+                        item={item}
+                        index={index}
+                        categoryFilename={filename}
+                        totalItems={category.content.length}
+                    />
                 ))}
             </main>
         </div>
