@@ -9,8 +9,22 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-amiri" });
 
 export const metadata: Metadata = {
-  title: "Nur - Islamic App",
-  description: "Quran, Hadith, Adhkar, Prayer Times, and AI Assistant",
+  title: {
+    default: "Nur - Islamic App",
+    template: "%s | Nur",
+  },
+  description: "Nur is your companion for Quran, Hadith, Adhkar, prayer times, and an AI assistant — all in one beautiful, modern Islamic app.",
+  keywords: ["Quran", "Hadith", "Adhkar", "Islamic app", "prayer times", "Sahih al-Bukhari", "Nur"],
+  applicationName: "Nur",
+  authors: [{ name: "Nur" }],
+  openGraph: {
+    title: "Nur - Islamic App",
+    description: "Your companion for Quran, Hadith, Adhkar, prayer times, and an AI assistant.",
+    type: "website",
+  },
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
