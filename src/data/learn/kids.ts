@@ -99,8 +99,8 @@ export const kidsLessons: KidsLesson[] = [
         titleAr: 'الحديث مع الله',
         content: 'Prayer (Salah) is like talking to Allah! Five times a day, you get to talk to the Creator of everything. It\'s like having a special phone call with the most important Person in the universe!',
         contentAr: 'الصلاة مثل الحديث مع الله! خمس مرات يومياً، يمكنك التحدث مع خالق كل شيء. إنها مثل مكالمة هاتفية مع أهم شخص في الكون!',
-        funFact: 'The best time to pray is when you feel happy, sad, or need help.',
-        funFactAr: 'أفضل وقت للصلاة هو عندما تشعر بالسعادة أو الحزن أو تحتاج مساعدة.',
+        funFact: 'You can talk to Allah at any time — when you are happy, sad, or in need of help, He is always listening.',
+        funFactAr: 'يمكنك التحدث إلى الله في أي وقت — عندما تكون سعيداً أو حزيناً أو تحتاج مساعدة، فهو يسمعك دائماً.',
         quiz: {
           question: 'How many times a day do Muslims pray?',
           questionAr: 'كم مرة يصلي المسلمون في اليوم؟',
@@ -114,8 +114,8 @@ export const kidsLessons: KidsLesson[] = [
       {
         title: 'Steps of Prayer',
         titleAr: 'خطوات الصلاة',
-        content: '1. Stand facing Mecca\n2. Say "Allahu Akbar" (Allah is Greatest)\n3. Put your hands on your chest\n4. Say "Subhana Rabbiyal Adheem" and bow\n5. Say "Subhana Rabbiyal A\'la" and prostrate\n6. Say "Assalamu Alaikum" to finish\n\nIt\'s like a beautiful dance for Allah!',
-        contentAr: '1. وقف مستقبلاً مكة\n2. قل "الله أكبر"\n3. ضع يديك على صدرك\n4. قل "سبحان ربي العظيم" واركع\n5. قل "سبحان ربي الأعلى" واسجد\n6. قل "السلام عليكم" للانتهاء\n\nإنها رقصة جميلة لله!',
+        content: '1. Stand facing Mecca\n2. Say "Allahu Akbar" (Allah is Greatest)\n3. Put your hands on your chest\n4. Say "Subhana Rabbiyal Adheem" and bow\n5. Say "Subhana Rabbiyal A\'la" and prostrate\n6. Say "Assalamu Alaikum" to finish\n\nPraying with focus and humility is one of the most beautiful things you can do — you are standing directly before Allah, the Lord of all the worlds!',
+        contentAr: '1. وقف مستقبلاً مكة\n2. قل "الله أكبر"\n3. ضع يديك على صدرك\n4. قل "سبحان ربي العظيم" واركع\n5. قل "سبحان ربي الأعلى" واسجد\n6. قل "السلام عليكم" للانتهاء\n\nالصلاة بخشوع وتركيز من أجمل الأعمال — فأنت تقف بين يدي الله رب العالمين مباشرة!',
         funFact: 'When you pray, all your sins are forgiven!',
         funFactAr: 'حين تصلي، تُغفر كل ذنوبك!',
         quiz: {
