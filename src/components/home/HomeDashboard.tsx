@@ -132,7 +132,8 @@ export default function HomeDashboard() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {ADHKAR_LINKS.map(({ href, key }) => {
-                        const done = adhkarDoneToday[href.replace('/adhkar/', '')];
+                        const isDailyOnce = !href.includes('PostPrayer');
+                        const done = isDailyOnce && adhkarDoneToday[href.replace('/adhkar/', '')];
                         return (
                             <Link
                                 key={href}

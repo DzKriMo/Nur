@@ -19,6 +19,9 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
     const { markAdhkarDone, adhkarDoneToday } = useBookmarks();
     const markedRef = useRef(false);
 
+    // Post-prayer adhkar are recited 5 times a day, so the once-daily "done" tracking does not apply to them.
+    const isDailyOnce = !categoryFilename.startsWith('PostPrayer');
+
     useEffect(() => {
         const checkProgress = () => {
             let count = 0;
@@ -27,7 +30,7 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                 if (saved && parseInt(saved) > 0) count++;
             }
             setCompleted(count);
-            if (count === totalItems && totalItems > 0 && !markedRef.current) {
+            if (isDailyOnce && count === totalItems && totalItems > 0 && !markedRef.current) {
                 markedRef.current = true;
                 markAdhkarDone(categoryFilename);
             }
@@ -37,13 +40,13 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
 
         const interval = setInterval(checkProgress, 1000);
         return () => clearInterval(interval);
-    }, [totalItems, categoryFilename, markAdhkarDone]);
+    }, [totalItems, categoryFilename, markAdhkarDone, isDailyOnce]);
 
     if (!mounted) return null;
 
     const percentage = totalItems > 0 ? Math.round((completed / totalItems) * 100) : 0;
     const allDone = completed === totalItems;
-    const doneToday = adhkarDoneToday[categoryFilename];
+    const doneToday = isDailyOnce ? adhkarDoneToday[categoryFilename] : false;
 
     return (
         <div className={cn(
