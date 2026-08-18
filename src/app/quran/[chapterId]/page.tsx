@@ -3,11 +3,22 @@ import VerseView from '@/components/quran/VerseView';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import LocalizedText from '@/components/layout/LocalizedText';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{
         chapterId: string;
     }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { chapterId } = await params;
+    const surah = await getSurah(chapterId);
+    return {
+        title: `سورة ${surah.name}`,
+        description: `سورة ${surah.name} - ${surah.count} آية. اقرأ واستمع مع الترجمة الإنجليزية والتفسير.`,
+        alternates: { canonical: `/quran/${chapterId}` },
+    };
 }
 
 export default async function ChapterPage({ params }: PageProps) {

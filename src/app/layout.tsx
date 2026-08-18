@@ -4,23 +4,63 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ClientProviders from "@/components/providers/ClientProviders";
+import { SITE_URL, SITE_NAME, SITE_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_EN } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-amiri" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Nur - Islamic App",
-    template: "%s | Nur",
+    default: SITE_NAME,
+    template: `%s - نور`,
   },
-  description: "Nur is your companion for Quran, Hadith, Adhkar, prayer times, and an AI assistant — all in one beautiful, modern Islamic app.",
-  keywords: ["Quran", "Hadith", "Adhkar", "Islamic app", "prayer times", "Sahih al-Bukhari", "Nur"],
-  applicationName: "Nur",
-  authors: [{ name: "Nur" }],
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "قرآن",
+    "القرآن الكريم",
+    "الحديث الشريف",
+    "صحيح البخاري",
+    "الأذكار",
+    "أوقات الصلاة",
+    "قصص الأنبياء",
+    "تطبيق إسلامي",
+    "Quran",
+    "Hadith",
+    "Sahih al-Bukhari",
+    "Adhkar",
+    "Islamic app",
+    "Nur",
+  ],
+  applicationName: "نور",
+  authors: [{ name: "نور" }],
+  creator: "نور",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Nur - Islamic App",
-    description: "Your companion for Quran, Hadith, Adhkar, prayer times, and an AI assistant.",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: "ar_AR",
+    alternateLocale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_NAME_EN,
+    description: SITE_DESCRIPTION_EN,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/icon.svg",
@@ -40,6 +80,20 @@ export default function RootLayout({
           <main className="pb-16 md:pb-0">{children}</main>
           <Footer />
         </ClientProviders>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: SITE_NAME,
+              alternateName: SITE_NAME_EN,
+              url: SITE_URL,
+              description: SITE_DESCRIPTION,
+              inLanguage: "ar",
+            }),
+          }}
+        />
       </body>
     </html>
   );

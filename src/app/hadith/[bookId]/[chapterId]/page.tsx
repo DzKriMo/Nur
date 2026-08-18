@@ -3,12 +3,25 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import HadithList from '@/components/hadith/HadithList';
 import LocalizedText from '@/components/layout/LocalizedText';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{
         bookId: string;
         chapterId: string;
     }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { bookId, chapterId } = await params;
+    const book = await getHadithBook(bookId);
+    const chapter = book.chapters.find(c => c.id === parseInt(chapterId));
+    const chapterTitle = chapter?.arabic ?? 'باب من كتب الحديث';
+    return {
+        title: chapterTitle,
+        description: `${chapterTitle} - من ${book.metadata.arabic.title}، أحاديث نبوية مع الترجمة.`,
+        alternates: { canonical: `/hadith/${bookId}/${chapterId}` },
+    };
 }
 
 export default async function ChapterPage({ params }: PageProps) {

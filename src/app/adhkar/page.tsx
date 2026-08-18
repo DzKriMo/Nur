@@ -1,6 +1,13 @@
 import { getAdhkarCategories } from '@/lib/data';
 import PageHeader from '@/components/layout/PageHeader';
 import AdhkarCategoryCard from '@/components/adhkar/AdhkarCategoryCard';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'الأذكار',
+    description: 'أذكار الصباح والمساء وأذكار ما بعد الصلاة مع عدّاد تفاعلي وأدلة من القرآن والسنة.',
+    alternates: { canonical: '/adhkar' },
+};
 
 export default async function AdhkarPage() {
     const categories = await getAdhkarCategories();

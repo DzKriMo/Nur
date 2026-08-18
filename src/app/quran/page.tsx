@@ -2,6 +2,13 @@ import { getSurahs } from '@/lib/data';
 import ChapterList from '@/components/quran/ChapterList';
 import PageHeader from '@/components/layout/PageHeader';
 import QuranViewToggle from '@/components/quran/QuranViewToggle';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'القرآن الكريم - اقرأ واستمع',
+    description: 'اقرأ واستمع للقرآن الكريم كاملاً مع الترجمة الإنجليزية والتفسير، مصحف مجوّد بصوت مشاهير القراء.',
+    alternates: { canonical: '/quran' },
+};
 
 export default async function QuranPage() {
     const surahs = await getSurahs();

@@ -2,6 +2,13 @@ import { getHadithBooks } from '@/lib/data';
 import BookList from '@/components/hadith/BookList';
 import PageHeader from '@/components/layout/PageHeader';
 import SectionHeading from '@/components/layout/SectionHeading';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'كتب الحديث الشريف',
+    description: 'تصفح كتب الحديث التسعة (صحيح البخاري، صحيح مسلم) والأربعين النووية وغيرها مع الترجمة العربية والإنجليزية.',
+    alternates: { canonical: '/hadith' },
+};
 
 export default async function HadithPage() {
     const [majorBooks, fortyBooks, otherBooks] = await Promise.all([

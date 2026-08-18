@@ -4,11 +4,22 @@ import AdhkarProgress from '@/components/adhkar/AdhkarProgress';
 import LocalizedText from '@/components/layout/LocalizedText';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{
         filename: string;
     }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { filename } = await params;
+    const category = await getAdhkar(filename);
+    return {
+        title: category.titleAr,
+        description: `${category.titleAr} - ${category.content.length} أذكار مع الأدلة من القرآن والسنة.`,
+        alternates: { canonical: `/adhkar/${filename}` },
+    };
 }
 
 export default async function AdhkarCategoryPage({ params }: PageProps) {

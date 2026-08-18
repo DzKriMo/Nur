@@ -2,6 +2,13 @@ import { getSurahs } from '@/lib/data';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import LocalizedText from '@/components/layout/LocalizedText';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'فهرس أجزاء القرآن الكريم',
+    description: 'فهرس الأجزاء الثلاثين من القرآن الكريم مع أسماء السور ومواضع الآيات.',
+    alternates: { canonical: '/quran/juz' },
+};
 
 interface JuzInfo {
     index: string;
