@@ -16,7 +16,7 @@ export default async function BookPage({ params }: PageProps) {
     const chapters = book.chapters;
 
     return (
-        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 pb-20">
+        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 pb-20 md:pt-16">
             <div className="bg-white/80 dark:bg-stone-900/80 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 md:top-16 z-20">
                 <div className="max-w-4xl mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
                     <Link
