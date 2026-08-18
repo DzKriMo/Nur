@@ -47,6 +47,10 @@ interface SpeechRecognitionResultEvent {
     resultIndex: number;
 }
 
+interface SpeechRecognitionErrorEvent {
+    error: string;
+}
+
 interface SpeechRecognitionInstance {
     lang: string;
     continuous: boolean;
@@ -54,7 +58,7 @@ interface SpeechRecognitionInstance {
     maxAlternatives: number;
     onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
     onend: (() => void) | null;
-    onerror: (() => void) | null;
+    onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
     start: () => void;
     stop: () => void;
 }
@@ -71,6 +75,9 @@ type SpeechWindow = Window & {
 const REPEAT_OPTIONS = [1, 2, 3, 5, 7];
 const MAX_ALTERNATIVES = 3;
 const LOOKAHEAD = 5;
+
+// Errors that mean the mic can't be used at all (don't auto-restart).
+const MIC_FATAL_ERRORS = new Set(['not-allowed', 'service-not-allowed', 'language-not-supported', 'audio-capture']);
 
 interface RecitationResult {
     accuracy: number;
@@ -92,6 +99,9 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const [revealedWords, setRevealedWords] = useState(0);
     const [skippedIndices, setSkippedIndices] = useState<number[]>([]);
     const [speechUnsupported, setSpeechUnsupported] = useState(false);
+    const [micError, setMicError] = useState<string | null>(null);
+    const [noSpeechHint, setNoSpeechHint] = useState(false);
+    const [liveTranscript, setLiveTranscript] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<RecitationResult | null>(null);
     const [celebration, setCelebration] = useState<string | null>(null);
@@ -125,6 +135,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const hardStopRef = useRef(false);
     const completedRef = useRef(false);
     const autoContinueRef = useRef(false);
+    const receivedSpeechRef = useRef(false);
+    const noSpeechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const targetWordsRef = useRef<string[]>([]);
 
     const verses: VerseItem[] = Object.entries(surah.verse).map(([key, text]) => ({
@@ -180,6 +192,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const stopRecognition = useCallback(() => {
         hardStopRef.current = true;
         keepListeningRef.current = false;
+        if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
         if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
         if (recognitionRef.current) {
             recognitionRef.current.onresult = null;
@@ -264,6 +277,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         const SR = win.SpeechRecognition || win.webkitSpeechRecognition;
         if (!SR) {
             setSpeechUnsupported(true);
+            setMicError(window.isSecureContext === false ? 'insecure_context' : null);
             return;
         }
 
@@ -276,6 +290,17 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         recognition.onresult = (event) => {
             if (completedRef.current || hardStopRef.current) return;
             setSpeechUnsupported(false);
+            setMicError(null);
+
+            if (!receivedSpeechRef.current) {
+                receivedSpeechRef.current = true;
+                if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
+                setNoSpeechHint(false);
+            }
+
+            const last = event.results[event.results.length - 1];
+            const text = last?.[0]?.transcript ?? '';
+            if (text) setLiveTranscript(text);
 
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const res = event.results[i];
@@ -330,6 +355,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 setIsRestarting(true);
                 restartTimerRef.current = setTimeout(() => {
                     setIsRestarting(false);
+                    // If the mic has been live a while with no speech, nudge the user.
+                    if (!receivedSpeechRef.current) setNoSpeechHint(true);
                     createRecognition();
                 }, 350);
             } else {
@@ -337,11 +364,24 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             }
         };
 
-        recognition.onerror = () => {
+        recognition.onerror = (event) => {
             if (recognitionRef.current === recognition) {
                 recognitionRef.current = null;
             }
-            setIsListening(false);
+            // Fatal mic errors (permission denied, no mic, unsupported language):
+            // stop for good and tell the user. Transient errors (no-speech,
+            // network, aborted) are recovered by the onend auto-restart.
+            if (MIC_FATAL_ERRORS.has(event.error)) {
+                hardStopRef.current = true;
+                keepListeningRef.current = false;
+                if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
+                if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+                setIsListening(false);
+                setIsRestarting(false);
+                setMicError(event.error);
+            } else {
+                setIsListening(false);
+            }
         };
 
         recognitionRef.current = recognition;
@@ -360,6 +400,10 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setResult(null);
         setCelebration(null);
         setError(null);
+        setMicError(null);
+        setNoSpeechHint(false);
+        setLiveTranscript('');
+        receivedSpeechRef.current = false;
         finalAltStreamsRef.current = [];
         interimAltStreamsRef.current = [];
         revealedRef.current = 0;
@@ -368,6 +412,10 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setRevealedWords(0);
         setSkippedIndices([]);
         createRecognition();
+        if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
+        noSpeechTimerRef.current = setTimeout(() => {
+            if (!receivedSpeechRef.current && keepListeningRef.current) setNoSpeechHint(true);
+        }, 5000);
     }, [createRecognition]);
 
     const startListeningRef = useRef(startListening);
@@ -658,6 +706,16 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                         {revealedWords}/{targetWordsRef.current.length} {t('quran.words_revealed')}
                                     </p>
                                 )}
+                                {isListening && noSpeechHint && !liveTranscript && (
+                                    <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                                        {t('quran.no_speech_hint')}
+                                    </p>
+                                )}
+                                {isListening && liveTranscript && (
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 font-arabic" dir="rtl">
+                                        {liveTranscript}
+                                    </p>
+                                )}
                             </>
                         ) : (
                             <>
@@ -690,6 +748,17 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 <>
                     {speechUnsupported && (
                         <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 text-center">{t('quran.speech_unsupported')}</p>
+                    )}
+
+                    {micError && (
+                        <p className="mt-3 text-sm text-amber-600 dark:text-amber-400 flex items-center gap-2 justify-center">
+                            <AlertCircle size={15} />
+                            {micError === 'not-allowed' || micError === 'service-not-allowed'
+                                ? t('quran.mic_denied')
+                                : micError === 'insecure_context'
+                                    ? t('quran.insecure_context')
+                                    : t('quran.mic_error')}
+                        </p>
                     )}
 
                     <div className="flex items-center justify-center gap-4 mt-5">

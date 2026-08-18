@@ -241,6 +241,10 @@ export const translations = {
         'quran.auto_flow': 'Auto-advance keeps going after each verse.',
         'quran.riwaya': 'Recitation (Riwaya)',
         'quran.warsh_audio_note': 'Audio playback uses Hafs recitation.',
+        'quran.mic_denied': 'Microphone access was denied. Allow mic access in your browser, then tap the mic again.',
+        'quran.mic_error': 'Speech recognition ran into an error. Tap the mic to try again.',
+        'quran.insecure_context': 'Speech recognition needs a secure connection. Open https://nur.lat and try again.',
+        'quran.no_speech_hint': 'No speech detected yet. Check your microphone and make sure it is allowed.',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'Search All Hadith',
@@ -557,6 +561,10 @@ export const translations = {
         'quran.auto_flow': 'الانتقال التلقائي يستمر بعد كل آية.',
         'quran.riwaya': 'الرواية',
         'quran.warsh_audio_note': 'الصوت المتاح هو تلاوة حفص.',
+        'quran.mic_denied': 'تم رفض الوصول إلى الميكروفون. اسمح بالوصول إلى الميكروفون في المتصفح ثم اضغط على الميكروفون مرة أخرى.',
+        'quran.mic_error': 'حدث خطأ في التعرف على الكلام. اضغط على الميكروفون لإعادة المحاولة.',
+        'quran.insecure_context': 'التعرف على الكلام يتطلب اتصالاً آمناً. افتح https://nur.lat وحاول مرة أخرى.',
+        'quran.no_speech_hint': 'لم يتم رصد أي صوت بعد. تحقق من الميكروفون ومن السماح باستخدامه.',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'بحث شامل في الحديث',

@@ -39,6 +39,7 @@ export function dayKey(d = new Date()): string {
 
 export function normalizeArabic(text: string): string {
     return text
+        .replace(/[\uFEFF\u200B-\u200F\u2060\u00A0]/g, '')
         .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u08F0-\u08FF\u0610-\u061A\u06DD\uFD3E\uFD3F\u0300-\u036F]/g, '')
         .replace(/[أإآٱ]/g, 'ا')
         .replace(/ة/g, 'ه')
