@@ -531,6 +531,29 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         }
     }, [stopRecognition]);
 
+    // Resume recitation from a tapped word: keep everything before it revealed
+    // and re-anchor the live detection there, so a mistake mid-verse (or a
+    // mis-detected word) never forces a full re-read of a long verse.
+    const startFromWord = useCallback((index: number) => {
+        if (tab !== 'memorize') return;
+        const target = targetWordsRef.current;
+        if (!target.length || index < 0 || index >= target.length) return;
+        if (advanceTimerRef.current) {
+            clearTimeout(advanceTimerRef.current);
+            advanceTimerRef.current = null;
+        }
+        if (!isListening) {
+            startListeningRef.current();
+        }
+        revealedRef.current = index;
+        completedRef.current = false;
+        missedSetRef.current = new Set();
+        setRevealedWords(index);
+        setSkippedIndices([]);
+        setResult(null);
+        setCelebration(null);
+    }, [tab, isListening]);
+
     // ---- Listen & Repeat playback ----
     const playVerse = useCallback((idx: number) => {
         const verse = rangeVerses[idx];
@@ -744,8 +767,10 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                     {currentDisplayWords.map((word, i) => (
                                         <span
                                             key={i}
+                                            onClick={() => startFromWord(i)}
+                                            title={t('quran.start_here')}
                                             className={cn(
-                                                "inline-block transition-all duration-300 mx-0.5",
+                                                "inline-block transition-all duration-300 mx-0.5 cursor-pointer hover:bg-violet-100 dark:hover:bg-violet-900/30 rounded px-0.5",
                                                 i < revealedWords && !skippedSet.has(i)
                                                     ? "text-emerald-700 dark:text-emerald-400 font-medium"
                                                     : skippedSet.has(i)

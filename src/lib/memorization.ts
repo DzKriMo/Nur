@@ -195,6 +195,24 @@ function tryMatchStream(altStreams: string[][], cursors: number[], word: string,
  * the current word is reported as `missed` (misheard or a riwaya variant the
  * engine doesn't recognize) and alignment continues instead of stalling.
  */
+/** How many stream tokens a single-word match may scan when searching. */
+const MAX_SCAN = 64;
+/** How many target words ahead the skip-ahead recovery may jump over. */
+const SKIP_WINDOW = 4;
+
+/**
+ * Multi-alternative alignment with forgiving skip-ahead recovery. Each ASR
+ * alternative is an independent chronological token stream; a target word is
+ * revealed when ANY stream matches it in order.
+ *
+ * - The current frontier word is searched across the whole remaining stream
+ *   (bounded by MAX_SCAN) so a long breath re-read that floods the stream with
+ *   duplicates never buries it past a small window.
+ * - Skip-ahead: if the current word isn't recognized but one of the next
+ *   SKIP_WINDOW words is, the gap is recorded as `missed` (misheard or a
+ *   riwaya variant the engine doesn't recognize) and alignment continues, so a
+ *   single bad word can never stall the whole verse.
+ */
 export function alignTokensMulti(
     altStreams: string[][],
     targetWords: string[],
@@ -205,15 +223,20 @@ export function alignTokensMulti(
     const missed: number[] = [];
     let i = startIndex;
     while (i < targetWords.length) {
-        if (tryMatchStream(altStreams, cursors, targetWords[i], lookahead)) {
+        if (tryMatchStream(altStreams, cursors, targetWords[i], MAX_SCAN)) {
             i++;
             continue;
         }
-        if (i + 1 < targetWords.length && tryMatchStream(altStreams, cursors, targetWords[i + 1], lookahead + 2)) {
-            missed.push(i);
-            i++;
-            continue;
+        let jumped = false;
+        for (let j = 1; j <= SKIP_WINDOW && i + j < targetWords.length; j++) {
+            if (tryMatchStream(altStreams, cursors, targetWords[i + j], lookahead + j * 2)) {
+                for (let m = i; m < i + j; m++) missed.push(m);
+                i += j + 1;
+                jumped = true;
+                break;
+            }
         }
+        if (jumped) continue;
         break;
     }
     return { consumed: i - startIndex, missed, cursors };
