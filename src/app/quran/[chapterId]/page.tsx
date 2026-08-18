@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { chapterId } = await params;
     const surah = await getSurah(chapterId);
     const surahs = await getSurahs();
-    const arabicName = surahs.find(s => s.index === chapterId)?.titleAr ?? surah.name;
+    const arabicName = surahs.find(s => s.index === chapterId.padStart(3, '0'))?.titleAr ?? surah.name;
     return {
         title: `سورة ${arabicName}`,
         description: `سورة ${arabicName} - ${surah.count} آية. اقرأ واستمع مع الترجمة الإنجليزية والتفسير.`,
