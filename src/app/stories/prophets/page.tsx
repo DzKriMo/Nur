@@ -6,7 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { prophetsStories } from '@/data/stories/prophets';
 
 export default function ProphetsPage() {
-    const { t, dir } = useLanguage();
+    const { t, dir, language } = useLanguage();
+    const isAr = language === 'ar';
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
@@ -45,9 +46,9 @@ export default function ProphetsPage() {
                                 <div className="absolute inset-0 islamic-star-bg opacity-10" />
                             </div>
                             <div className="p-4">
-                                <h3 className="font-bold text-slate-900 dark:text-white mb-1">{prophet.name}</h3>
-                                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">{prophet.nameAr}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{prophet.summary}</p>
+                                <h3 className="font-bold text-slate-900 dark:text-white mb-1 font-arabic">{isAr ? prophet.nameAr : prophet.name}</h3>
+                                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1 font-arabic">{prophet.nameAr}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 font-arabic">{isAr ? prophet.summaryAr : prophet.summary}</p>
                             </div>
                         </Link>
                     ))}

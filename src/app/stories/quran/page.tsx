@@ -6,7 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { quranStories } from '@/data/stories/quran';
 
 export default function QuranStoriesPage() {
-    const { t, dir } = useLanguage();
+    const { t, dir, language } = useLanguage();
+    const isAr = language === 'ar';
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
@@ -45,10 +46,10 @@ export default function QuranStoriesPage() {
                                 <div className="absolute inset-0 islamic-star-bg opacity-10" />
                             </div>
                             <div className="p-4">
-                                <h3 className="font-bold text-slate-900 dark:text-white mb-1">{story.title}</h3>
-                                <p className="text-xs text-violet-600 dark:text-violet-400 font-medium mb-1">{story.titleAr}</p>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{story.surah}</p>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{story.summary}</p>
+                                <h3 className="font-bold text-slate-900 dark:text-white mb-1 font-arabic">{isAr ? story.titleAr : story.title}</h3>
+                                <p className="text-xs text-violet-600 dark:text-violet-400 font-medium mb-1 font-arabic">{story.titleAr}</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{isAr ? story.surahAr : story.surah}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 font-arabic">{isAr ? story.summaryAr : story.summary}</p>
                             </div>
                         </Link>
                     ))}

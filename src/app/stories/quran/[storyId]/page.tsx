@@ -8,7 +8,7 @@ import { quranStories } from '@/data/stories/quran';
 
 export default function QuranStoryPage() {
     const params = useParams();
-    const { t, dir } = useLanguage();
+    const { t, dir, language } = useLanguage();
     const storyId = params.storyId as string;
     const story = quranStories.find(s => s.id === storyId);
 
@@ -19,6 +19,14 @@ export default function QuranStoryPage() {
             </div>
         );
     }
+
+    const isAr = language === 'ar';
+    const title = isAr ? story.titleAr : story.title;
+    const surah = isAr ? story.surahAr : story.surah;
+    const summary = isAr ? story.summaryAr : story.summary;
+    const fullStory = isAr ? story.fullStoryAr : story.fullStory;
+    const keyLessons = isAr ? story.keyLessonsAr : story.keyLessons;
+    const characters = isAr ? story.charactersAr : story.characters;
 
     const currentIndex = quranStories.findIndex(s => s.id === storyId);
     const prevStory = currentIndex > 0 ? quranStories[currentIndex - 1] : null;
@@ -48,38 +56,38 @@ export default function QuranStoryPage() {
 
                     <div className="p-6 md:p-8">
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">{story.title}</h1>
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2 font-arabic">{title}</h1>
                             <p className="text-violet-600 dark:text-violet-400 font-medium text-lg font-arabic">{story.titleAr}</p>
-                            <p className="text-slate-500 dark:text-slate-400 mt-1">{story.surah}</p>
+                            <p className="text-slate-500 dark:text-slate-400 mt-1">{surah}</p>
                         </div>
 
                         <div className="mb-6">
-                            <p className="text-lg text-slate-700 dark:text-slate-200 font-medium italic border-r-4 border-violet-500 pr-4 py-2 bg-violet-50 dark:bg-violet-900/10 rounded-r-lg">
-                                {story.summary}
+                            <p className={`text-lg text-slate-700 dark:text-slate-200 font-medium italic border-r-4 border-violet-500 pr-4 py-2 bg-violet-50 dark:bg-violet-900/10 rounded-r-lg font-arabic ${isAr ? 'border-r-4 border-l-0 pr-4 pl-0' : ''}`}>
+                                {summary}
                             </p>
                         </div>
 
-                        <div className="prose prose-slate dark:prose-invert max-w-none">
-                            {story.fullStory.split('\n\n').map((paragraph, i) => (
-                                <p key={i} className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                        <div className={isAr ? "text-right" : ""}>
+                            {fullStory.split('\n\n').map((paragraph, i) => (
+                                <p key={i} className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4 font-arabic text-base md:text-lg">
                                     {paragraph}
                                 </p>
                             ))}
                         </div>
 
-                        {story.characters.length > 0 && (
+                        {characters.length > 0 && (
                             <div className="mt-6 flex items-start gap-2 text-sm text-slate-500 dark:text-slate-400">
                                 <Users size={16} className="mt-0.5 flex-shrink-0" />
-                                <span><strong>{t('stories.characters')}:</strong> {story.characters.join(', ')}</span>
+                                <span><strong>{t('stories.characters')}:</strong> {characters.join(', ')}</span>
                             </div>
                         )}
 
-                        {story.keyLessons.length > 0 && (
+                        {keyLessons.length > 0 && (
                             <div className="mt-6 p-4 bg-violet-50 dark:bg-violet-900/20 rounded-xl border border-violet-200 dark:border-violet-800">
                                 <h3 className="font-bold text-violet-800 dark:text-violet-300 mb-3">{t('stories.key_lessons')}</h3>
                                 <ul className="space-y-2">
-                                    {story.keyLessons.map((lesson, i) => (
-                                        <li key={i} className="flex items-start gap-2 text-violet-700 dark:text-violet-200 text-sm">
+                                    {keyLessons.map((lesson, i) => (
+                                        <li key={i} className="flex items-start gap-2 text-violet-700 dark:text-violet-200 text-sm font-arabic">
                                             <span className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-2 flex-shrink-0" />
                                             {lesson}
                                         </li>
@@ -103,7 +111,7 @@ export default function QuranStoryPage() {
                             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                         >
                             {dir === 'rtl' ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-                            <span className="text-sm">{prevStory.title}</span>
+                            <span className="text-sm font-arabic">{isAr ? prevStory.titleAr : prevStory.title}</span>
                         </Link>
                     ) : <div />}
                     {nextStory ? (
@@ -111,7 +119,7 @@ export default function QuranStoryPage() {
                             href={`/stories/quran/${nextStory.id}`}
                             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                         >
-                            <span className="text-sm">{nextStory.title}</span>
+                            <span className="text-sm font-arabic">{isAr ? nextStory.titleAr : nextStory.title}</span>
                             {dir === 'rtl' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
                         </Link>
                     ) : <div />}

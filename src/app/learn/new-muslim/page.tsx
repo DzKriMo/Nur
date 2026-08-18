@@ -2,17 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { newConvertLessons } from '@/data/learn/newConvert';
 
 export default function NewMuslimPage() {
-    const { t, dir } = useLanguage();
+    const { t, dir, language } = useLanguage();
     const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
     const [currentStep, setCurrentStep] = useState(0);
     const [quizAnswered, setQuizAnswered] = useState<Record<string, boolean>>({});
     const [quizCorrect, setQuizCorrect] = useState<Record<string, boolean>>({});
 
+    const isAr = language === 'ar';
     const lesson = newConvertLessons.find(l => l.id === selectedLesson);
     const step = lesson?.steps[currentStep];
 
@@ -22,6 +23,10 @@ export default function NewMuslimPage() {
     };
 
     if (lesson && step) {
+        const stepTitle = isAr ? step.titleAr : step.title;
+        const stepContent = isAr ? step.contentAr : step.content;
+        const lessonTitle = isAr ? lesson.titleAr : lesson.title;
+
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
                 <div className="max-w-2xl mx-auto">
@@ -39,20 +44,20 @@ export default function NewMuslimPage() {
                                 <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
                                     {t('learn.step')} {currentStep + 1} {t('learn.of')} {lesson.steps.length}
                                 </span>
-                                <span className="text-sm text-slate-500 dark:text-slate-400">{lesson.titleAr}</span>
+                                <span className="text-sm text-slate-500 dark:text-slate-400 font-arabic">{lessonTitle}</span>
                             </div>
                         </div>
 
                         <div className="p-6 md:p-8">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">{step.title}</h2>
-                            <div className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                                {step.content}
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 font-arabic">{stepTitle}</h2>
+                            <div className={`text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line font-arabic ${isAr ? 'text-right' : ''}`}>
+                                {stepContent}
                             </div>
 
                             {step.quiz && (
                                 <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                                     <h3 className="font-bold text-amber-800 dark:text-amber-300 mb-3">{t('learn.quiz')}</h3>
-                                    <p className="text-amber-900 dark:text-amber-200 mb-3">{step.quiz.question}</p>
+                                    <p className="text-amber-900 dark:text-amber-200 mb-3 font-arabic">{isAr ? step.quiz.questionAr : step.quiz.question}</p>
                                     <div className="space-y-2">
                                         {step.quiz.options.map((option, i) => {
                                             const answered = quizAnswered[`${lesson.id}-${currentStep}`];
@@ -74,7 +79,7 @@ export default function NewMuslimPage() {
                                                         <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs">
                                                             {answered && isCorrect ? <Check size={14} /> : String.fromCharCode(65 + i)}
                                                         </span>
-                                                        <span>{option.text}</span>
+                                                        <span className="font-arabic">{isAr ? option.textAr : option.text}</span>
                                                     </div>
                                                 </button>
                                             );
@@ -147,7 +152,7 @@ export default function NewMuslimPage() {
                             className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 text-left"
                         >
                             <div className="text-3xl mb-3">{lesson.icon}</div>
-                            <h3 className="font-bold text-slate-900 dark:text-white mb-1">{lesson.title}</h3>
+                            <h3 className="font-bold text-slate-900 dark:text-white mb-1 font-arabic">{isAr ? lesson.titleAr : lesson.title}</h3>
                             <p className="text-sm text-slate-500 dark:text-slate-400">{lesson.steps.length} {t('learn.step')}</p>
                         </button>
                     ))}

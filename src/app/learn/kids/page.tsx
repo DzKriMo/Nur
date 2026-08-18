@@ -7,14 +7,20 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { kidsLessons } from '@/data/learn/kids';
 
 export default function KidsPage() {
-    const { t, dir } = useLanguage();
+    const { t, dir, language } = useLanguage();
     const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
     const [currentStep, setCurrentStep] = useState(0);
 
+    const isAr = language === 'ar';
     const lesson = kidsLessons.find(l => l.id === selectedLesson);
     const step = lesson?.steps[currentStep];
 
     if (lesson && step) {
+        const stepTitle = isAr ? step.titleAr : step.title;
+        const stepContent = isAr ? step.contentAr : step.content;
+        const funFact = isAr ? step.funFactAr : step.funFact;
+        const lessonTitle = isAr ? lesson.titleAr : lesson.title;
+
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
                 <div className="max-w-2xl mx-auto">
@@ -37,15 +43,15 @@ export default function KidsPage() {
                         </div>
 
                         <div className="p-6 md:p-8">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">{step.title}</h2>
-                            <div className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
-                                {step.content}
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 font-arabic">{stepTitle}</h2>
+                            <div className={`text-slate-600 dark:text-slate-300 leading-relaxed text-lg font-arabic ${isAr ? 'text-right' : ''}`}>
+                                {stepContent}
                             </div>
 
-                            {step.funFact && (
+                            {funFact && (
                                 <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-                                    <p className="text-amber-800 dark:text-amber-200 text-sm">
-                                        ✨ <strong>{step.funFact}</strong>
+                                    <p className="text-amber-800 dark:text-amber-200 text-sm font-arabic">
+                                        ✨ <strong>{funFact}</strong>
                                     </p>
                                 </div>
                             )}
@@ -110,7 +116,7 @@ export default function KidsPage() {
                             style={{ borderColor: `${lesson.color}30` }}
                         >
                             <div className="text-4xl mb-3">{lesson.icon}</div>
-                            <h3 className="font-bold text-slate-900 dark:text-white mb-1">{lesson.title}</h3>
+                            <h3 className="font-bold text-slate-900 dark:text-white mb-1 font-arabic">{isAr ? lesson.titleAr : lesson.title}</h3>
                             <p className="text-sm text-slate-500 dark:text-slate-400">{lesson.steps.length} {t('learn.step')}</p>
                         </button>
                     ))}
