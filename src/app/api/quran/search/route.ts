@@ -33,7 +33,7 @@ async function loadQuranCorpus(): Promise<VerseEntry[]> {
         const surah = JSON.parse(await fs.readFile(path.join(surahDir, file), 'utf-8')) as {
             verse: Record<string, string>;
         };
-        const meta = metaMap.get(surahId);
+        const meta = metaMap.get(surahId.padStart(3, '0'));
         const transFile = path.join(transDir, `en_translation_${surahId}.json`);
         let trans: Record<string, string> = {};
         try {
