@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, Check, ListMusic, BookMarked } from 'lucide-react';
+import { Play, Pause, Share2, Check, ListMusic, BookMarked, Brain } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
+import MemorizationMode from '@/components/quran/MemorizationMode';
 
 interface VerseViewProps {
     surah: SurahContent;
@@ -21,6 +22,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
     const [copiedVerse, setCopiedVerse] = useState<string | null>(null);
     const [activeJuz, setActiveJuz] = useState<string>('');
+    const [memorizeMode, setMemorizeMode] = useState(false);
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
     const soundRef = useRef<Howl | null>(null);
@@ -215,6 +217,22 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                         </select>
                     )}
                     <button
+                        onClick={() => {
+                            stopSound();
+                            autoPlayRef.current = false;
+                            setMemorizeMode(true);
+                        }}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg text-sm",
+                            memorizeMode
+                                ? "bg-violet-600 hover:bg-violet-700 text-white"
+                                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
+                        )}
+                    >
+                        <Brain size={16} />
+                        <span className="hidden sm:inline">{t('quran.memorize')}</span>
+                    </button>
+                    <button
                         onClick={playChapter}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
                     >
@@ -224,8 +242,15 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                 </div>
             </div>
 
-            <div className="space-y-4">
-                {verses.map((verse) => (
+            {memorizeMode ? (
+                <MemorizationMode
+                    surah={surah}
+                    chapterId={chapterId}
+                    onExit={() => setMemorizeMode(false)}
+                />
+            ) : (
+                <div className="space-y-4">
+                    {verses.map((verse) => (
                     <div
                         key={verse.key}
                         id={`verse-${verse.verseNum}`}
@@ -308,7 +333,8 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                         </div>
                     </div>
                 ))}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
