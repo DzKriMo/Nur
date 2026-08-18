@@ -60,6 +60,7 @@ interface BookmarksContextType {
 
     adhkarDoneToday: Record<string, boolean>;
     markAdhkarDone: (filename: string) => void;
+    resetAdhkar: (filename: string) => void;
 }
 
 const BookmarksContext = createContext<BookmarksContextType | undefined>(undefined);
@@ -131,6 +132,15 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
         setAdhkarDone(prev => ({ ...prev, [filename]: true }));
     }, [setAdhkarDone]);
 
+    const resetAdhkar = useCallback((filename: string) => {
+        setAdhkarDone(prev => {
+            if (!prev[filename]) return prev;
+            const next = { ...prev };
+            delete next[filename];
+            return next;
+        });
+    }, [setAdhkarDone]);
+
     const value: BookmarksContextType = {
         quranBookmarks,
         isVerseBookmarked,
@@ -150,6 +160,7 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
         markLearnCompleted,
         adhkarDoneToday: adhkarDone,
         markAdhkarDone,
+        resetAdhkar,
     };
 
     return (

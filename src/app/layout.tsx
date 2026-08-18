@@ -47,11 +47,20 @@ export const metadata: Metadata = {
     locale: "ar_AR",
     alternateLocale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1280,
+        height: 853,
+        alt: SITE_NAME_EN,
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: SITE_NAME_EN,
     description: SITE_DESCRIPTION_EN,
+    images: ["/og.jpg"],
   },
   robots: {
     index: true,

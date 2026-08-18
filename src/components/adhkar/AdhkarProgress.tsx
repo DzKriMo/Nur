@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, RotateCcw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
-import { useMounted } from '@/lib/storage';
+import { useMounted, resetStored } from '@/lib/storage';
 
 interface AdhkarProgressProps {
     totalItems: number;
@@ -16,7 +16,7 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
     const [completed, setCompleted] = useState(0);
     const mounted = useMounted();
     const { language } = useLanguage();
-    const { markAdhkarDone, adhkarDoneToday } = useBookmarks();
+    const { markAdhkarDone, adhkarDoneToday, resetAdhkar } = useBookmarks();
     const markedRef = useRef(false);
 
     // Post-prayer adhkar are recited 5 times a day, so the once-daily "done" tracking does not apply to them.
@@ -43,6 +43,16 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
     }, [totalItems, categoryFilename, markAdhkarDone, isDailyOnce]);
 
     if (!mounted) return null;
+
+    const handleReset = () => {
+        if (!window.confirm(language === 'ar' ? 'إعادة تعيين جميع الأذكار في هذا القسم؟' : 'Reset all Adhkar in this category?')) return;
+        for (let i = 0; i < totalItems; i++) {
+            resetStored(`adhkar_${categoryFilename}_${i}`);
+        }
+        resetAdhkar(categoryFilename);
+        markedRef.current = false;
+        setCompleted(0);
+    };
 
     const percentage = totalItems > 0 ? Math.round((completed / totalItems) * 100) : 0;
     const allDone = completed === totalItems;
@@ -74,6 +84,15 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
+                    {completed > 0 && (
+                        <button
+                            onClick={handleReset}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
+                            title={language === 'ar' ? 'إعادة تعيين الأذكار' : 'Reset Adhkar'}
+                        >
+                            <RotateCcw size={14} />
+                        </button>
+                    )}
                     {doneToday && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
                             {language === 'ar' ? 'أُنجز اليوم ✓' : 'Done today ✓'}

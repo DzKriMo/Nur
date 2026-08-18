@@ -22,12 +22,31 @@ export function setStored<T>(key: string, value: T): void {
     }
 }
 
+/**
+ * Resets a localStorage-backed state store back to its initial value,
+ * removing the persisted value and notifying all subscribed components.
+ */
+export function resetStored(key: string): void {
+    const store = stores.get(key) as Store<unknown> | undefined;
+    if (store) {
+        store.reset();
+    } else if (typeof window !== 'undefined') {
+        try {
+            window.localStorage.removeItem(key);
+        } catch {
+            // ignore
+        }
+    }
+}
+
 interface Store<T> {
     value: T;
+    initial: T;
     listeners: Set<() => void>;
     subscribe: (cb: () => void) => () => void;
     getSnapshot: () => T;
     set: (next: T | ((prev: T) => T)) => void;
+    reset: () => void;
 }
 
 const stores = new Map<string, Store<unknown>>();
@@ -43,6 +62,7 @@ function getStore<T>(key: string, initial: T): Store<T> {
         get value() {
             return value;
         },
+        initial,
         listeners,
         subscribe(cb: () => void) {
             listeners.add(cb);
@@ -57,6 +77,17 @@ function getStore<T>(key: string, initial: T): Store<T> {
             if (Object.is(computed, prev)) return;
             value = computed;
             setStored(key, computed);
+            listeners.forEach(l => l());
+        },
+        reset() {
+            value = initial;
+            if (typeof window !== 'undefined') {
+                try {
+                    window.localStorage.removeItem(key);
+                } catch {
+                    // ignore
+                }
+            }
             listeners.forEach(l => l());
         },
     };
