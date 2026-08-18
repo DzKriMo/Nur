@@ -239,6 +239,8 @@ export const translations = {
         'quran.practice_more': 'Keep practicing this verse',
         'quran.listen_first': 'Listen to each verse, then recite it from memory.',
         'quran.auto_flow': 'Auto-advance keeps going after each verse.',
+        'quran.riwaya': 'Recitation (Riwaya)',
+        'quran.warsh_audio_note': 'Audio playback uses Hafs recitation.',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'Search All Hadith',
@@ -553,6 +555,8 @@ export const translations = {
         'quran.practice_more': 'واصل التدرب على هذه الآية',
         'quran.listen_first': 'استمع لكل آية ثم اقرأها من الذاكرة.',
         'quran.auto_flow': 'الانتقال التلقائي يستمر بعد كل آية.',
+        'quran.riwaya': 'الرواية',
+        'quran.warsh_audio_note': 'الصوت المتاح هو تلاوة حفص.',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'بحث شامل في الحديث',

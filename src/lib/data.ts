@@ -1,11 +1,16 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { SurahMeta, SurahContent, HadithBook, AdhkarCategory, TranslationContent, HadithChapter, Hadith, BookInfo } from '@/types';
+import { Riwaya } from '@/lib/riwaya';
 
 const DATA_DIR = path.join(process.cwd(), 'src/data');
 
 const cache = new Map<string, { data: unknown; expiry: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
+
+function quranDir(riwaya: Riwaya): string {
+    return riwaya === 'hafs' ? 'quran' : path.join('quran', riwaya);
+}
 
 function getCached<T>(key: string): T | null {
     const entry = cache.get(key);
@@ -19,23 +24,23 @@ function setCache(key: string, data: unknown): void {
 }
 
 // Quran
-export async function getSurahs(): Promise<SurahMeta[]> {
-    const key = 'surahs';
+export async function getSurahs(riwaya: Riwaya = 'hafs'): Promise<SurahMeta[]> {
+    const key = `surahs_${riwaya}`;
     const cached = getCached<SurahMeta[]>(key);
     if (cached) return cached;
-    const filePath = path.join(DATA_DIR, 'quran', 'surah.json');
+    const filePath = path.join(DATA_DIR, quranDir(riwaya), 'surah.json');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data: SurahMeta[] = JSON.parse(fileContent);
     setCache(key, data);
     return data;
 }
 
-export async function getSurah(index: string): Promise<SurahContent> {
+export async function getSurah(index: string, riwaya: Riwaya = 'hafs'): Promise<SurahContent> {
     const id = parseInt(index, 10);
-    const key = `surah_${id}`;
+    const key = `surah_${riwaya}_${id}`;
     const cached = getCached<SurahContent>(key);
     if (cached) return cached;
-    const filePath = path.join(DATA_DIR, 'quran', 'surahs', `surah_${id}.json`);
+    const filePath = path.join(DATA_DIR, quranDir(riwaya), 'surahs', `surah_${id}.json`);
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const data: SurahContent = JSON.parse(fileContent);
     setCache(key, data);

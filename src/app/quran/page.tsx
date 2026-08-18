@@ -5,6 +5,8 @@ import QuranViewToggle from '@/components/quran/QuranViewToggle';
 import LocalizedText from '@/components/layout/LocalizedText';
 import Link from 'next/link';
 import { Search, BookMarked } from 'lucide-react';
+import { cookies } from 'next/headers';
+import { getRiwayaFromCookie } from '@/lib/riwaya';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
 };
 
 export default async function QuranPage() {
-    const surahs = await getSurahs();
+    const riwaya = getRiwayaFromCookie((await cookies()).toString());
+    const surahs = await getSurahs(riwaya);
 
     return (
         <div className="min-h-screen pt-20 md:pt-28 px-4 md:px-12 pb-8 md:pb-12">

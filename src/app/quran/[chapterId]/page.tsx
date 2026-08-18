@@ -3,6 +3,8 @@ import VerseView from '@/components/quran/VerseView';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import LocalizedText from '@/components/layout/LocalizedText';
+import { cookies } from 'next/headers';
+import { getRiwayaFromCookie, Riwaya } from '@/lib/riwaya';
 import type { Metadata } from 'next';
 
 interface PageProps {
@@ -13,8 +15,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { chapterId } = await params;
-    const surah = await getSurah(chapterId);
-    const surahs = await getSurahs();
+    const riwaya = getRiwayaFromCookie((await cookies()).toString());
+    const surah = await getSurah(chapterId, riwaya);
+    const surahs = await getSurahs(riwaya);
     const arabicName = surahs.find(s => s.index === chapterId.padStart(3, '0'))?.titleAr ?? surah.name;
     return {
         title: `سورة ${arabicName}`,
@@ -25,7 +28,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ChapterPage({ params }: PageProps) {
     const { chapterId } = await params;
-    const surah = await getSurah(chapterId);
+    const riwaya: Riwaya = getRiwayaFromCookie((await cookies()).toString());
+    const surah = await getSurah(chapterId, riwaya);
     const translation = await getTranslation(chapterId, 'en');
     const tafseer = await getTranslation(chapterId, 'ar');
 
@@ -59,6 +63,7 @@ export default async function ChapterPage({ params }: PageProps) {
                     translation={translation}
                     tafseer={tafseer}
                     chapterId={chapterId}
+                    riwaya={riwaya}
                 />
 
                 <div className="flex justify-between mt-8">

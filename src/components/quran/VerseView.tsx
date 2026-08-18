@@ -2,11 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, Check, ListMusic, BookMarked, Brain } from 'lucide-react';
+import { Play, Pause, Share2, Check, ListMusic, BookMarked, Brain, BookOpenText } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
+import { useRouter } from 'next/navigation';
+import { Riwaya, RIAWAYA_OPTIONS, setRiwayaCookie } from '@/lib/riwaya';
 import MemorizationMode from '@/components/quran/MemorizationMode';
 
 interface VerseViewProps {
@@ -14,9 +16,10 @@ interface VerseViewProps {
     translation: TranslationContent;
     tafseer: TranslationContent;
     chapterId: string;
+    riwaya: Riwaya;
 }
 
-export default function VerseView({ surah, translation, tafseer, chapterId }: VerseViewProps) {
+export default function VerseView({ surah, translation, tafseer, chapterId, riwaya }: VerseViewProps) {
     const [playingVerse, setPlayingVerse] = useState<string | null>(null);
     const [, setSound] = useState<Howl | null>(null);
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
@@ -29,6 +32,13 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
     const lastSavedRef = useRef<string>('');
     const { t } = useLanguage();
     const { isVerseBookmarked, toggleVerseBookmark, saveLastRead } = useBookmarks();
+    const router = useRouter();
+
+    const changeRiwaya = (value: Riwaya) => {
+        if (value === riwaya) return;
+        setRiwayaCookie(value);
+        router.refresh();
+    };
 
     const verses = Object.entries(surah.verse).map(([key, text]) => {
         const verseNum = key.split('_')[1];
@@ -202,6 +212,21 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 focus-within:ring-2 focus-within:ring-emerald-500" title={t('quran.riwaya')}>
+                        <BookOpenText size={14} className="text-slate-400" />
+                        <select
+                            value={riwaya}
+                            onChange={(e) => changeRiwaya(e.target.value as Riwaya)}
+                            className="bg-transparent text-slate-700 dark:text-slate-200 text-sm font-medium focus:outline-none cursor-pointer"
+                            aria-label={t('quran.riwaya')}
+                        >
+                            {RIAWAYA_OPTIONS.map((r) => (
+                                <option key={r.id} value={r.id}>
+                                    {r.id === 'hafs' ? r.labelEn : r.labelAr}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
                     {juzList.length > 1 && (
                         <select
                             value={activeJuz}
@@ -246,6 +271,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                 <MemorizationMode
                     surah={surah}
                     chapterId={chapterId}
+                    riwaya={riwaya}
                     onExit={() => setMemorizeMode(false)}
                 />
             ) : (

@@ -39,7 +39,7 @@ export function dayKey(d = new Date()): string {
 
 export function normalizeArabic(text: string): string {
     return text
-        .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u0610-\u061A]/g, '')
+        .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u08F0-\u08FF\u0610-\u061A\u06DD\uFD3E\uFD3F\u0300-\u036F]/g, '')
         .replace(/[أإآٱ]/g, 'ا')
         .replace(/ة/g, 'ه')
         .replace(/ى/g, 'ي')
@@ -71,16 +71,30 @@ function levenshtein(a: string, b: string): number {
 }
 
 /**
- * Fuzzy Arabic word match. Exact match always wins; otherwise a Levenshtein
- * similarity threshold tolerates common ASR errors (shadda/hamza variants).
+ * Strips common Arabic proclitics (ال, و, ف, ب, ك, ل) so that e.g. "وَالرَّحِيم"
+ * and "الرَّحِيم" are treated as the same word. This makes matching tolerant of
+ * riwaya/ASR differences that add or drop a leading clitic.
+ */
+function stripLeadingClitics(w: string): string {
+    let s = w;
+    if (s.startsWith('ال') && s.length > 3) s = s.slice(2);
+    if (s.length > 1 && 'والفبكل'.includes(s[0])) s = s.slice(1);
+    return s;
+}
+
+/**
+ * Fuzzy Arabic word match. Exact match always wins; a clitic-insensitive match
+ * tolerates riwaya/ASR prefix differences; otherwise a Levenshtein similarity
+ * threshold tolerates common ASR errors (shadda/hamza variants).
  */
 export function isWordMatch(a: string, b: string): boolean {
     if (!a || !b) return false;
     if (a === b) return true;
+    if (stripLeadingClitics(a) === stripLeadingClitics(b)) return true;
     const maxLen = Math.max(a.length, b.length);
     if (maxLen === 0) return false;
     const similarity = 1 - levenshtein(a, b) / maxLen;
-    return similarity >= 0.72;
+    return similarity >= 0.7;
 }
 
 /**
@@ -106,37 +120,58 @@ export function matchSpokenWords(spokenTokens: string[], targetWords: string[], 
     return revealed;
 }
 
+export interface AlignResult {
+    /** Number of target words resolved (matched or skipped-missed) from `startIndex`. */
+    consumed: number;
+    /** Absolute target indices that were skipped as unrecognized (riwaya/ASR variants). */
+    missed: number[];
+}
+
+function tryMatchStream(altStreams: string[][], cursors: number[], word: string, lookahead: number): boolean {
+    for (let a = 0; a < altStreams.length; a++) {
+        const tokens = altStreams[a];
+        const end = Math.min(tokens.length, cursors[a] + lookahead);
+        for (let k = cursors[a]; k < end; k++) {
+            if (isWordMatch(tokens[k], word)) {
+                cursors[a] = k + 1;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 /**
- * Multi-alternative greedy alignment. Each ASR alternative is an independent
- * chronological token stream; a target word is revealed when ANY stream matches
- * it in order within the lookahead window. This dramatically improves hit-rate
- * on Arabic where the top alternative is frequently wrong.
- * `startIndex` allows resuming alignment after force-skipped (stuck) words.
+ * Multi-alternative alignment with skip-ahead recovery. Each ASR alternative
+ * is an independent chronological token stream; a target word is revealed when
+ * ANY stream matches it in order within the lookahead window.
+ *
+ * Skip-ahead: if the current target word isn't recognized but the NEXT one is,
+ * the current word is reported as `missed` (misheard or a riwaya variant the
+ * engine doesn't recognize) and alignment continues instead of stalling.
  */
 export function alignTokensMulti(
     altStreams: string[][],
     targetWords: string[],
     startIndex = 0,
-    lookahead = 4
-): number {
+    lookahead = 5
+): AlignResult {
     const cursors = altStreams.map(() => 0);
-    let revealed = 0;
-    for (let i = startIndex; i < targetWords.length; i++) {
-        let found = false;
-        for (let a = 0; a < altStreams.length && !found; a++) {
-            const tokens = altStreams[a];
-            for (let k = cursors[a]; k < Math.min(tokens.length, cursors[a] + lookahead); k++) {
-                if (isWordMatch(tokens[k], targetWords[i])) {
-                    cursors[a] = k + 1;
-                    found = true;
-                    break;
-                }
-            }
+    const missed: number[] = [];
+    let i = startIndex;
+    while (i < targetWords.length) {
+        if (tryMatchStream(altStreams, cursors, targetWords[i], lookahead)) {
+            i++;
+            continue;
         }
-        if (!found) break;
-        revealed++;
+        if (i + 1 < targetWords.length && tryMatchStream(altStreams, cursors, targetWords[i + 1], lookahead + 2)) {
+            missed.push(i);
+            i++;
+            continue;
+        }
+        break;
     }
-    return revealed;
+    return { consumed: i - startIndex, missed };
 }
 
 export function compareRecitation(spoken: string, target: string): { accuracy: number; missing: string[] } {

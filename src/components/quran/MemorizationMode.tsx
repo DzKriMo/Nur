@@ -11,6 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStoredState } from '@/lib/storage';
+import { Riwaya, RIAWAYA_OPTIONS } from '@/lib/riwaya';
 import {
     DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY,
     normalizeArabicTokens, alignTokensMulti, recordVerse,
@@ -22,6 +23,7 @@ import {
 interface MemorizationModeProps {
     surah: SurahContent;
     chapterId: string;
+    riwaya?: Riwaya;
     onExit: () => void;
 }
 
@@ -68,7 +70,7 @@ type SpeechWindow = Window & {
 
 const REPEAT_OPTIONS = [1, 2, 3, 5, 7];
 const MAX_ALTERNATIVES = 3;
-const MAX_STALL_EVENTS = 6;
+const LOOKAHEAD = 5;
 
 interface RecitationResult {
     accuracy: number;
@@ -77,7 +79,7 @@ interface RecitationResult {
     missing: string[];
 }
 
-export default function MemorizationMode({ surah, chapterId, onExit }: MemorizationModeProps) {
+export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', onExit }: MemorizationModeProps) {
     const { t } = useLanguage();
     const [tab, setTab] = useState<'memorize' | 'listen'>('memorize');
     const [repeats, setRepeats] = useState(3);
@@ -118,8 +120,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     const finalAltStreamsRef = useRef<string[]>([]);
     const interimAltStreamsRef = useRef<string[]>([]);
     const revealedRef = useRef(0);
-    const skippedRef = useRef(0);
-    const stallStreakRef = useRef(0);
+    const missedSetRef = useRef<Set<number>>(new Set());
     const keepListeningRef = useRef(false);
     const hardStopRef = useRef(false);
     const completedRef = useRef(false);
@@ -148,8 +149,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         finalAltStreamsRef.current = [];
         interimAltStreamsRef.current = [];
         revealedRef.current = 0;
-        skippedRef.current = 0;
-        stallStreakRef.current = 0;
+        missedSetRef.current = new Set();
         completedRef.current = false;
         targetWordsRef.current = currentVerse ? normalizeArabicTokens(currentVerse.text) : [];
         setRevealedWords(0);
@@ -277,7 +277,6 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             if (completedRef.current || hardStopRef.current) return;
             setSpeechUnsupported(false);
 
-            let hasNewFinal = false;
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const res = event.results[i];
                 for (let a = 0; a < Math.min(MAX_ALTERNATIVES, res.length); a++) {
@@ -285,7 +284,6 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                     if (!text) continue;
                     if (res.isFinal) {
                         finalAltStreamsRef.current[a] = (finalAltStreamsRef.current[a] ?? '') + text + ' ';
-                        hasNewFinal = true;
                     } else {
                         interimAltStreamsRef.current[a] = text + ' ';
                     }
@@ -303,29 +301,22 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                 streams.push(normalizeArabicTokens(finalPart + ' ' + interimPart));
             }
 
-            const matched = alignTokensMulti(streams, target, skippedRef.current);
-            const candidate = skippedRef.current + matched;
-            const next = Math.max(revealedRef.current, candidate);
-
-            if (next > revealedRef.current) {
-                revealedRef.current = next;
-                stallStreakRef.current = 0;
-            } else if (hasNewFinal && candidate <= revealedRef.current) {
-                stallStreakRef.current += 1;
-                if (stallStreakRef.current >= MAX_STALL_EVENTS && skippedRef.current + matched < target.length) {
-                    // User said a word the engine can't match — mark it missed and move on
-                    skippedRef.current += 1;
-                    stallStreakRef.current = 0;
+            // Fresh alignment of the full cumulative transcript. Reveal is kept
+            // monotonic (frontier only moves forward); words the engine can't
+            // recognize get marked as missed (skip-ahead) so the verse keeps
+            // flowing instead of stalling on one misheard word.
+            const { consumed, missed } = alignTokensMulti(streams, target, 0, LOOKAHEAD);
+            const frontier = revealedRef.current;
+            if (consumed > frontier) {
+                for (const m of missed) {
+                    if (m >= frontier) missedSetRef.current.add(m);
                 }
-            }
-
-            setRevealedWords(revealedRef.current);
-            const skippedArr: number[] = [];
-            for (let s = 0; s < skippedRef.current; s++) skippedArr.push(s);
-            setSkippedIndices(skippedArr);
-
-            if (revealedRef.current >= target.length) {
-                completeVerse();
+                revealedRef.current = consumed;
+                setRevealedWords(consumed);
+                setSkippedIndices(Array.from(missedSetRef.current).sort((a, b) => a - b));
+                if (consumed >= target.length) {
+                    completeVerse();
+                }
             }
         };
 
@@ -372,8 +363,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         finalAltStreamsRef.current = [];
         interimAltStreamsRef.current = [];
         revealedRef.current = 0;
-        skippedRef.current = 0;
-        stallStreakRef.current = 0;
+        missedSetRef.current = new Set();
         completedRef.current = false;
         setRevealedWords(0);
         setSkippedIndices([]);
@@ -530,7 +520,12 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <Brain size={20} className="text-violet-600 dark:text-violet-400" />
-                    <h2 className="font-bold text-slate-900 dark:text-white text-lg font-arabic">{surah.name}</h2>
+                    <h2 className="font-bold text-slate-900 dark:text-white text-lg font-arabic">
+                        {surah.name}
+                        <span className="inline-block ml-2 px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 text-[11px] font-medium align-middle">
+                            {RIAWAYA_OPTIONS.find((r) => r.id === riwaya)?.labelAr ?? 'حفص'}
+                        </span>
+                    </h2>
                 </div>
                 <button
                     onClick={onExitMode}
@@ -766,6 +761,11 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                     <p className="text-center mt-3 text-sm text-slate-500 dark:text-slate-400">
                         {t('quran.listen_first')}
                     </p>
+                    {riwaya === 'warsh' && (
+                        <p className="text-center mt-1 text-xs text-slate-400 dark:text-slate-500">
+                            {t('quran.warsh_audio_note')}
+                        </p>
+                    )}
                 </>
             )}
 
