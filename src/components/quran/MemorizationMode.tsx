@@ -3,9 +3,21 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Howl } from 'howler';
 import { SurahContent } from '@/types';
-import { Brain, Play, Pause, Eye, EyeOff, Mic, MicOff, ChevronLeft, ChevronRight, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import {
+    Brain, Play, Pause, Mic, MicOff, ChevronLeft, ChevronRight,
+    CheckCircle2, XCircle, AlertCircle, Flame, Target, Trophy, SkipForward,
+    RotateCcw, ListMusic, Award, Star,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useStoredState } from '@/lib/storage';
+import {
+    DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY,
+    normalizeArabicTokens, matchSpokenWords, recordVerse,
+    getTodayVerses, getStreak, getTotalVerses, getSurahProgress,
+    getUnlockedMilestones, getNewlyUnlockedMilestones,
+    MemorizationState,
+} from '@/lib/memorization';
 
 interface MemorizationModeProps {
     surah: SurahContent;
@@ -22,18 +34,17 @@ interface SpeechRecognitionAlternative {
     transcript: string;
 }
 
-interface SpeechRecognitionEvent {
-    results: Array<Array<SpeechRecognitionAlternative>>;
+interface SpeechRecognitionResultEvent {
+    results: Array<{ isFinal: boolean; [index: number]: SpeechRecognitionAlternative }>;
     resultIndex: number;
 }
 
-// Minimal typing for the Web Speech API (only exposed in some browsers)
 interface SpeechRecognitionInstance {
     lang: string;
     continuous: boolean;
     interimResults: boolean;
     maxAlternatives: number;
-    onresult: ((event: SpeechRecognitionEvent) => void) | null;
+    onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
     onend: (() => void) | null;
     onerror: (() => void) | null;
     start: () => void;
@@ -51,49 +62,51 @@ type SpeechWindow = Window & {
 
 const REPEAT_OPTIONS = [1, 2, 3, 5, 7];
 
-function normalizeArabic(text: string): string {
-    return text
-        .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u0610-\u061A]/g, '')
-        .replace(/[أإآٱ]/g, 'ا')
-        .replace(/ة/g, 'ه')
-        .replace(/ى/g, 'ي')
-        .replace(/\s+/g, ' ')
-        .trim();
-}
-
-function compareRecitation(spoken: string, target: string): { accuracy: number; missing: string[] } {
-    const targetWords = normalizeArabic(target).split(' ').filter(Boolean);
-    const spokenWords = normalizeArabic(spoken).split(' ').filter(Boolean);
-    if (targetWords.length === 0) return { accuracy: 0, missing: [] };
-
-    const missing = targetWords.filter((w) => !spokenWords.includes(w));
-    const accuracy = Math.round(((targetWords.length - missing.length) / targetWords.length) * 100);
-    return { accuracy, missing };
+interface RecitationResult {
+    accuracy: number;
+    revealed: number;
+    total: number;
+    missing: string[];
 }
 
 export default function MemorizationMode({ surah, chapterId, onExit }: MemorizationModeProps) {
     const { t } = useLanguage();
+    const [tab, setTab] = useState<'memorize' | 'listen'>('memorize');
     const [repeats, setRepeats] = useState(3);
     const [fromVerse, setFromVerse] = useState(1);
     const [toVerse, setToVerse] = useState(surah.count);
     const [currentIdx, setCurrentIdx] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [hideText, setHideText] = useState(true);
-    const [revealed, setRevealed] = useState(false);
     const [isListening, setIsListening] = useState(false);
-    const [recognitionResult, setRecognitionResult] = useState<{ accuracy: number; missing: string[] } | null>(null);
+    const [revealedWords, setRevealedWords] = useState(0);
     const [speechUnsupported, setSpeechUnsupported] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [result, setResult] = useState<RecitationResult | null>(null);
+    const [celebration, setCelebration] = useState<string | null>(null);
+    const [milestoneCelebration, setMilestoneCelebration] = useState<number | null>(null);
+    const [progress, setProgress] = useStoredState<MemorizationState>(
+        MEMORIZATION_STORAGE_KEY,
+        DEFAULT_MEMORIZATION_STATE
+    );
+
+    const progressRef = useRef(progress);
+    useEffect(() => {
+        progressRef.current = progress;
+    }, [progress]);
 
     const soundRef = useRef<Howl | null>(null);
     const repeatCountRef = useRef(0);
     const currentIdxRef = useRef(0);
-    const repeatsRef = useRef(repeats);
     const isPlayingRef = useRef(false);
     const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
     const versesRef = useRef<HTMLDivElement | null>(null);
+    const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    repeatsRef.current = repeats;
+    const transcriptRef = useRef('');
+    const cursorRef = useRef(0);
+    const targetWordsRef = useRef<string[]>([]);
+    const autoContinueRef = useRef(false);
 
     const verses: VerseItem[] = Object.entries(surah.verse).map(([key, text]) => ({
         verseNum: key.split('_')[1],
@@ -107,6 +120,30 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
 
     const currentVerse = rangeVerses[Math.min(currentIdx, rangeVerses.length - 1)];
 
+    // Keep the ref in sync with the index (also updated by auto-advance)
+    useEffect(() => {
+        currentIdxRef.current = currentIdx;
+    }, [currentIdx]);
+
+    // Reset recitation state whenever the current verse changes
+    useEffect(() => {
+        transcriptRef.current = '';
+        cursorRef.current = 0;
+        targetWordsRef.current = currentVerse ? normalizeArabicTokens(currentVerse.text) : [];
+        setRevealedWords(0);
+        setResult(null);
+        setCelebration(null);
+        setError(null);
+    }, [currentIdx, currentVerse]);
+
+    const todayVerses = getTodayVerses(progress);
+    const streak = getStreak(progress);
+    const totalVerses = getTotalVerses(progress);
+    const surahProgress = getSurahProgress(progress, chapterId);
+    const unlockedMilestones = getUnlockedMilestones(totalVerses);
+    const dailyGoal = progress.dailyGoal;
+    const goalProgress = Math.min(100, Math.round((todayVerses / Math.max(1, dailyGoal)) * 100));
+
     const stopSound = useCallback(() => {
         if (soundRef.current) {
             soundRef.current.stop();
@@ -117,6 +154,180 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         setIsPlaying(false);
     }, []);
 
+    const stopRecognition = useCallback(() => {
+        if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onend = null;
+            recognitionRef.current.onerror = null;
+            try { recognitionRef.current.stop(); } catch {}
+            recognitionRef.current = null;
+        }
+        setIsListening(false);
+    }, []);
+
+    const onExitMode = useCallback(() => {
+        stopSound();
+        stopRecognition();
+        if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+        if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+        onExit();
+    }, [onExit, stopSound, stopRecognition]);
+
+    useEffect(() => {
+        return () => {
+            stopSound();
+            stopRecognition();
+            if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+            if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+        };
+    }, [stopSound, stopRecognition]);
+
+    const recordAttempt = useCallback((accuracy: number) => {
+        const prev = progressRef.current;
+        const prevTotal = getTotalVerses(prev);
+        const next = recordVerse(prev, chapterId, currentVerse.verseNum, accuracy);
+        setProgress(next);
+        const newly = getNewlyUnlockedMilestones(prevTotal, getTotalVerses(next));
+        if (newly.length > 0) {
+            setMilestoneCelebration(newly[newly.length - 1]);
+            if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
+            celebrationTimerRef.current = setTimeout(() => setMilestoneCelebration(null), 4000);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chapterId, currentVerse]);
+
+    const startListening = useCallback(() => {
+        const win = window as SpeechWindow;
+        const SR = win.SpeechRecognition || win.webkitSpeechRecognition;
+        if (!SR) {
+            setSpeechUnsupported(true);
+            return;
+        }
+
+        stopRecognition();
+        setSpeechUnsupported(false);
+        setResult(null);
+        setCelebration(null);
+        transcriptRef.current = '';
+        cursorRef.current = 0;
+        setRevealedWords(0);
+
+        const recognition = new SR();
+        recognition.lang = 'ar-SA';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+            let interim = '';
+            let final = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const res = event.results[i];
+                const transcript = res[0]?.transcript ?? '';
+                if (res.isFinal) final += transcript + ' ';
+                else interim += transcript + ' ';
+            }
+            if (final) transcriptRef.current = transcriptRef.current + final;
+            const combined = transcriptRef.current + ' ' + interim;
+
+            const target = targetWordsRef.current;
+            if (target.length === 0) return;
+            const spokenTokens = normalizeArabicTokens(combined);
+            const matched = matchSpokenWords(spokenTokens, target, cursorRef.current);
+            if (matched > 0) {
+                cursorRef.current += matched;
+                setRevealedWords(cursorRef.current);
+                if (cursorRef.current >= target.length) {
+                    // Verse fully revealed — record and auto-advance
+                    const accuracy = Math.round((cursorRef.current / target.length) * 100);
+                    recordAttempt(accuracy);
+                    stopRecognition();
+                    setResult({ accuracy, revealed: cursorRef.current, total: target.length, missing: [] });
+                    setCelebration('verse_complete');
+                    const idx = currentIdxRef.current;
+                    if (idx + 1 < rangeVerses.length) {
+                        autoContinueRef.current = true;
+                        advanceTimerRef.current = setTimeout(() => {
+                            setCurrentIdx(idx + 1);
+                        }, 2200);
+                    } else {
+                        advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 2200);
+                    }
+                }
+            }
+        };
+
+        recognition.onend = () => {
+            if (recognitionRef.current === recognition) {
+                recognitionRef.current = null;
+            }
+            setIsListening(false);
+        };
+
+        recognition.onerror = () => {
+            if (recognitionRef.current === recognition) {
+                recognitionRef.current = null;
+            }
+            setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+        setIsListening(true);
+        try {
+            recognition.start();
+        } catch {
+            setIsListening(false);
+            setSpeechUnsupported(true);
+        }
+    }, [rangeVerses.length, recordAttempt, stopRecognition]);
+
+    const startListeningRef = useRef(startListening);
+    useEffect(() => {
+        startListeningRef.current = startListening;
+    }, [startListening]);
+
+    // Auto-continue: when a verse is fully revealed, the next verse appears and
+    // we restart listening automatically so the session flows verse to verse.
+    useEffect(() => {
+        if (autoContinueRef.current) {
+            autoContinueRef.current = false;
+            if (tab === 'memorize') {
+                startListeningRef.current();
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentIdx]);
+
+    const stopListening = useCallback(() => {
+        const target = targetWordsRef.current;
+        const revealed = cursorRef.current;
+        stopRecognition();
+        if (target.length > 0) {
+            const accuracy = Math.round((revealed / target.length) * 100);
+            const missing = target.slice(revealed);
+            recordAttempt(accuracy);
+            setResult({ accuracy, revealed, total: target.length, missing });
+            if (accuracy >= 85) {
+                setCelebration('perfect');
+            } else if (accuracy >= 50) {
+                setCelebration('great');
+            } else {
+                setCelebration(null);
+            }
+        }
+    }, [recordAttempt, stopRecognition]);
+
+    const skipVerse = useCallback(() => {
+        stopRecognition();
+        const idx = currentIdxRef.current;
+        if (idx + 1 < rangeVerses.length) {
+            setCurrentIdx(idx + 1);
+        } else {
+            setCelebration('range_complete');
+        }
+    }, [rangeVerses.length, stopRecognition]);
+
+    // ---- Listen & Repeat playback ----
     const playVerse = useCallback((idx: number) => {
         const verse = rangeVerses[idx];
         if (!verse) return;
@@ -135,7 +346,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             html5: true,
             onend: () => {
                 repeatCountRef.current += 1;
-                if (repeatCountRef.current < repeatsRef.current) {
+                if (repeatCountRef.current < repeats) {
                     sound.play();
                 } else {
                     repeatCountRef.current = 0;
@@ -156,12 +367,10 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         soundRef.current = sound;
         currentIdxRef.current = idx;
         setCurrentIdx(idx);
-        setRevealed(false);
-        setRecognitionResult(null);
         isPlayingRef.current = true;
         setIsPlaying(true);
         sound.play();
-    }, [chapterId, rangeVerses, stopSound]);
+    }, [chapterId, rangeVerses, repeats, stopSound]);
 
     const togglePlay = useCallback(() => {
         if (isPlayingRef.current) {
@@ -176,96 +385,17 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         const clamped = Math.max(0, Math.min(idx, rangeVerses.length - 1));
         currentIdxRef.current = clamped;
         setCurrentIdx(clamped);
-        setRevealed(false);
-        setRecognitionResult(null);
         if (isPlayingRef.current) {
             repeatCountRef.current = 0;
             playVerse(clamped);
         }
     }, [playVerse, rangeVerses.length]);
 
-    const onExitMode = useCallback(() => {
-        stopSound();
-        onExit();
-    }, [onExit, stopSound]);
-
-    useEffect(() => {
-        return () => {
-            stopSound();
-            if (recognitionRef.current) {
-                recognitionRef.current.onresult = null;
-                recognitionRef.current.onend = null;
-                try { recognitionRef.current.stop(); } catch {}
-            }
-        };
-    }, [stopSound]);
-
-    const scrollToCurrent = () => {
-        versesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-
-    useEffect(() => {
-        if (currentVerse && isPlaying) {
-            scrollToCurrent();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentIdx]);
-
-    const checkRecitation = () => {
-        if (isListening) {
-            if (recognitionRef.current) {
-                try { recognitionRef.current.stop(); } catch {}
-            }
-            setIsListening(false);
-            return;
-        }
-
-        const win = window as SpeechWindow;
-        const SR = win.SpeechRecognition || win.webkitSpeechRecognition;
-        if (!SR) {
-            setSpeechUnsupported(true);
-            return;
-        }
-
-        setRecognitionResult(null);
-        setSpeechUnsupported(false);
-
-        const recognition = new SR();
-        recognition.lang = 'ar-SA';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event) => {
-            const spoken = event.results[0]?.[0]?.transcript ?? '';
-            const target = currentVerse?.text ?? '';
-            setRecognitionResult(compareRecitation(spoken, target));
-        };
-
-        recognition.onend = () => {
-            setIsListening(false);
-            recognitionRef.current = null;
-        };
-
-        recognition.onerror = () => {
-            setIsListening(false);
-            recognitionRef.current = null;
-        };
-
-        recognitionRef.current = recognition;
-        setIsListening(true);
-        try {
-            recognition.start();
-        } catch {
-            setIsListening(false);
-            setSpeechUnsupported(true);
-        }
-    };
-
     const changeFrom = (val: number) => {
         const v = Math.max(1, Math.min(val, toVerse, surah.count));
         setFromVerse(v);
         stopSound();
+        stopRecognition();
         currentIdxRef.current = 0;
         setCurrentIdx(0);
     };
@@ -274,11 +404,12 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
         const v = Math.max(fromVerse, Math.min(val, surah.count));
         setToVerse(v);
         stopSound();
+        stopRecognition();
         currentIdxRef.current = 0;
         setCurrentIdx(0);
     };
 
-    const accuracy = recognitionResult?.accuracy ?? null;
+    const currentDisplayWords = currentVerse ? currentVerse.text.split(' ').filter(Boolean) : [];
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 p-5 md:p-6">
@@ -296,21 +427,36 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                 </button>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-wrap items-center gap-3 mb-5">
-                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <span>{t('quran.repeats')}</span>
-                    <select
-                        value={repeats}
-                        onChange={(e) => setRepeats(parseInt(e.target.value, 10))}
-                        className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    >
-                        {REPEAT_OPTIONS.map((r) => (
-                            <option key={r} value={r}>{r}×</option>
-                        ))}
-                    </select>
-                </label>
+            {/* Tab switcher */}
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-4">
+                <button
+                    onClick={() => { stopRecognition(); setTab('memorize'); }}
+                    className={cn(
+                        "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        tab === 'memorize'
+                            ? "bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-400 shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    )}
+                >
+                    <Brain size={15} />
+                    {t('quran.memorize_tab')}
+                </button>
+                <button
+                    onClick={() => { stopRecognition(); setTab('listen'); }}
+                    className={cn(
+                        "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        tab === 'listen'
+                            ? "bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-400 shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    )}
+                >
+                    <ListMusic size={15} />
+                    {t('quran.listen_tab')}
+                </button>
+            </div>
 
+            {/* Range + repeats controls */}
+            <div className="flex flex-wrap items-center gap-3 mb-5">
                 <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                     <span>{t('quran.from')}</span>
                     <select
@@ -337,36 +483,71 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                     </select>
                 </label>
 
-                <button
-                    onClick={() => setHideText(!hideText)}
-                    className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
-                        hideText
-                            ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
-                            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                    )}
-                >
-                    {hideText ? <EyeOff size={15} /> : <Eye size={15} />}
-                    {hideText ? t('quran.hide_text') : t('quran.show_text')}
-                </button>
+                {tab === 'listen' && (
+                    <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                        <span>{t('quran.repeats')}</span>
+                        <select
+                            value={repeats}
+                            onChange={(e) => setRepeats(parseInt(e.target.value, 10))}
+                            className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                        >
+                            {REPEAT_OPTIONS.map((r) => (
+                                <option key={r} value={r}>{r}×</option>
+                            ))}
+                        </select>
+                    </label>
+                )}
+
+                {tab === 'listen' && (
+                    <button
+                        onClick={() => setTab('memorize')}
+                        className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors"
+                    >
+                        <Mic size={15} />
+                        {t('quran.tap_mic')}
+                    </button>
+                )}
             </div>
 
             {/* Verse display */}
             <div
                 ref={versesRef}
-                className="min-h-[160px] rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center gap-4"
+                className="min-h-[170px] rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center gap-4"
             >
                 {currentVerse ? (
                     <>
                         <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-700 dark:text-violet-400 font-medium text-sm">
                             {currentVerse.verseNum}
                         </div>
-                        {hideText && !revealed ? (
+
+                        {tab === 'memorize' ? (
                             <>
-                                <p className="text-2xl md:text-3xl text-slate-300 dark:text-slate-600 font-arabic select-none">
-                                    ﷽ ﷽ ﷽ ﷽ ﷽
+                                {isListening && (
+                                    <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        {t('quran.listening')}
+                                    </p>
+                                )}
+                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
+                                    {currentDisplayWords.map((word, i) => (
+                                        <span
+                                            key={i}
+                                            className={cn(
+                                                "inline-block transition-all duration-300 mx-0.5",
+                                                i < revealedWords
+                                                    ? "text-emerald-700 dark:text-emerald-400"
+                                                    : "text-slate-300 dark:text-slate-600"
+                                            )}
+                                        >
+                                            {i < revealedWords ? word : '••••'}
+                                        </span>
+                                    ))}
                                 </p>
-                                <p className="text-sm text-slate-400 dark:text-slate-500">{t('quran.recite')}</p>
+                                {!isListening && !result && revealedWords > 0 && (
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                        {revealedWords}/{targetWordsRef.current.length} {t('quran.words_revealed')}
+                                    </p>
+                                )}
                             </>
                         ) : (
                             <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
@@ -386,32 +567,84 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                 </p>
             )}
 
-            {/* Playback controls */}
-            <div className="flex items-center justify-center gap-4 mt-5">
-                <button
-                    onClick={() => jumpTo(currentIdx - 1)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
-                    title={t('quran.prev_verse')}
-                >
-                    <ChevronLeft size={20} className="rotate-180" />
-                </button>
+            {/* Memorize controls */}
+            {tab === 'memorize' && (
+                <>
+                    {speechUnsupported && (
+                        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 text-center">{t('quran.speech_unsupported')}</p>
+                    )}
 
-                <button
-                    onClick={togglePlay}
-                    className="w-14 h-14 rounded-full bg-violet-600 hover:bg-violet-700 text-white flex items-center justify-center shadow-lg transition-colors"
-                    title={t('quran.play_from_here')}
-                >
-                    {isPlaying ? <Pause size={22} /> : <Play size={22} />}
-                </button>
+                    <div className="flex items-center justify-center gap-4 mt-5">
+                        <button
+                            onClick={() => { if (isPlaying) { stopSound(); } if (!isListening) skipVerse(); }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
+                            title={t('quran.skip_verse')}
+                        >
+                            <SkipForward size={18} className="rotate-180" />
+                        </button>
 
-                <button
-                    onClick={() => jumpTo(currentIdx + 1)}
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
-                    title={t('quran.next_verse')}
-                >
-                    <ChevronRight size={20} className="rotate-180" />
-                </button>
-            </div>
+                        <button
+                            onClick={isListening ? stopListening : startListening}
+                            className={cn(
+                                "w-14 h-14 rounded-full text-white flex items-center justify-center shadow-lg transition-colors",
+                                isListening
+                                    ? "bg-red-500 hover:bg-red-600"
+                                    : "bg-emerald-600 hover:bg-emerald-700"
+                            )}
+                            title={isListening ? t('quran.stop_mic') : t('quran.tap_mic')}
+                        >
+                            {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+                        </button>
+
+                        <button
+                            onClick={skipVerse}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
+                            title={t('quran.skip_verse')}
+                        >
+                            <SkipForward size={18} />
+                        </button>
+                    </div>
+
+                    <p className="text-center mt-3 text-sm text-slate-500 dark:text-slate-400">
+                        {t('quran.memorize_hint')}
+                    </p>
+                </>
+            )}
+
+            {/* Listen controls */}
+            {tab === 'listen' && (
+                <>
+                    <div className="flex items-center justify-center gap-4 mt-5">
+                        <button
+                            onClick={() => jumpTo(currentIdx - 1)}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
+                            title={t('quran.prev_verse')}
+                        >
+                            <ChevronLeft size={20} className="rotate-180" />
+                        </button>
+
+                        <button
+                            onClick={togglePlay}
+                            className="w-14 h-14 rounded-full bg-violet-600 hover:bg-violet-700 text-white flex items-center justify-center shadow-lg transition-colors"
+                            title={t('quran.play_from_here')}
+                        >
+                            {isPlaying ? <Pause size={22} /> : <Play size={22} />}
+                        </button>
+
+                        <button
+                            onClick={() => jumpTo(currentIdx + 1)}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
+                            title={t('quran.next_verse')}
+                        >
+                            <ChevronRight size={20} className="rotate-180" />
+                        </button>
+                    </div>
+
+                    <p className="text-center mt-3 text-sm text-slate-500 dark:text-slate-400">
+                        {t('quran.listen_first')}
+                    </p>
+                </>
+            )}
 
             <div className="flex items-center justify-center mt-4 gap-1 text-sm text-slate-500 dark:text-slate-400">
                 <span>{currentIdx + 1}</span>
@@ -419,63 +652,147 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                 <span>{rangeVerses.length}</span>
             </div>
 
-            {/* Recitation check */}
-            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-5">
-                <div className="flex flex-col items-center gap-3">
-                    <button
-                        onClick={checkRecitation}
-                        className={cn(
-                            "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors",
-                            isListening
-                                ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                                : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        )}
-                    >
-                        {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-                        {isListening ? t('quran.reciting') : t('quran.check_recitation')}
-                    </button>
-
-                    {!isListening && !recognitionResult && !speechUnsupported && hideText && !revealed && (
-                        <button
-                            onClick={() => setRevealed(true)}
-                            className="text-sm font-medium text-violet-600 dark:text-violet-400 hover:underline"
-                        >
-                            {t('quran.reveal')}
-                        </button>
+            {/* Result / celebration panel */}
+            {(result || celebration || milestoneCelebration) && (
+                <div className="mt-5 border-t border-slate-100 dark:border-slate-800 pt-5 space-y-3">
+                    {milestoneCelebration !== null && (
+                        <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 animate-pulse">
+                            <Award size={16} />
+                            {t('quran.milestone_reached')} {milestoneCelebration} {t('quran.memorized_total')}
+                        </div>
                     )}
 
-                    {speechUnsupported && (
-                        <p className="text-sm text-slate-500 dark:text-slate-400 text-center">{t('quran.speech_unsupported')}</p>
+                    {celebration && (
+                        <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
+                            <CheckCircle2 size={16} />
+                            {celebration === 'verse_complete' && t('quran.verse_complete')}
+                            {celebration === 'surah_complete' && t('quran.surah_complete')}
+                            {celebration === 'range_complete' && t('quran.range_complete')}
+                            {celebration === 'perfect' && t('quran.perfect')}
+                            {celebration === 'great' && t('quran.great')}
+                            <span className="font-normal opacity-80">· {t('quran.auto_advancing')}</span>
+                        </div>
                     )}
 
-                    {recognitionResult && (
-                        <div className="w-full max-w-md">
+                    {result && (
+                        <div className="space-y-2">
                             <div className={cn(
-                                "flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium mb-2",
-                                accuracy !== null && accuracy >= 80
+                                "flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium",
+                                result.accuracy >= 85
                                     ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
-                                    : accuracy !== null && accuracy >= 50
+                                    : result.accuracy >= 50
                                         ? "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
                                         : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                             )}>
-                                {accuracy !== null && accuracy >= 80 ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-                                <span>{t('quran.accuracy')}: {accuracy}%</span>
+                                {result.accuracy >= 85 ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                                <span>{t('quran.accuracy')}: {result.accuracy}%</span>
+                                <span className="opacity-70 ml-auto">({result.revealed}/{result.total})</span>
                             </div>
-                            {recognitionResult.missing.length > 0 ? (
+
+                            {result.missing.length > 0 ? (
                                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                                    {t('quran.missed_words')}: <span className="font-arabic">{recognitionResult.missing.join(' · ')}</span>
+                                    {t('quran.weak_words')}: <span className="font-arabic">{result.missing.slice(0, 8).join(' · ')}</span>
+                                    {result.missing.length > 8 && ' …'}
                                 </p>
                             ) : (
                                 <p className="text-sm text-emerald-600 dark:text-emerald-400">{t('quran.no_missed')}</p>
                             )}
-                            <div className="flex justify-center mt-3">
-                                <button
-                                    onClick={() => setRevealed(true)}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                                >
-                                    {t('quran.reveal')}
-                                </button>
-                            </div>
+
+                            {result.accuracy < 85 && (
+                                <div className="flex gap-2 pt-1">
+                                    <button
+                                        onClick={() => { setResult(null); if (!isListening) startListening(); }}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+                                    >
+                                        <RotateCcw size={15} />
+                                        {t('quran.retry_verse')}
+                                    </button>
+                                    <button
+                                        onClick={skipVerse}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        <SkipForward size={15} />
+                                        {t('quran.skip_verse')}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Journey / progress */}
+            <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-5">
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-2">
+                        <Trophy size={16} className="text-amber-500" />
+                        {t('quran.your_progress')}
+                    </span>
+                    <label className="flex items-center gap-1.5 text-xs font-normal text-slate-500 dark:text-slate-400">
+                        {t('quran.daily_goal')}
+                        <select
+                            value={dailyGoal}
+                            onChange={(e) => setProgress({ ...progress, dailyGoal: parseInt(e.target.value, 10) })}
+                            className="px-1.5 py-1 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
+                        >
+                            {[1, 3, 5, 10, 20, 50].map((g) => (
+                                <option key={g} value={g}>{g}</option>
+                            ))}
+                        </select>
+                    </label>
+                </h3>
+
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                        <div className="flex items-center justify-center gap-1 text-amber-500 mb-1">
+                            <Target size={14} />
+                        </div>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white">{todayVerses}<span className="text-xs font-normal text-slate-500 dark:text-slate-400">/{dailyGoal}</span></p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('quran.today')}</p>
+                        <div className="mt-1.5 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${goalProgress}%` }} />
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                        <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
+                            <Flame size={14} />
+                        </div>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white">{streak}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('quran.streak')}</p>
+                    </div>
+
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                        <div className="flex items-center justify-center gap-1 text-emerald-500 mb-1">
+                            <CheckCircle2 size={14} />
+                        </div>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white">{totalVerses}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t('quran.memorized_total')}</p>
+                    </div>
+                </div>
+
+                {/* Surah mastery + milestones */}
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('quran.surah_mastery')}</p>
+                        <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                            {surahProgress.mastered}<span className="text-slate-400">/{surahProgress.total || '–'}</span>
+                        </p>
+                    </div>
+                    <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-emerald-500 rounded-full transition-all"
+                            style={{ width: `${surahProgress.total > 0 ? Math.round((surahProgress.mastered / surahProgress.total) * 100) : 0}%` }}
+                        />
+                    </div>
+                    {unlockedMilestones.length > 0 && (
+                        <div className="flex items-center gap-1.5 mt-3 flex-wrap">
+                            {unlockedMilestones.map((m) => (
+                                <span key={m} className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-[11px] font-medium">
+                                    <Star size={11} fill="currentColor" />
+                                    {m}
+                                </span>
+                            ))}
                         </div>
                     )}
                 </div>
