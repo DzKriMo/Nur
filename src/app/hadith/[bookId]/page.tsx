@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import ChapterList from '@/components/hadith/ChapterList';
+import LocalizedText from '@/components/layout/LocalizedText';
 import { getHadithBook } from '@/lib/data';
 
 interface PageProps {
@@ -23,11 +24,13 @@ export default async function BookPage({ params }: PageProps) {
                         className="flex items-center gap-1 text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors text-sm"
                     >
                         <ChevronLeft size={18} className="rotate-180" />
-                        <span className="hidden sm:inline">Back to Books</span>
+                        <span className="hidden sm:inline"><LocalizedText en="Back to Books" ar="رجوع للكتب" /></span>
                     </Link>
                     <div className="text-center min-w-0 flex-1 mx-4">
                         <h1 className="font-bold text-lg text-stone-900 dark:text-white truncate">{book.metadata.english.title}</h1>
-                        <p className="text-xs text-stone-500 dark:text-stone-400">{chapters.length} Chapters</p>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">
+                            <LocalizedText en={`${chapters.length} Chapters`} ar={`${chapters.length} باب`} />
+                        </p>
                     </div>
                     <div className="w-20" />
                 </div>

@@ -1,6 +1,7 @@
 import { getSurahs } from '@/lib/data';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import LocalizedText from '@/components/layout/LocalizedText';
 
 interface JuzInfo {
     index: string;
@@ -42,14 +43,14 @@ export default async function JuzListPage() {
                         className="flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-sm"
                     >
                         <ChevronLeft size={18} className="rotate-180" />
-                        <span>Back to Surahs</span>
+                        <span><LocalizedText en="Back to Surahs" ar="رجوع للسور" /></span>
                     </Link>
                 </div>
             </div>
 
             <main className="max-w-4xl mx-auto px-4 py-6">
                 <h1 className="text-3xl font-bold text-emerald-800 dark:text-emerald-400 mb-8 text-center font-arabic">
-                    الأجزاء
+                    <LocalizedText en="Juz' Index" ar="الأجزاء" />
                 </h1>
 
                 <div className="space-y-4">
@@ -60,8 +61,12 @@ export default async function JuzListPage() {
                                     {parseInt(juz.index)}
                                 </div>
                                 <div>
-                                    <h2 className="font-bold text-lg text-slate-900 dark:text-white">Juz {parseInt(juz.index)}</h2>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">{juz.surahs.length} Surahs</p>
+                                    <h2 className="font-bold text-lg text-slate-900 dark:text-white">
+                                        <LocalizedText en={`Juz ${parseInt(juz.index)}`} ar={`الجزء ${parseInt(juz.index)}`} />
+                                    </h2>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                        <LocalizedText en={`${juz.surahs.length} Surahs`} ar={`${juz.surahs.length} سور`} />
+                                    </p>
                                 </div>
                             </div>
                             <div className="space-y-2">

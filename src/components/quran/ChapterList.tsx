@@ -44,7 +44,7 @@ export default function ChapterList({ surahs, lastRead }: ChapterListProps) {
             )}
 
             <div className="relative max-w-md mx-auto">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-slate-400">
                     <Search size={20} />
                 </div>
                 <input
@@ -52,7 +52,7 @@ export default function ChapterList({ surahs, lastRead }: ChapterListProps) {
                     placeholder={t('quran.search_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                    className="w-full ps-10 pe-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400"
                 />
             </div>
 

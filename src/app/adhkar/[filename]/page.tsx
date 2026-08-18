@@ -1,6 +1,7 @@
 import { getAdhkar } from '@/lib/data';
 import AdhkarCard from '@/components/adhkar/AdhkarCard';
 import AdhkarProgress from '@/components/adhkar/AdhkarProgress';
+import LocalizedText from '@/components/layout/LocalizedText';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
@@ -23,11 +24,13 @@ export default async function AdhkarCategoryPage({ params }: PageProps) {
                         className="flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors text-sm"
                     >
                         <ChevronLeft size={18} className="rotate-180" />
-                        <span className="hidden sm:inline">Back to Categories</span>
+                        <span className="hidden sm:inline"><LocalizedText en="Back to Categories" ar="رجوع للأقسام" /></span>
                     </Link>
                     <div className="text-center min-w-0 flex-1 mx-4">
                         <h1 className="font-bold text-lg text-slate-900 dark:text-white font-arabic truncate">{category.titleAr}</h1>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{category.content.length} Adhkar</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            <LocalizedText en={`${category.content.length} Adhkar`} ar={`${category.content.length} ذكر`} />
+                        </p>
                     </div>
                     <div className="w-20" />
                 </div>

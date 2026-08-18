@@ -25,7 +25,7 @@ export default function ChapterList({ bookId, chapters }: ChapterListProps) {
     return (
         <div className="space-y-6">
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+                <div className="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-stone-400">
                     <Search size={20} />
                 </div>
                 <input
@@ -33,7 +33,7 @@ export default function ChapterList({ bookId, chapters }: ChapterListProps) {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={t('hadith.search_chapters')}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
+                    className="w-full ps-10 pe-4 py-3 rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all outline-none text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
                 />
             </div>
 

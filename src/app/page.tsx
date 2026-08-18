@@ -28,35 +28,35 @@ export default function Home() {
     return (
         <div className="min-h-screen">
             {/* Hero Section */}
-            <section className="relative pt-24 pb-32 px-6 overflow-hidden">
+            <section className="relative pt-16 md:pt-24 pb-16 md:pb-32 px-4 md:px-6 overflow-hidden">
                 <div className="absolute inset-0 islamic-star-bg" />
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-emerald-200/30 dark:bg-emerald-900/10 rounded-full blur-3xl -z-10" />
                 <div className="absolute top-20 right-1/4 w-64 h-64 bg-emerald-300/20 dark:bg-emerald-800/10 rounded-full blur-2xl -z-10" />
                 <div className="absolute top-40 left-1/4 w-48 h-48 bg-amber-200/20 dark:bg-amber-900/10 rounded-full blur-2xl -z-10" />
 
                 <div className="max-w-7xl mx-auto text-center relative z-10">
-                    <div className="mb-8">
-                        <span className="font-arabic text-6xl md:text-8xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight">
+                    <div className="mb-6 md:mb-8">
+                        <span className="font-arabic text-5xl md:text-8xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight">
                             نور
                         </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 font-serif">
                         {t('home.hero.title')}
                     </h1>
-                    <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    <p className="text-base md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed">
                         {t('home.hero.subtitle')}
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4" dir="ltr">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4" dir="ltr">
                         <Link
                             href="/quran"
-                            className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-medium transition-all hover:shadow-lg hover:-translate-y-1 flex items-center gap-2"
+                            className="w-full sm:w-auto px-6 md:px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-medium transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2"
                         >
                             {t('home.hero.read_quran')} <ArrowRight size={20} className={dir === 'rtl' ? 'rotate-180' : ''} />
                         </Link>
                         <Link
                             href="/chat"
-                            className="px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-full font-medium transition-all hover:shadow-lg hover:-translate-y-1"
+                            className="w-full sm:w-auto px-6 md:px-8 py-4 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-full font-medium transition-all hover:shadow-lg hover:-translate-y-1"
                         >
                             {t('home.hero.ai_chat')}
                         </Link>
@@ -65,7 +65,7 @@ export default function Home() {
             </section>
 
             {/* Features Grid */}
-            <section className="px-6 pb-24">
+            <section className="px-4 md:px-6 pb-24">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {features.map((feature) => {
                         const colors = colorMap[feature.color];

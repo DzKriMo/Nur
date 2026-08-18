@@ -22,7 +22,7 @@ export default function KidsPage() {
         const lessonTitle = isAr ? lesson.titleAr : lesson.title;
 
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
                 <div className="max-w-2xl mx-auto">
                     <button
                         onClick={() => { setSelectedLesson(null); setCurrentStep(0); }}
@@ -100,7 +100,7 @@ export default function KidsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
             <div className="max-w-3xl mx-auto">
                 <Link href="/learn" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 mb-6 transition-colors">
                     {dir === 'rtl' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}

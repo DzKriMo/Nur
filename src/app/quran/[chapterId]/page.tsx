@@ -2,6 +2,7 @@ import { getSurah, getTranslation } from '@/lib/data';
 import VerseView from '@/components/quran/VerseView';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import LocalizedText from '@/components/layout/LocalizedText';
 
 interface PageProps {
     params: Promise<{
@@ -27,11 +28,13 @@ export default async function ChapterPage({ params }: PageProps) {
                         className="flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-sm"
                     >
                         <ChevronLeft size={18} className="rotate-180" />
-                        <span className="hidden sm:inline">Back to Surahs</span>
+                        <span className="hidden sm:inline"><LocalizedText en="Back to Surahs" ar="رجوع للسور" /></span>
                     </Link>
                     <div className="text-center">
                         <h1 className="font-bold text-lg text-slate-900 dark:text-white font-arabic">{surah.name}</h1>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{surah.count} Verses</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                            <LocalizedText en={`${surah.count} Verses`} ar={`${surah.count} آية`} />
+                        </p>
                     </div>
                     <div className="w-20" />
                 </div>
@@ -52,7 +55,7 @@ export default async function ChapterPage({ params }: PageProps) {
                             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors text-sm"
                         >
                             <ChevronLeft size={16} className="rotate-180" />
-                            Previous
+                            <LocalizedText en="Previous" ar="السابقة" />
                         </Link>
                     ) : <div />}
                     {nextId ? (
@@ -60,7 +63,7 @@ export default async function ChapterPage({ params }: PageProps) {
                             href={`/quran/${nextId}`}
                             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors text-sm"
                         >
-                            Next
+                            <LocalizedText en="Next" ar="التالية" />
                             <ChevronRight size={16} className="rotate-180" />
                         </Link>
                     ) : <div />}

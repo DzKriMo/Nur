@@ -30,7 +30,7 @@ export default function LearnPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
                     <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">

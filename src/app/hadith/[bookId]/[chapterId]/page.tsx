@@ -2,6 +2,7 @@ import { getHadiths, getHadithBook } from '@/lib/data';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import HadithList from '@/components/hadith/HadithList';
+import LocalizedText from '@/components/layout/LocalizedText';
 
 interface PageProps {
     params: Promise<{
@@ -27,11 +28,13 @@ export default async function ChapterPage({ params }: PageProps) {
                         className="flex items-center gap-1 text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-500 transition-colors text-sm"
                     >
                         <ChevronLeft size={18} className="rotate-180" />
-                        <span className="hidden sm:inline">Back to Chapters</span>
+                        <span className="hidden sm:inline"><LocalizedText en="Back to Chapters" ar="رجوع للأبواب" /></span>
                     </Link>
                     <div className="text-center min-w-0 flex-1 mx-4">
                         <h1 className="font-bold text-lg text-stone-900 dark:text-white truncate">{chapter?.english}</h1>
-                        <p className="text-xs text-stone-500 dark:text-stone-400">{hadiths.length} Hadiths</p>
+                        <p className="text-xs text-stone-500 dark:text-stone-400">
+                            <LocalizedText en={`${hadiths.length} Hadiths`} ar={`${hadiths.length} حديث`} />
+                        </p>
                     </div>
                     <div className="w-20" />
                 </div>

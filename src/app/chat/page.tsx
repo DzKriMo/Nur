@@ -6,11 +6,10 @@ export default function ChatPage() {
     const { t } = useLanguage();
 
     return (
-        <div className="flex flex-col" style={{ height: 'calc(100vh - 4rem)' }}>
+        <div className="flex flex-col h-[calc(100dvh-8rem)] md:h-[calc(100dvh-4rem)]">
             <iframe
                 src="https://chatilm.islamicity.org/en"
                 className="flex-1 w-full border-0 min-h-0"
-                style={{ height: 'calc(100vh - 4rem - 2rem)' }}
                 title="ChatILM - Islamic AI Assistant"
                 allow="clipboard-write; popups"
                 sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals"

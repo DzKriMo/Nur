@@ -7,7 +7,7 @@ export default function AboutPage() {
     const { t } = useLanguage();
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="min-h-screen flex items-center justify-center p-6 pt-24 md:pt-28">
             <div className="max-w-2xl w-full bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-xl border border-slate-100 dark:border-slate-800 text-center">
                 <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-8 text-emerald-600 dark:text-emerald-400">
                     <Heart size={40} />

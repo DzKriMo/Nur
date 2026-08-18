@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${amiri.variable} antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50`}>
         <ClientProviders>
           <Navbar />
-          <main>{children}</main>
+          <main className="pb-16 md:pb-0">{children}</main>
         </ClientProviders>
       </body>
     </html>

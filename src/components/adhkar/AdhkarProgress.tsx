@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { CheckCircle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AdhkarProgressProps {
     totalItems: number;
@@ -12,6 +13,7 @@ interface AdhkarProgressProps {
 export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarProgressProps) {
     const [completed, setCompleted] = useState(0);
     const [mounted, setMounted] = useState(false);
+    const { language } = useLanguage();
 
     useEffect(() => {
         const checkProgress = () => {
@@ -53,7 +55,11 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                         "text-sm font-medium",
                         allDone ? "text-emerald-700 dark:text-emerald-300" : "text-slate-600 dark:text-slate-400"
                     )}>
-                        {allDone ? 'All Adhkar completed!' : `${completed} of ${totalItems} Adhkar`}
+                        {allDone
+                            ? (language === 'ar' ? 'تم إكمال جميع الأذكار!' : 'All Adhkar completed!')
+                            : (language === 'ar'
+                                ? `${completed} من أصل ${totalItems} ذكر`
+                                : `${completed} of ${totalItems} Adhkar`)}
                     </span>
                 </div>
                 <span className={cn(

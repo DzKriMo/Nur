@@ -29,7 +29,13 @@ export default function Navbar() {
         { href: '/about', label: t('nav.about'), icon: Info },
     ];
 
-    const mobileLinks = links.slice(0, 5);
+    const mobileLinks = [
+        { href: '/', label: t('nav.home'), icon: Home },
+        { href: '/quran', label: t('nav.quran'), icon: Book },
+        { href: '/hadith', label: t('nav.hadith'), icon: MessageCircle },
+        { href: '/adhkar', label: t('nav.adhkar'), icon: Heart },
+        { href: '/prayer', label: t('nav.prayer'), icon: Clock },
+    ];
 
     const extraLinks = [
         { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
@@ -149,14 +155,6 @@ export default function Navbar() {
                                     </Link>
                                 );
                             })}
-                            <Link
-                                href="/prayer"
-                                onClick={() => setMobileOpen(false)}
-                                className="flex items-center gap-3 p-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                            >
-                                <Clock size={20} />
-                                <span className="font-medium">{t('nav.prayer')}</span>
-                            </Link>
                             <button
                                 onClick={() => { toggleTheme(); setMobileOpen(false); }}
                                 className="flex items-center gap-3 p-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full"
