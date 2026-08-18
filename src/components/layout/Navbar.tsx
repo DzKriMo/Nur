@@ -128,7 +128,7 @@ export default function Navbar() {
                         className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl text-slate-400 dark:text-slate-500 min-w-[56px]"
                     >
                         {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-                        <span className="text-[10px] font-medium">{t('common.settings')}</span>
+                        <span className="text-[10px] font-medium">{t('common.more')}</span>
                     </button>
                 </div>
             </nav>
