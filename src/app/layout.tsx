@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import ClientProviders from "@/components/providers/ClientProviders";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -23,6 +24,7 @@ export default function RootLayout({
         <ClientProviders>
           <Navbar />
           <main className="pb-16 md:pb-0">{children}</main>
+          <Footer />
         </ClientProviders>
       </body>
     </html>

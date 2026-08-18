@@ -139,6 +139,8 @@ export const translations = {
         'about.dedication': 'This app is ongoing charity (Sadaqah Jariyah) for the soul of the father.',
         'about.hadith': '"When a person dies, his deeds come to an end except for three: Sadaqah Jariyah (a continuous charity), or knowledge from which benefit is gained, or a righteous child who prays for him."',
         'about.built': 'Built with love for the Ummah.',
+        'footer.rights': 'All rights reserved.',
+        'footer.quick_links': 'Quick Links',
 
         // Prayer
         'prayer.title': 'Prayer Times',
@@ -310,6 +312,8 @@ export const translations = {
         'about.dedication': 'هذا التطبيق صدقة جارية على روح الوالد.',
         'about.hadith': '"إذا مات الإنسان انقطع عنه عمله إلا من ثلاثة: إلا من صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له."',
         'about.built': 'بُني بحب للأمة.',
+        'footer.rights': 'جميع الحقوق محفوظة.',
+        'footer.quick_links': 'روابط سريعة',
 
         // Prayer
         'prayer.title': 'أوقات الصلاة',
