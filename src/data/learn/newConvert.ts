@@ -3,6 +3,8 @@ export interface NewConvertLesson {
   title: string;
   titleAr: string;
   icon: string;
+  references: string[];
+  referencesAr: string[];
   steps: {
     title: string;
     titleAr: string;
@@ -22,6 +24,18 @@ export const newConvertLessons: NewConvertLesson[] = [
     title: 'The Shahada',
     titleAr: 'الشهادة',
     icon: '🕌',
+    references: [
+      'Quran 3:18 — "Allah bears witness that there is no deity except Him"',
+      'Quran 47:19 — "Know that there is no deity except Allah"',
+      'Sahih al-Bukhari 8 — Islam is built on five pillars',
+      'Sahih al-Bukhari 54 — Whoever testifies that there is no deity except Allah and that Muhammad is His Messenger'
+    ],
+    referencesAr: [
+      'القرآن 3:18 — «شهد الله أنه لا إله إلا هو»',
+      'القرآن 47:19 — «فاعلم أنه لا إله إلا الله»',
+      'صحيح البخاري 8 — الإسلام مبني على خمسة أركان',
+      'صحيح البخاري 54 — من شهد أن لا إله إلا الله وأن محمداً رسول الله'
+    ],
     steps: [
       {
         title: 'What is the Shahada?',
@@ -57,6 +71,16 @@ export const newConvertLessons: NewConvertLesson[] = [
     title: 'Wudu (Ablution)',
     titleAr: 'الوضوء',
     icon: '💧',
+    references: [
+      'Quran 5:6 — "O you who have believed, when you rise to [perform] prayer, wash your faces and your forearms"',
+      'Sahih al-Bukhari 158 — The Prophet\'s wudu step by step',
+      'Sahih al-Bukhari 193 — Sins fall away with the water of wudu'
+    ],
+    referencesAr: [
+      'القرآن 5:6 — «يا أيها الذين آمنوا إذا قمتم إلى الصلاة فاغسلوا وجوهكم وأيديكم»',
+      'صحيح البخاري 158 — وضوء النبي صلى الله عليه وسلم خطوة بخطوة',
+      'صحيح البخاري 193 — تخرج الخطايا مع ماء الوضوء'
+    ],
     steps: [
       {
         title: 'What is Wudu?',
@@ -86,6 +110,18 @@ export const newConvertLessons: NewConvertLesson[] = [
     title: 'Prayer (Salah)',
     titleAr: 'الصلاة',
     icon: '🕌',
+    references: [
+      'Quran 2:238 — "Maintain with care the [obligatory] prayers"',
+      'Quran 20:14 — "Establish prayer for My remembrance"',
+      'Sahih al-Bukhari 349 — The five daily prayers were made obligatory during the Night Journey',
+      'Sahih al-Bukhari 527 — The five prayers wipe away sins like a river washing away filth'
+    ],
+    referencesAr: [
+      'القرآن 2:238 — «حافظوا على الصلوات»',
+      'القرآن 20:14 — «وأقم الصلاة لذكري»',
+      'صحيح البخاري 349 — فرضت الصلوات الخمس ليلة الإسراء',
+      'صحيح البخاري 527 — الصلوات الخمس تكفر الذنوب كما يغسل النهر الدرن'
+    ],
     steps: [
       {
         title: 'What is Salah?',
@@ -121,6 +157,18 @@ export const newConvertLessons: NewConvertLesson[] = [
     title: 'Fasting (Sawm)',
     titleAr: 'الصيام',
     icon: '🌙',
+    references: [
+      'Quran 2:183-185 — "O you who have believed, decreed upon you is fasting"',
+      'Sahih al-Bukhari 8 — Fasting during Ramadan is one of the five pillars',
+      'Sahih al-Bukhari 1901 — Whoever fasts Ramadan out of faith and seeking reward has his past sins forgiven',
+      'Sahih al-Bukhari 1933 — Whoever forgets and eats while fasting, let him complete his fast'
+    ],
+    referencesAr: [
+      'القرآن 2:183-185 — «كتب عليكم الصيام»',
+      'صحيح البخاري 8 — صوم رمضان من أركان الإسلام الخمسة',
+      'صحيح البخاري 1901 — من صام رمضان إيماناً واحتساباً غفر له ما تقدم من ذنبه',
+      'صحيح البخاري 1933 — من نسي وهو صائم فأكل وشرب فليتم صومه'
+    ],
     steps: [
       {
         title: 'What is Sawm?',
@@ -159,6 +207,16 @@ export const newConvertLessons: NewConvertLesson[] = [
     title: 'The Six Articles of Faith',
     titleAr: 'أركان الإيمان الستة',
     icon: '📖',
+    references: [
+      'Quran 4:136 — "Believe in Allah and His Messenger and the Book He sent down"',
+      'Sahih al-Bukhari 50 — The hadith of Jibril: faith is to believe in Allah, His angels, His books, His messengers, the Last Day, and Qadar',
+      'Sahih al-Bukhari 4777 — The six articles of faith as explained to the angel Jibril'
+    ],
+    referencesAr: [
+      'القرآن 4:136 — «آمنوا بالله ورسوله والكتاب الذي نزل»',
+      'صحيح البخاري 50 — حديث جبريل: الإيمان أن تؤمن بالله وملائكته وكتبه ورسله واليوم الآخر والقدر',
+      'صحيح البخاري 4777 — أركان الإيمان الستة كما شرحها جبريل'
+    ],
     steps: [
       {
         title: 'What Muslims believe',

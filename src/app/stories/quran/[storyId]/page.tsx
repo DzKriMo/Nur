@@ -96,10 +96,29 @@ export default function QuranStoryPage() {
                             </div>
                         )}
 
-                        <div className="mt-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                            <BookOpen size={16} />
-                            <span className="font-medium">{t('stories.source')}:</span>
-                            <span>{story.surah}</span>
+                        <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
+                                <BookOpen size={16} className="text-violet-600 dark:text-violet-400" />
+                                {t('stories.references')}
+                            </h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-xs font-semibold text-violet-700 dark:text-violet-400 mb-1">{t('stories.quran_refs')}</p>
+                                    <ul className="space-y-1">
+                                        <li className="text-sm text-slate-600 dark:text-slate-300 font-arabic">• {surah}</li>
+                                    </ul>
+                                </div>
+                                {(isAr ? story.hadithRefsAr : story.hadithRefs).length > 0 && (
+                                    <div>
+                                        <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">{t('stories.hadith_refs')}</p>
+                                        <ul className="space-y-1">
+                                            {(isAr ? story.hadithRefsAr : story.hadithRefs).map((ref, i) => (
+                                                <li key={i} className="text-sm text-slate-600 dark:text-slate-300 font-arabic">• {ref}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

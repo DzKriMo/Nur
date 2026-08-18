@@ -12,6 +12,8 @@ export interface QuranStory {
   keyLessonsAr: string[];
   characters: string[];
   charactersAr: string[];
+  hadithRefs: string[];
+  hadithRefsAr: string[];
   svgColor: string;
 }
 
@@ -56,6 +58,12 @@ When Adam and his wife ate from the forbidden tree, they realized their mistake 
     ],
     characters: ['Adam', 'Iblis (Satan)', 'The Angels'],
     charactersAr: ['آدم', 'إبليس (الشيطان)', 'الملائكة'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3326 — Allah created Adam 60 cubits tall and taught him to greet the angels with peace'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3326 — خلق الله آدم بطول ستين ذراعاً وعلّمه السلام على الملائكة'
+    ],
     svgColor: '#059669'
   },
   {
@@ -98,6 +106,8 @@ The people of the cave eventually passed away, and Allah placed a sign at their 
     ],
     characters: ['The Young Believers', 'The Tyrant King', 'The Dog'],
     charactersAr: ['الشباب المؤمنون', 'الملك الطاغية', 'الكلب'],
+    hadithRefs: [],
+    hadithRefsAr: [],
     svgColor: '#7c3aed'
   },
   {
@@ -144,6 +154,8 @@ The barrier will remain until the end of times, when Allah will permit Gog and M
     ],
     characters: ['Dhul-Qarnayn', 'The People of the East', 'The People of Gog and Magog'],
     charactersAr: ['ذو القرنين', 'أهل المشرق', 'قوم يأجوج ومأجوج'],
+    hadithRefs: [],
+    hadithRefsAr: [],
     svgColor: '#d97706'
   },
   {
@@ -198,6 +210,8 @@ Luqman's advice encompasses the core values of Islamic ethics: monotheism, grati
     ],
     characters: ['Luqman', 'His Son'],
     charactersAr: ['لقمان', 'ابنه'],
+    hadithRefs: [],
+    hadithRefsAr: [],
     svgColor: '#b45309'
   },
   {
@@ -244,6 +258,8 @@ This event is also associated with the birth year of Prophet Muhammad (PBUH), kn
     ],
     characters: ['Abrahah', 'The People of Mecca'],
     charactersAr: ['أبرهة', 'أهل مكة'],
+    hadithRefs: [],
+    hadithRefsAr: [],
     svgColor: '#dc2626'
   },
   {
@@ -294,6 +310,12 @@ Before drowning, Pharaoh cried: "I believe that there is no deity except the One
     ],
     characters: ['Musa (Moses)', 'Pharaoh', 'Harun (Aaron)', 'Pharaoh\'s Wife'],
     charactersAr: ['موسى', 'فرعون', 'هارون', 'امرأة فرعون'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3407 — The angel of death was sent to Musa, who struck him and returned his sight'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3407 — أرسل الله ملك الموت إلى موسى فلطمه فردّ بصره'
+    ],
     svgColor: '#ea580c'
   },
   {
@@ -344,6 +366,12 @@ This story demonstrates that true wealth and power come from Allah, and that wis
     ],
     characters: ['Sulaiman', 'Bilqis (Queen of Sheba)', 'The Hoopoe', 'Sulaiman\'s Jinn'],
     charactersAr: ['سليمان', 'بلقيس (ملكة سبأ)', 'الهدهد', 'جن سليمان'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3427 — Sulaiman\'s wise judgement in the case of two women arguing over a child'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3427 — قضى سليمان بحكمته في قصة المرأتين والطفل'
+    ],
     svgColor: '#0891b2'
   },
   {
@@ -394,6 +422,12 @@ The story teaches us about patience, forgiveness, and trust in Allah's plan. It 
     ],
     characters: ['Yusuf', 'Yaqub (Jacob)', 'The Brothers', 'Aziz', 'The King of Egypt'],
     charactersAr: ['يوسف', 'يعقوب', 'الإخوة', 'عزيز مصر', 'ملك مصر'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3207 — The Prophet (PBUH) said he would not have stayed in prison as long as Yusuf without accepting freedom'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3207 — قال النبي صلى الله عليه وسلم: لو لبثت في السجن طول ما لبث يوسف لأجبت الداعي'
+    ],
     svgColor: '#7c3aed'
   },
   {
@@ -444,6 +478,14 @@ This story demonstrates Allah's power to create without precedent and the purity
     ],
     characters: ['Maryam (Mary)', 'Isa (Jesus)', 'Jibreel (Gabriel)'],
     charactersAr: ['مريم', 'عيسى', 'جبريل'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3436 - Three spoke in the cradle: Isa, Juraij, and the baby in the story of the woman',
+      'Sahih al-Bukhari 3443 - "I am the nearest of all people to Isa, son of Mary"'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3436 - ثلاثة تكلموا في المهد: عيسى وجريج وصاحب قصة المرأة',
+      'صحيح البخاري 3443 - «أنا أولى الناس بعيسى ابن مريم»'
+    ],
     svgColor: '#059669'
   }
 ];

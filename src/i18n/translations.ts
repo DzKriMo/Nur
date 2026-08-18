@@ -112,6 +112,7 @@ export const translations = {
         'learn.next': 'Next',
         'learn.quiz': 'Quiz',
         'learn.quiz_correct': 'Correct!',
+        'learn.references': 'References',
         'learn.quiz_wrong': 'Try again!',
         'learn.back_to_topics': 'Back to Topics',
 
@@ -125,9 +126,11 @@ export const translations = {
         'stories.quran_stories_desc': 'Beautiful stories mentioned in the Holy Quran',
         'stories.back_to_stories': 'Back to Stories',
         'stories.read_more': 'Read More',
-        'stories.source': 'Source',
         'stories.key_lessons': 'Key Lessons',
         'stories.characters': 'Characters',
+        'stories.references': 'References',
+        'stories.quran_refs': 'Quran',
+        'stories.hadith_refs': 'Sahih al-Bukhari',
         'stories.old_muslims': 'Stories of the Early Muslims',
 
         // About
@@ -280,6 +283,7 @@ export const translations = {
         'learn.next': 'التالي',
         'learn.quiz': 'اختبار',
         'learn.quiz_correct': 'صحيح!',
+        'learn.references': 'المراجع',
         'learn.quiz_wrong': 'حاول مرة أخرى!',
         'learn.back_to_topics': 'رجوع للمواضيع',
 
@@ -293,9 +297,11 @@ export const translations = {
         'stories.quran_stories_desc': 'قصص جميلة وردت في القرآن الكريم',
         'stories.back_to_stories': 'رجوع للقصص',
         'stories.read_more': 'اقرأ المزيد',
-        'stories.source': 'المصدر',
         'stories.key_lessons': 'الدروس المستفادة',
         'stories.characters': 'الشخصيات',
+        'stories.references': 'المراجع',
+        'stories.quran_refs': 'القرآن الكريم',
+        'stories.hadith_refs': 'صحيح البخاري',
         'stories.old_muslims': 'قصص المسلمين الأوائل',
 
         // About

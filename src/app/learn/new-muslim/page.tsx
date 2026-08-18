@@ -92,6 +92,15 @@ export default function NewMuslimPage() {
                                     )}
                                 </div>
                             )}
+
+                            <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                                <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3">{t('learn.references')}</h3>
+                                <ul className="space-y-1">
+                                    {(isAr ? lesson.referencesAr : lesson.references).map((ref, i) => (
+                                        <li key={i} className="text-sm text-slate-600 dark:text-slate-300 font-arabic">• {ref}</li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
 
                         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-between">

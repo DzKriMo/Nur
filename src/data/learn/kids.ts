@@ -4,6 +4,8 @@ export interface KidsLesson {
   titleAr: string;
   icon: string;
   color: string;
+  references: string[];
+  referencesAr: string[];
   steps: {
     title: string;
     titleAr: string;
@@ -21,6 +23,16 @@ export const kidsLessons: KidsLesson[] = [
     titleAr: 'من هو الله؟',
     icon: '☪️',
     color: '#059669',
+    references: [
+      'Quran 112 — "Say: He is Allah, [who is] One"',
+      'Quran 2:255 — The Verse of the Throne about Allah\'s greatness',
+      'Sahih al-Bukhari 6410 — Allah has 99 names; whoever memorizes them enters Paradise'
+    ],
+    referencesAr: [
+      'القرآن 112 — «قل هو الله أحد»',
+      'القرآن 2:255 — آية الكرسي في عظمة الله',
+      'صحيح البخاري 6410 — لله تسعة وتسعون اسماً من حفظها دخل الجنة'
+    ],
     steps: [
       {
         title: 'Allah is One',
@@ -46,6 +58,16 @@ export const kidsLessons: KidsLesson[] = [
     titleAr: 'الصلاة ممتعة!',
     icon: '🕌',
     color: '#7c3aed',
+    references: [
+      'Quran 20:14 — "Establish prayer for My remembrance"',
+      'Sahih al-Bukhari 349 — The five daily prayers were given to the Prophet during the Night Journey',
+      'Sahih al-Bukhari 527 — The five prayers wipe away sins like a river washing away filth'
+    ],
+    referencesAr: [
+      'القرآن 20:14 — «وأقم الصلاة لذكري»',
+      'صحيح البخاري 349 — أُعطي النبي الصلوات الخمس ليلة الإسراء',
+      'صحيح البخاري 527 — الصلوات الخمس تكفر الذنوب كما يغسل النهر الدرن'
+    ],
     steps: [
       {
         title: 'Talking to Allah',
@@ -71,12 +93,24 @@ export const kidsLessons: KidsLesson[] = [
     titleAr: 'الطيبة',
     icon: '❤️',
     color: '#dc2626',
+    references: [
+      'Quran 4:36 — "And do good to parents, relatives, orphans, and the needy"',
+      'Sahih al-Bukhari 13 — None of you truly believes until he loves for his brother what he loves for himself',
+      'Sahih al-Bukhari 2363 — A man was forgiven by Allah for giving water to a thirsty dog',
+      'Sahih al-Bukhari 6009 — Allah forgave a woman who gave water to a thirsty dog'
+    ],
+    referencesAr: [
+      'القرآن 4:36 — «وبالوالدين إحساناً»',
+      'صحيح البخاري 13 — لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه',
+      'صحيح البخاري 2363 — غفر الله لرجل سقى كلباً عطشان',
+      'صحيح البخاري 6009 — غفر الله لامرأة سقت كلباً عطشان'
+    ],
     steps: [
       {
         title: 'Kindness to others',
         titleAr: 'الطيبة مع الآخرين',
-        content: 'Allah loves people who are kind! Smile at your friends, help your mom and dad, share your toys, and say nice words. Even a smile is charity in Islam!',
-        contentAr: 'يحب الله الناس الطيبين! ابتسم لأصدقائك، ساعد أمك وأبيك، شارك لعبتك، وقل كلمات لطيفة. حتى الابتسامة صدقة في الإسلام!',
+        content: 'Allah loves people who are kind! Smile at your friends, help your mom and dad, share your toys, and say nice words. Kindness to others is a sign of true faith.',
+        contentAr: 'يحب الله الناس الطيبين! ابتسم لأصدقائك، ساعد أمك وأبيك، شارك لعبتك، وقل كلمات لطيفة. الطيبة مع الآخرين علامة على الإيمان الحقيقي.',
         funFact: 'The Prophet Muhammad (PBUH) was the kindest person ever!',
         funFactAr: 'كان النبي محمد صلى الله عليه وسلم أكثر الناس طيبة!'
       },
@@ -96,14 +130,24 @@ export const kidsLessons: KidsLesson[] = [
     titleAr: 'أنبياء رائعون!',
     icon: '⭐',
     color: '#d97706',
+    references: [
+      'Quran 33:40 — Muhammad is the Messenger of Allah and the Seal of the Prophets',
+      'Sahih al-Bukhari 3 — The first revelation to Prophet Muhammad in the cave of Hira',
+      'Sahih al-Bukhari 3436 — Baby Isa spoke in the cradle, one of the three who spoke as infants'
+    ],
+    referencesAr: [
+      'القرآن 33:40 — محمد رسول الله وخاتم النبيين',
+      'صحيح البخاري 3 — أول وحي للنبي في غار حراء',
+      'صحيح البخاري 3436 — تكلم عيسى في المهد، أحد الثلاثة الذين تكلموا صغاراً'
+    ],
     steps: [
       {
         title: 'Prophet Muhammad (PBUH)',
         titleAr: 'النبي محمد صلى الله عليه وسلم',
         content: 'Prophet Muhammad was the last and final prophet! He was super kind, loved children, and always told the truth. He taught us how to be good Muslims and good people.',
         contentAr: 'النبي محمد صلى الله عليه وسلم كان النبي الأخير! كان طيباً جداً، يحب الأطفال، ويقول الصدق دائماً. علمنا كيف نكون مسلمين صالحين.',
-        funFact: 'Prophet Muhammad had a cat named Muezza and loved cats!',
-        funFactAr: 'كان للنبي محمد صلى الله عليه وسلم قطة اسمها مُعِزَّة وكان يحب القطط!'
+        funFact: 'Prophet Muhammad loved the story of a man who was forgiven by Allah for giving water to a thirsty dog!',
+        funFactAr: 'أحب النبي محمد قصة رجل غفر الله له لأنه سقى كلباً عطشان!'
       },
       {
         title: 'Prophet Isa (Jesus)',
@@ -121,6 +165,20 @@ export const kidsLessons: KidsLesson[] = [
     titleAr: 'كلمات سحرية!',
     icon: '✨',
     color: '#0891b2',
+    references: [
+      'Quran 2:152 — "Remember Me; I will remember you"',
+      'Quran 7:180 — "And to Allah belong the best names"',
+      'Sahih al-Bukhari 5376 — Say "Bismillah" and eat with your right hand',
+      'Sahih al-Bukhari 6406 — Two words beloved to Ar-Rahman: "SubhanAllahi wa bihamdih, SubhanAllahil-Adheem"',
+      'Sahih al-Bukhari 6306 — The Sayyid al-Istighfar (the master of seeking forgiveness)'
+    ],
+    referencesAr: [
+      'القرآن 2:152 — «فاذكروني أذكركم»',
+      'القرآن 7:180 — «ولله الأسماء الحسنى»',
+      'صحيح البخاري 5376 — قل "بسم الله" وكل بيمينك',
+      'صحيح البخاري 6406 — كلمتان حبيبتان إلى الرحمن: «سبحان الله وبحمده سبحان الله العظيم»',
+      'صحيح البخاري 6306 — سيد الاستغفار'
+    ],
     steps: [
       {
         title: 'Words Allah loves',

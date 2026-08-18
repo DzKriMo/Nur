@@ -15,6 +15,8 @@ export interface ProphetStory {
   keyLessons: string[];
   keyLessonsAr: string[];
   relatedSurahs: string[];
+  hadithRefs: string[];
+  hadithRefsAr: string[];
   svgColor: string;
 }
 
@@ -60,6 +62,16 @@ From Adam, Allah sent prophets and messengers to guide humanity. Adam is conside
       'جميعنا من ذرية آدم، مما يجعلنا متساوين'
     ],
     relatedSurahs: ['Al-Baqarah (2:30-37)', 'Al-A\'raf (7:19-25)', 'Ta-Ha (20:115-123)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3326 — Allah created Adam 60 cubits tall and taught him to greet the angels with peace',
+      'Sahih al-Bukhari 3340 — On the Day of Resurrection people first seek intercession from Adam',
+      'Sahih al-Bukhari 4737 — Adam and Musa argued about pre-decree (Qadar)'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3326 — خلق الله آدم بطول ستين ذراعاً وعلّمه السلام على الملائكة',
+      'صحيح البخاري 3340 — يوم القيامة يطلب الناس الشفاعة من آدم أولاً',
+      'صحيح البخاري 4737 — احتجاج آدم وموسى في القدر'
+    ],
     svgColor: '#059669'
   },
   {
@@ -103,6 +115,14 @@ The story of Nuh teaches us about patience, perseverance in calling to truth, an
       'مشروع الله ينتصر دائماً'
     ],
     relatedSurahs: ['Nuh (71)', 'Hud (11:25-49)', 'Al-Mu\'minun (23:23-30)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3340 — Nuh was the first messenger sent to the people of the earth; Allah named him a thankful slave',
+      'Sahih al-Bukhari 4476 — Nuh is among the prophets people approach for intercession'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3340 — نوح أول الرسل إلى أهل الأرض، وسّمه الله عبداً شكوراً',
+      'صحيح البخاري 4476 — نوح من الأنبياء الذين يطلب الناس منهم الشفاعة'
+    ],
     svgColor: '#0284c7'
   },
   {
@@ -150,6 +170,16 @@ Ibrahim, along with his son Ismail, built the Kaaba in Mecca, establishing it as
       'البناء من أجل الله يترك أثراً باقياً'
     ],
     relatedSurahs: ['Al-Baqarah (2:124-141)', 'Al-An\'am (6:74-83)', 'Ibrahim (14:35-41)', 'Al-Hajj (22:26-33)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3340 — Ibrahim is the Khalil (friend) of Allah; people seek his intercession on the Day of Resurrection',
+      'Sahih al-Bukhari 3364 — The story of Ibrahim bringing Hajar and Ismail to Mecca and the springing of Zamzam',
+      'Sahih al-Bukhari 3371 — Ibrahim used to seek refuge (for Ismail and Ishaq) with Allah\'s perfect words'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3340 — إبراهيم خليل الله، يطلب الناس شفاعته يوم القيامة',
+      'صحيح البخاري 3364 — قصة مجيء إبراهيم بهاجر وإسماعيل إلى مكة وظهور زمزم',
+      'صحيح البخاري 3371 — كان إبراهيم يعوّذ إسماعيل وإسحاق بكلمات الله التامة'
+    ],
     svgColor: '#d97706'
   },
   {
@@ -197,6 +227,14 @@ Ismail grew up in Mecca, and together with his father Ibrahim, he built the Kaab
       'التضحية في سبيل الله تجلب أجراً عظيماً'
     ],
     relatedSurahs: ['Al-Baqarah (2:127-129)', 'As-Saffat (37:100-113)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3364 — Hajar ran between Safa and Marwah seeking water; Zamzam sprang beneath Ismail',
+      'Sahih al-Bukhari 3365 — Ibrahim and Ismail raised the foundations of the Kaaba'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3364 — سعت هاجر بين الصفا والمروة، وفجرت زمزم تحت إسماعيل',
+      'صحيح البخاري 3365 — رفع إبراهيم وإسماعيل قواعد الكعبة'
+    ],
     svgColor: '#7c3aed'
   },
   {
@@ -244,6 +282,12 @@ The story of Lut is a reminder of the consequences of moral corruption and the i
       'اتباع الهدى يحفظ من الهلاك'
     ],
     relatedSurahs: ['Hud (11:77-83)', 'Al-Hijr (15:61-77)', 'Ash-Shu\'ara (26:160-175)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3207 — "May Allah have mercy on Lut; he sought refuge in a strong pillar" (i.e., Allah)'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3207 — «رحم الله لوطاً، لقد أوى إلى ركن شديد» أي إلى الله'
+    ],
     svgColor: '#dc2626'
   },
   {
@@ -291,6 +335,12 @@ The story of Yusuf teaches us about patience, forgiveness, and trust in Allah's 
       'العفة والتقوى تُكافأ دائماً'
     ],
     relatedSurahs: ['Yusuf (12)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3207 — The Prophet (PBUH) said he would not have stayed in prison as long as Yusuf without accepting freedom'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3207 — قال النبي صلى الله عليه وسلم: لو لبثت في السجن طول ما لبث يوسف لأجبت الداعي'
+    ],
     svgColor: '#7c3aed'
   },
   {
@@ -338,6 +388,16 @@ Musa led the Israelites for forty years in the wilderness, receiving the Torah a
       'نصر الله يأتي في أصعب اللحظات'
     ],
     relatedSurahs: ['Al-Baqarah (2:51-73)', 'Ta-Ha (20:9-98)', 'Al-Qasas (28:3-43)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3407 — The angel of death was sent to Musa, who struck him and returned his sight',
+      'Sahih al-Bukhari 3401 — The story of Musa and Al-Khidr on the seashore',
+      'Sahih al-Bukhari 4737 — Musa argued with Adam about pre-decree (Qadar)'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3407 — أرسل الله ملك الموت إلى موسى فلطمه فردّ بصره',
+      'صحيح البخاري 3401 — قصة موسى مع الخضر عند مجمع البحرين',
+      'صحيح البخاري 4737 — احتجاج موسى على آدم في القدر'
+    ],
     svgColor: '#ea580c'
   },
   {
@@ -385,6 +445,12 @@ The story of Dawud teaches us about courage, faith, and the importance of using 
       'يجب توظيف المواهب في خدمة الله'
     ],
     relatedSurahs: ['Al-Baqarah (2:251)', 'Saad (38:17-26)', 'Al-Anbiya (21:78-80)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3420 — The most beloved fasting to Allah was Dawud\'s (fasting alternate days), and the most beloved prayer was Dawud\'s (a third of the night)'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3420 — أحب الصيام إلى الله صيام داود (يصوم يوماً ويفطر يوماً)، وأحب الصلاة صلاة داود (نصف الليل أو ثلثه)'
+    ],
     svgColor: '#b45309'
   },
   {
@@ -436,6 +502,12 @@ When Sulaiman died, he was standing with his staff, supporting himself. The jinn
       'العدل والأمانة أساسان في القيادة'
     ],
     relatedSurahs: ['Al-Baqarah (2:102)', 'An-Naml (27:15-44)', 'Saad (38:30-40)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3427 — Sulaiman\'s wise judgement in the case of two women arguing over a child, after Dawud\'s judgement'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3427 — قضى سليمان بحكمته في قصة المرأتين والطفل بعد قضاء داود'
+    ],
     svgColor: '#0891b2'
   },
   {
@@ -485,6 +557,12 @@ The story of Yunus teaches us that Allah's mercy is always greater than His puni
       'الله يسمع دعاءنا حتى في أحلك اللحظات'
     ],
     relatedSurahs: ['Yunus (10:98)', 'Al-Anbiya (21:87-88)', 'As-Saffat (37:139-148)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3413 — "It is not right for any Muslim to say that I am better than Yunus bin Matta"'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3413 — «لا ينبغي لعبد أن يقول أنا خير من يونس بن متى»'
+    ],
     svgColor: '#0369a1'
   },
   {
@@ -532,6 +610,16 @@ The Quran emphasizes that Isa was a prophet and servant of Allah, not divine him
       'ميلاد عيسى دليل على قدرة الله على الخلق من غير سابق'
     ],
     relatedSurahs: ['Al-Imran (3:45-59)', 'Maryam (19:16-36)', 'Al-Anbiya (21:91)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3436 — Three spoke in the cradle: Isa, Juraij, and the baby in the story of the woman',
+      'Sahih al-Bukhari 3443 — "I am the nearest of all people to Isa, son of Mary"',
+      'Sahih al-Bukhari 3435 — Whoever testifies that Isa is the slave and Messenger of Allah, and His word, will enter Paradise'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3436 — ثلاثة تكلموا في المهد: عيسى وجريج وصاحب قصة المرأة',
+      'صحيح البخاري 3443 — «أنا أولى الناس بعيسى ابن مريم»',
+      'صحيح البخاري 3435 — من شهد أن عيسى عبد الله ورسوله وكلمته دخل الجنة'
+    ],
     svgColor: '#059669'
   },
   {
@@ -587,6 +675,16 @@ The story of Muhammad teaches us about the perfect character, mercy to all creat
       'القرآن هو الوحي الخاتم المحفوظ'
     ],
     relatedSurahs: ['Al-Ahzab (33:40)', 'Al-Fath (48:1-3)', 'Al-Qalam (68:1-4)'],
+    hadithRefs: [
+      'Sahih al-Bukhari 3 — The first revelation in the cave of Hira: "Read in the name of your Lord" (96:1-5)',
+      'Sahih al-Bukhari 3340 — "I will be the chief of the people on the Day of Resurrection" — the hadith of intercession',
+      'Sahih al-Bukhari 349 — The Prophet\'s journey to Jerusalem and ascension (Isra & Mi\'raj)'
+    ],
+    hadithRefsAr: [
+      'صحيح البخاري 3 — أول الوحي في غار حراء: «اقرأ باسم ربك الذي خلق» (العلق 1-5)',
+      'صحيح البخاري 3340 — «أنا سيد ولد آدم يوم القيامة» — حديث الشفاعة',
+      'صحيح البخاري 349 — رحلة الإسراء والمعراج'
+    ],
     svgColor: '#16a34a'
   }
 ];
