@@ -170,15 +170,21 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     // stable verseNum (currentVerse object ref would change every render and
     // wipe the live reveal mid-verse).
     useEffect(() => {
-        finalTokensRef.current = [];
-        interimTextRef.current = [];
+        if (autoContinueRef.current) {
+            // Auto-advance: keep the accumulated speech streams and the results
+            // cutoff (already past the finished verse), because the user may
+            // have started reciting the next verse during the transition — that
+            // speech must survive into the new verse's alignment.
+        } else {
+            finalTokensRef.current = [];
+            interimTextRef.current = [];
+            resultsCutoffRef.current = lastResultsLengthRef.current;
+            setLiveTranscript('');
+        }
         revealedRef.current = 0;
         missedSetRef.current = new Set();
         completedRef.current = false;
         targetWordsRef.current = currentVerse ? normalizeArabicTokens(currentVerse.text) : [];
-        // Drop recognition results older than this verse so stale audio from
-        // the previous verse can't pollute the new one's alignment.
-        resultsCutoffRef.current = lastResultsLengthRef.current;
         receivedSpeechRef.current = false;
         setRevealedWords(0);
         setSkippedIndices([]);
@@ -186,7 +192,6 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setCelebration(null);
         setError(null);
         setNoSpeechHint(false);
-        setLiveTranscript('');
     }, [currentIdx, currentVerse?.verseNum, currentVerse]);
 
     const todayVerses = getTodayVerses(progress);
@@ -256,6 +261,10 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const completeVerse = useCallback(() => {
         if (completedRef.current) return;
         completedRef.current = true;
+        // Pin the results cutoff at the end of THIS verse's speech so the next
+        // verse's already-recognized words (spoken during the transition) are
+        // kept, while this verse's earlier results stay dropped.
+        resultsCutoffRef.current = lastResultsLengthRef.current;
         // Keep the mic live across verses so the next verse's recitation is
         // caught immediately. Per-verse state (streams, frontier, target) is
         // reset when the index advances; results older than the reset are cut.
@@ -305,22 +314,17 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
 
         recognition.onresult = (event) => {
             lastResultsLengthRef.current = event.results.length;
-            if (completedRef.current || hardStopRef.current) return;
+            if (hardStopRef.current) return;
             setSpeechUnsupported(false);
             setMicError(null);
-
-            if (!receivedSpeechRef.current) {
-                receivedSpeechRef.current = true;
-                if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
-                setNoSpeechHint(false);
-            }
 
             const last = event.results[event.results.length - 1];
             const text = last?.[0]?.transcript ?? '';
             if (text) setLiveTranscript(text);
 
-            // Skip results finalized before this verse began (verse reset sets
-            // resultsCutoffRef to the previous verse's result count).
+            // Accumulate every result, including during the short verse-
+            // transition window (completedRef set), so recitation of the next
+            // verse that starts before the index advances is not lost.
             const startRes = Math.max(event.resultIndex, resultsCutoffRef.current);
             for (let i = startRes; i < event.results.length; i++) {
                 const res = event.results[i];
@@ -334,6 +338,14 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         interimTextRef.current[a] = text;
                     }
                 }
+            }
+
+            if (completedRef.current) return;
+
+            if (!receivedSpeechRef.current) {
+                receivedSpeechRef.current = true;
+                if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
+                setNoSpeechHint(false);
             }
 
             // Combined chronological streams: finalized tokens (persistent) + live interim
@@ -457,6 +469,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         startListeningRef.current = startListening;
     }, [startListening]);
 
+    const createRecognitionRef = useRef(createRecognition);
+    useEffect(() => {
+        createRecognitionRef.current = createRecognition;
+    }, [createRecognition]);
+
     // Auto-continue: when a verse is fully revealed, the next verse appears. The
     // recognition instance is kept alive across the transition so the user can
     // start reciting the next verse immediately; only re-arm the per-verse
@@ -474,7 +491,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         if (!receivedSpeechRef.current && keepListeningRef.current) setNoSpeechHint(true);
                     }, 5000);
                 } else {
-                    startListeningRef.current();
+                    // Recognition died during the transition: restart it
+                    // without clearing the accumulated speech streams.
+                    keepListeningRef.current = true;
+                    setIsListening(true);
+                    createRecognitionRef.current();
                 }
             }
         }
