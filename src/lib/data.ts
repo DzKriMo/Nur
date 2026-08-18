@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { SurahMeta, SurahContent, HadithBook, AdhkarCategory, AdhkarItem, TranslationContent, HadithChapter, Hadith, BookInfo } from '@/types';
+import { SurahMeta, SurahContent, HadithBook, AdhkarCategory, TranslationContent, HadithChapter, Hadith, BookInfo } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'src/data');
 
@@ -103,6 +103,31 @@ export async function getHadithBook(filename: string): Promise<HadithBook> {
     const data: HadithBook = JSON.parse(fileContent);
     setCache(key, data);
     return data;
+}
+
+// Permanent in-memory cache for hadith books (static data, avoids re-parsing large JSON)
+const hadithBookCache = new Map<string, HadithBook>();
+const hadithBookLoading = new Map<string, Promise<HadithBook>>();
+
+export function getHadithBookCached(filename: string): Promise<HadithBook> {
+    const existing = hadithBookCache.get(filename);
+    if (existing) return Promise.resolve(existing);
+    const pending = hadithBookLoading.get(filename);
+    if (pending) return pending;
+
+    const load = (async () => {
+        const book = await getHadithBook(filename);
+        hadithBookCache.set(filename, book);
+        hadithBookLoading.delete(filename);
+        return book;
+    })();
+    hadithBookLoading.set(filename, load);
+    return load;
+}
+
+export async function getAllHadithBooks(): Promise<HadithBook[]> {
+    const books = await getHadithBooks();
+    return Promise.all(books.map(b => getHadithBookCached(b.filename)));
 }
 
 export async function getHadithChapters(filename: string): Promise<HadithChapter[]> {

@@ -54,7 +54,12 @@ export default async function ChapterPage({ params }: PageProps) {
             </div>
 
             <main className="max-w-4xl mx-auto px-4 py-4 space-y-8">
-                <HadithList hadiths={hadiths} />
+                <HadithList
+                    hadiths={hadiths}
+                    bookId={bookId}
+                    bookName={book.metadata.english.title}
+                    bookNameAr={book.metadata.arabic.title}
+                />
             </main>
         </div>
     );

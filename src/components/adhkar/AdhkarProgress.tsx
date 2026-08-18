@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useBookmarks } from '@/contexts/BookmarksContext';
+import { useMounted } from '@/lib/storage';
 
 interface AdhkarProgressProps {
     totalItems: number;
@@ -12,8 +14,10 @@ interface AdhkarProgressProps {
 
 export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarProgressProps) {
     const [completed, setCompleted] = useState(0);
-    const [mounted, setMounted] = useState(false);
+    const mounted = useMounted();
     const { language } = useLanguage();
+    const { markAdhkarDone, adhkarDoneToday } = useBookmarks();
+    const markedRef = useRef(false);
 
     useEffect(() => {
         const checkProgress = () => {
@@ -23,19 +27,23 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                 if (saved && parseInt(saved) > 0) count++;
             }
             setCompleted(count);
+            if (count === totalItems && totalItems > 0 && !markedRef.current) {
+                markedRef.current = true;
+                markAdhkarDone(categoryFilename);
+            }
         };
 
         checkProgress();
-        setMounted(true);
 
         const interval = setInterval(checkProgress, 1000);
         return () => clearInterval(interval);
-    }, [totalItems, categoryFilename]);
+    }, [totalItems, categoryFilename, markAdhkarDone]);
 
     if (!mounted) return null;
 
     const percentage = totalItems > 0 ? Math.round((completed / totalItems) * 100) : 0;
     const allDone = completed === totalItems;
+    const doneToday = adhkarDoneToday[categoryFilename];
 
     return (
         <div className={cn(
@@ -62,12 +70,19 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                                 : `${completed} of ${totalItems} Adhkar`)}
                     </span>
                 </div>
-                <span className={cn(
-                    "text-xs font-bold",
-                    allDone ? "text-emerald-600 dark:text-emerald-400" : "text-slate-500 dark:text-slate-500"
-                )}>
-                    {percentage}%
-                </span>
+                <div className="flex items-center gap-2">
+                    {doneToday && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                            {language === 'ar' ? 'أُنجز اليوم ✓' : 'Done today ✓'}
+                        </span>
+                    )}
+                    <span className={cn(
+                        "text-xs font-bold",
+                        allDone ? "text-emerald-600 dark:text-emerald-400" : "text-slate-500 dark:text-slate-500"
+                    )}>
+                        {percentage}%
+                    </span>
+                </div>
             </div>
             <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div

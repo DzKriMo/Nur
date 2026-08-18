@@ -1,3 +1,9 @@
+export interface KidsQuiz {
+  question: string;
+  questionAr: string;
+  options: { text: string; textAr: string; correct: boolean }[];
+}
+
 export interface KidsLesson {
   id: string;
   title: string;
@@ -13,6 +19,7 @@ export interface KidsLesson {
     contentAr: string;
     funFact?: string;
     funFactAr?: string;
+    quiz?: KidsQuiz;
   }[];
 }
 
@@ -40,7 +47,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Allah is the One who created everything — the sun, the moon, the stars, the trees, the animals, and you! Allah is One and unique. There is nothing like Him.',
         contentAr: 'الله هو من خلق كل شيء — الشمس والقمر والنجوم والشجر والحيوانات وأنت! الله واحد وفريد. لا شيء مثله.',
         funFact: 'Did you know? The word "Allah" means "The One worthy of worship" in Arabic.',
-        funFactAr: 'هل تعلم؟ كلمة "الله" تعني "المعبود بحق" بالعربية.'
+        funFactAr: 'هل تعلم؟ كلمة "الله" تعني "المعبود بحق" بالعربية.',
+        quiz: {
+          question: 'How many gods are there in Islam?',
+          questionAr: 'كم إلهاً في الإسلام؟',
+          options: [
+            { text: 'One', textAr: 'إله واحد', correct: true },
+            { text: 'Two', textAr: 'إلهان', correct: false },
+            { text: 'Many', textAr: 'آلهة كثيرة', correct: false }
+          ]
+        }
       },
       {
         title: 'Allah sees everything',
@@ -48,7 +64,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Allah sees everything you do, even when no one is watching. When you do good things, Allah is happy with you. When you make a mistake, Allah still loves you — just say sorry and try again!',
         contentAr: 'الله يرى كل شيء تفعله، حتى عندما لا أحد يراك. حين تفعل أشياء جيدة، الله سعيد بك. حين تخطئ، الله يحبك أيضاً — فقط قل آسف وحاول مرة أخرى!',
         funFact: 'Allah is closer to you than your own heartbeat!',
-        funFactAr: 'الله أقرب إليك من نبضات قلبك!'
+        funFactAr: 'الله أقرب إليك من نبضات قلبك!',
+        quiz: {
+          question: 'When no one is watching you, what should you do?',
+          questionAr: 'عندما لا يراك أحد، ماذا تفعل؟',
+          options: [
+            { text: 'Do good because Allah sees you', textAr: 'أفعل الخير لأن الله يراني', correct: true },
+            { text: 'Do whatever I want', textAr: 'أفعل ما أشاء', correct: false },
+            { text: 'It doesn\'t matter', textAr: 'لا يهم', correct: false }
+          ]
+        }
       }
     ]
   },
@@ -75,7 +100,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Prayer (Salah) is like talking to Allah! Five times a day, you get to talk to the Creator of everything. It\'s like having a special phone call with the most important Person in the universe!',
         contentAr: 'الصلاة مثل الحديث مع الله! خمس مرات يومياً، يمكنك التحدث مع خالق كل شيء. إنها مثل مكالمة هاتفية مع أهم شخص في الكون!',
         funFact: 'The best time to pray is when you feel happy, sad, or need help.',
-        funFactAr: 'أفضل وقت للصلاة هو عندما تشعر بالسعادة أو الحزن أو تحتاج مساعدة.'
+        funFactAr: 'أفضل وقت للصلاة هو عندما تشعر بالسعادة أو الحزن أو تحتاج مساعدة.',
+        quiz: {
+          question: 'How many times a day do Muslims pray?',
+          questionAr: 'كم مرة يصلي المسلمون في اليوم؟',
+          options: [
+            { text: 'Five times', textAr: 'خمس مرات', correct: true },
+            { text: 'Two times', textAr: 'مرتين', correct: false },
+            { text: 'One time', textAr: 'مرة واحدة', correct: false }
+          ]
+        }
       },
       {
         title: 'Steps of Prayer',
@@ -83,7 +117,16 @@ export const kidsLessons: KidsLesson[] = [
         content: '1. Stand facing Mecca\n2. Say "Allahu Akbar" (Allah is Greatest)\n3. Put your hands on your chest\n4. Say "Subhana Rabbiyal Adheem" and bow\n5. Say "Subhana Rabbiyal A\'la" and prostrate\n6. Say "Assalamu Alaikum" to finish\n\nIt\'s like a beautiful dance for Allah!',
         contentAr: '1. وقف مستقبلاً مكة\n2. قل "الله أكبر"\n3. ضع يديك على صدرك\n4. قل "سبحان ربي العظيم" واركع\n5. قل "سبحان ربي الأعلى" واسجد\n6. قل "السلام عليكم" للانتهاء\n\nإنها رقصة جميلة لله!',
         funFact: 'When you pray, all your sins are forgiven!',
-        funFactAr: 'حين تصلي، تُغفر كل ذنوبك!'
+        funFactAr: 'حين تصلي، تُغفر كل ذنوبك!',
+        quiz: {
+          question: 'What do we say to begin the prayer?',
+          questionAr: 'ماذا نقول عند بداية الصلاة؟',
+          options: [
+            { text: 'Allahu Akbar', textAr: 'الله أكبر', correct: true },
+            { text: 'Bismillah', textAr: 'بسم الله', correct: false },
+            { text: 'Assalamu Alaikum', textAr: 'السلام عليكم', correct: false }
+          ]
+        }
       }
     ]
   },
@@ -112,7 +155,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Allah loves people who are kind! Smile at your friends, help your mom and dad, share your toys, and say nice words. Kindness to others is a sign of true faith.',
         contentAr: 'يحب الله الناس الطيبين! ابتسم لأصدقائك، ساعد أمك وأبيك، شارك لعبتك، وقل كلمات لطيفة. الطيبة مع الآخرين علامة على الإيمان الحقيقي.',
         funFact: 'The Prophet Muhammad (PBUH) was the kindest person ever!',
-        funFactAr: 'كان النبي محمد صلى الله عليه وسلم أكثر الناس طيبة!'
+        funFactAr: 'كان النبي محمد صلى الله عليه وسلم أكثر الناس طيبة!',
+        quiz: {
+          question: 'What is a sign of true faith?',
+          questionAr: 'ما علامة الإيمان الحقيقي؟',
+          options: [
+            { text: 'Being kind to others', textAr: 'الطيبة مع الآخرين', correct: true },
+            { text: 'Having many toys', textAr: 'امتلاك ألعاب كثيرة', correct: false },
+            { text: 'Being the strongest', textAr: 'أن تكون الأقوى', correct: false }
+          ]
+        }
       },
       {
         title: 'Kindness to animals',
@@ -120,7 +172,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Islam teaches us to be kind to ALL of Allah\'s creation, including animals! Feed birds, be gentle with cats and dogs, and never hurt any animal. Allah sees everything you do!',
         contentAr: 'يُعلمنا الإسلام أن نكون طيبين مع جميع مخلوقات الله بما في ذلك الحيوانات! أطعم الطيور، كن لطيفاً مع القطط والكلاب، ولا تؤذي أي حيوان. الله يرى كل شيء تفعله!',
         funFact: 'There\'s a special reward for giving water to a thirsty animal!',
-        funFactAr: 'هناك أجر خاص لإعطاء الماء لحيوان عطشان!'
+        funFactAr: 'هناك أجر خاص لإعطاء الماء لحيوان عطشان!',
+        quiz: {
+          question: 'What did the man in the story do for the thirsty dog?',
+          questionAr: 'ماذا فعل الرجل في القصة للكلب العطشان؟',
+          options: [
+            { text: 'He gave it water', textAr: 'أعطاه الماء', correct: true },
+            { text: 'He ignored it', textAr: 'تجاهله', correct: false },
+            { text: 'He chased it away', textAr: 'طرده بعيداً', correct: false }
+          ]
+        }
       }
     ]
   },
@@ -147,7 +208,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Prophet Muhammad was the last and final prophet! He was super kind, loved children, and always told the truth. He taught us how to be good Muslims and good people.',
         contentAr: 'النبي محمد صلى الله عليه وسلم كان النبي الأخير! كان طيباً جداً، يحب الأطفال، ويقول الصدق دائماً. علمنا كيف نكون مسلمين صالحين.',
         funFact: 'Prophet Muhammad loved the story of a man who was forgiven by Allah for giving water to a thirsty dog!',
-        funFactAr: 'أحب النبي محمد قصة رجل غفر الله له لأنه سقى كلباً عطشان!'
+        funFactAr: 'أحب النبي محمد قصة رجل غفر الله له لأنه سقى كلباً عطشان!',
+        quiz: {
+          question: 'Who is the last and final Prophet?',
+          questionAr: 'من هو خاتم الأنبياء؟',
+          options: [
+            { text: 'Prophet Muhammad (PBUH)', textAr: 'النبي محمد صلى الله عليه وسلم', correct: true },
+            { text: 'Prophet Adam', textAr: 'النبي آدم', correct: false },
+            { text: 'Prophet Isa', textAr: 'النبي عيسى', correct: false }
+          ]
+        }
       },
       {
         title: 'Prophet Isa (Jesus)',
@@ -155,7 +225,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Prophet Isa was born in a special way — he had no father! He could heal the sick and bring people back to life by Allah\'s permission. He was sent to guide the Children of Israel.',
         contentAr: 'وُلد النبي عيسى عليه السلام بطريقة خاصة — بدون أب! كان يشفي المرضى ويُعيد الناس للحياة بإذن الله. أُرسل لتوجيه بني إسرائيل.',
         funFact: 'Baby Isa spoke from the cradle to defend his mother!',
-        funFactAr: 'نطق الطفل عيسى من المهد دفاعاً عن أمه!'
+        funFactAr: 'نطق الطفل عيسى من المهد دفاعاً عن أمه!',
+        quiz: {
+          question: 'What could Prophet Isa do by Allah\'s permission?',
+          questionAr: 'ماذا كان يستطيع النبي عيسى بإذن الله؟',
+          options: [
+            { text: 'Heal the sick and bring back life', textAr: 'شفاء المرضى وإحياء الموتى', correct: true },
+            { text: 'Fly to the moon', textAr: 'الطيران إلى القمر', correct: false },
+            { text: 'Turn stone into gold', textAr: 'تحويل الحجر إلى ذهب', correct: false }
+          ]
+        }
       }
     ]
   },
@@ -186,7 +265,16 @@ export const kidsLessons: KidsLesson[] = [
         content: 'Islam has special words that make Allah happy when you say them!\n\n- "Bismillah" — In the name of Allah\n- "Alhamdulillah" — Praise be to Allah\n- "SubhanAllah" — Glory be to Allah\n- "Allahu Akbar" — Allah is Greatest\n- "Astaghfirullah" — I seek forgiveness from Allah',
         contentAr: 'في الإسلام كلمات خاصة تُسعد الله حين تقولها!\n\n- "بسم الله" — باسم الله\n- "الحمد لله" — الحمد لله\n- "سبحان الله" — سبحان الله\n- "الله أكبر" — الله أكبر\n- "أستغفر الله" — أستغفر الله',
         funFact: 'Saying "Bismillah" before eating brings blessings to your food!',
-        funFactAr: 'قول "بسم الله" قبل الأكل يجلب البركة لطعامك!'
+        funFactAr: 'قول "بسم الله" قبل الأكل يجلب البركة لطعامك!',
+        quiz: {
+          question: 'What do we say before we start eating?',
+          questionAr: 'ماذا نقول قبل أن نبدأ الأكل؟',
+          options: [
+            { text: 'Bismillah', textAr: 'بسم الله', correct: true },
+            { text: 'Allahu Akbar', textAr: 'الله أكبر', correct: false },
+            { text: 'Assalamu Alaikum', textAr: 'السلام عليكم', correct: false }
+          ]
+        }
       },
       {
         title: 'Kind words',

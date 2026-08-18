@@ -1,7 +1,10 @@
 import { getSurahs } from '@/lib/data';
-import ChapterList from '@/components/quran/ChapterList';
+import QuranList from '@/components/quran/QuranList';
 import PageHeader from '@/components/layout/PageHeader';
 import QuranViewToggle from '@/components/quran/QuranViewToggle';
+import LocalizedText from '@/components/layout/LocalizedText';
+import Link from 'next/link';
+import { Search, BookMarked } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -24,7 +27,24 @@ export default async function QuranPage() {
                     <QuranViewToggle />
                 </PageHeader>
 
-                <ChapterList surahs={surahs} />
+                <div className="flex flex-wrap justify-center gap-3 mb-8">
+                    <Link
+                        href="/quran/search"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                    >
+                        <Search size={15} />
+                        <LocalizedText en="Search Verses" ar="بحث في الآيات" />
+                    </Link>
+                    <Link
+                        href="/saved"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                    >
+                        <BookMarked size={15} />
+                        <LocalizedText en="Saved Verses" ar="الآيات المحفوظة" />
+                    </Link>
+                </div>
+
+                <QuranList surahs={surahs} />
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ClientProviders from "@/components/providers/ClientProviders";
+import PwaRegister from "@/components/PwaRegister";
 import { SITE_URL, SITE_NAME, SITE_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_EN } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -80,6 +81,7 @@ export default function RootLayout({
           <main className="pb-16 md:pb-0">{children}</main>
           <Footer />
         </ClientProviders>
+        <PwaRegister />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

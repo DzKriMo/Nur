@@ -1,17 +1,23 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { Search, BookMarked, Share2, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useBookmarks } from '@/contexts/BookmarksContext';
 import { Hadith } from '@/types';
 
 interface HadithListProps {
     hadiths: Hadith[];
+    bookId: string;
+    bookName: string;
+    bookNameAr: string;
 }
 
-export default function HadithList({ hadiths }: HadithListProps) {
+export default function HadithList({ hadiths, bookId, bookName, bookNameAr }: HadithListProps) {
     const [query, setQuery] = useState('');
     const { t } = useLanguage();
+    const { isHadithFavorite, toggleHadithFavorite } = useBookmarks();
+    const [copiedId, setCopiedId] = useState<number | null>(null);
 
     const filteredHadiths = useMemo(() => {
         if (!query.trim()) return hadiths;
@@ -22,6 +28,17 @@ export default function HadithList({ hadiths }: HadithListProps) {
             hadith.idInBook.toString().includes(query)
         );
     }, [hadiths, query]);
+
+    const shareHadith = async (hadith: Hadith) => {
+        const shareText = `${hadith.english.narrator} — ${hadith.english.text}\n\n(${bookName}, Hadith ${hadith.idInBook})\n${hadith.arabic}`;
+        if (navigator.share) {
+            try { await navigator.share({ text: shareText }); } catch {}
+        } else {
+            await navigator.clipboard.writeText(shareText);
+            setCopiedId(hadith.id);
+            setTimeout(() => setCopiedId(null), 2000);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -48,6 +65,36 @@ export default function HadithList({ hadiths }: HadithListProps) {
                             <span className="text-sm font-medium text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">
                                 {t('hadith.number')} {hadith.idInBook}
                             </span>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => shareHadith(hadith)}
+                                    className="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 transition-colors"
+                                    title={t('common.share')}
+                                >
+                                    {copiedId === hadith.id ? <Check size={14} className="text-amber-500" /> : <Share2 size={14} />}
+                                </button>
+                                <button
+                                    onClick={() => toggleHadithFavorite({
+                                        bookId,
+                                        chapterId: hadith.chapterId,
+                                        hadithId: hadith.id,
+                                        idInBook: hadith.idInBook,
+                                        arabic: hadith.arabic,
+                                        narrator: hadith.english.narrator,
+                                        text: hadith.english.text,
+                                        bookName,
+                                        bookNameAr,
+                                    })}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                                        isHadithFavorite(bookId, hadith.id)
+                                            ? "text-amber-500"
+                                            : "text-stone-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
+                                    }`}
+                                    title={t('hadith.save_hadith')}
+                                >
+                                    <BookMarked size={14} fill={isHadithFavorite(bookId, hadith.id) ? 'currentColor' : 'none'} />
+                                </button>
+                            </div>
                         </div>
 
                         <div className="space-y-4">

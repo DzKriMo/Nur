@@ -1,5 +1,6 @@
 import { getHadithBooks } from '@/lib/data';
 import BookList from '@/components/hadith/BookList';
+import GlobalHadithSearch from '@/components/hadith/GlobalHadithSearch';
 import PageHeader from '@/components/layout/PageHeader';
 import SectionHeading from '@/components/layout/SectionHeading';
 import type { Metadata } from 'next';
@@ -25,6 +26,8 @@ export default async function HadithPage() {
                     subtitleKey="hadith.subtitle"
                     titleClassName="text-amber-800 dark:text-amber-500"
                 />
+
+                <GlobalHadithSearch />
 
                 <div className="space-y-12">
                     <section>

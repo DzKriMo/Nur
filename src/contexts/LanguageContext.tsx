@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, ReactNode } from 'react';
 import { translations, Language, TranslationKey } from '@/i18n/translations';
+import { useStoredState } from '@/lib/storage';
 
 interface LanguageContextType {
     language: Language;
@@ -13,30 +14,16 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguageState] = useState<Language>('ar');
-    const [mounted, setMounted] = useState(false);
+    const [language, setLanguageState] = useStoredState<Language>('nur-language', 'ar');
 
     useEffect(() => {
-        setMounted(true);
-        const savedLang = localStorage.getItem('nur-language') as Language;
-        if (savedLang && (savedLang === 'en' || savedLang === 'ar')) {
-            setLanguageState(savedLang);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (mounted) {
-            document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = language;
-        }
-    }, [language, mounted]);
+        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = language;
+    }, [language]);
 
     const setLanguage = useCallback((lang: Language) => {
         setLanguageState(lang);
-        localStorage.setItem('nur-language', lang);
-        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-        document.documentElement.lang = lang;
-    }, []);
+    }, [setLanguageState]);
 
     const t = useCallback((key: TranslationKey): string => {
         return translations[language][key] || key;

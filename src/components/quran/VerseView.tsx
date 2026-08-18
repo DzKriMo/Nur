@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, Check, ListMusic } from 'lucide-react';
+import { Play, Pause, Share2, Check, ListMusic, BookMarked } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useBookmarks } from '@/contexts/BookmarksContext';
 
 interface VerseViewProps {
     surah: SurahContent;
@@ -16,13 +17,16 @@ interface VerseViewProps {
 
 export default function VerseView({ surah, translation, tafseer, chapterId }: VerseViewProps) {
     const [playingVerse, setPlayingVerse] = useState<string | null>(null);
-    const [sound, setSound] = useState<Howl | null>(null);
+    const [, setSound] = useState<Howl | null>(null);
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
     const [copiedVerse, setCopiedVerse] = useState<string | null>(null);
+    const [activeJuz, setActiveJuz] = useState<string>('');
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
     const soundRef = useRef<Howl | null>(null);
+    const lastSavedRef = useRef<string>('');
     const { t } = useLanguage();
+    const { isVerseBookmarked, toggleVerseBookmark, saveLastRead } = useBookmarks();
 
     const verses = Object.entries(surah.verse).map(([key, text]) => {
         const verseNum = key.split('_')[1];
@@ -35,6 +39,44 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
         };
     });
 
+    const juzList = surah.juz || [];
+
+    // Save last-read on scroll (verse nearest viewport center)
+    useEffect(() => {
+        const onScroll = () => {
+            requestAnimationFrame(() => {
+                let best: string | null = null;
+                let bestDist = Infinity;
+                const centerY = window.innerHeight / 2;
+                verseRefs.current.forEach((el, verseNum) => {
+                    const rect = el.getBoundingClientRect();
+                    const dist = Math.abs(rect.top + rect.height / 2 - centerY);
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        best = verseNum;
+                    }
+                });
+                if (best && best !== lastSavedRef.current) {
+                    lastSavedRef.current = best;
+                    saveLastRead(chapterId, best, surah.name);
+                }
+            });
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, [chapterId, surah.name, saveLastRead]);
+
+    const jumpToJuz = (juzIndex: string) => {
+        const boundary = juzList.find(j => j.index === juzIndex);
+        if (!boundary) return;
+        const target = document.getElementById(`verse-${boundary.verse.start}`);
+        if (target) {
+            setActiveJuz(juzIndex);
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const stopSound = useCallback(() => {
         if (soundRef.current) {
             soundRef.current.stop();
@@ -45,7 +87,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
         setPlayingVerse(null);
     }, []);
 
-    const playVerse = useCallback((verseNum: string) => {
+    function playVerse(verseNum: string) {
         if (soundRef.current) {
             soundRef.current.stop();
             soundRef.current.unload();
@@ -79,7 +121,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
         setSound(newSound);
         setPlayingVerse(verseNum);
         newSound.play();
-    }, [chapterId, verses.length]);
+    }
 
     const togglePlay = (verseNum: string) => {
         if (playingVerse === verseNum) {
@@ -157,13 +199,29 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                         {t('quran.tafseer')}
                     </button>
                 </div>
-                <button
-                    onClick={playChapter}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
-                >
-                    <Play size={16} />
-                    <span className="hidden sm:inline">{t('common.listen')}</span>
-                </button>
+                <div className="flex items-center gap-2">
+                    {juzList.length > 1 && (
+                        <select
+                            value={activeJuz}
+                            onChange={(e) => jumpToJuz(e.target.value)}
+                            className="px-2 py-1.5 rounded-lg text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        >
+                            <option value="">{t('quran.jump_to_juz')}</option>
+                            {juzList.map(j => (
+                                <option key={j.index} value={j.index}>
+                                    {t('quran.juz')} {parseInt(j.index)}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                    <button
+                        onClick={playChapter}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
+                    >
+                        <Play size={16} />
+                        <span className="hidden sm:inline">{t('common.listen')}</span>
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-4">
@@ -213,6 +271,23 @@ export default function VerseView({ surah, translation, tafseer, chapterId }: Ve
                                 title={t('quran.share_verse')}
                             >
                                 {copiedVerse === verse.verseNum ? <Check size={14} className="text-emerald-500" /> : <Share2 size={14} />}
+                            </button>
+                            <button
+                                onClick={() => toggleVerseBookmark({
+                                    surahId: chapterId,
+                                    verseNum: verse.verseNum,
+                                    surahName: surah.name,
+                                    surahNameAr: surah.name,
+                                })}
+                                className={cn(
+                                    "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                                    isVerseBookmarked(chapterId, verse.verseNum)
+                                        ? "text-emerald-500 hover:bg-emerald-50 dark:hover:bg-slate-800"
+                                        : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800"
+                                )}
+                                title={t('quran.save_verse')}
+                            >
+                                <BookMarked size={14} fill={isVerseBookmarked(chapterId, verse.verseNum) ? 'currentColor' : 'none'} />
                             </button>
                         </div>
 

@@ -12,6 +12,7 @@ const quickLinks: { href: string; key: TranslationKey }[] = [
     { href: '/stories', key: 'nav.stories' },
     { href: '/learn', key: 'nav.learn' },
     { href: '/chat', key: 'nav.chat' },
+    { href: '/saved', key: 'home.saved' },
     { href: '/about', key: 'nav.about' },
 ];
 

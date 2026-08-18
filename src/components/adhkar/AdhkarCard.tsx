@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { AdhkarItem } from '@/types';
 import { cn } from '@/lib/utils';
-import { Repeat, RotateCcw, Check, Volume2 } from 'lucide-react';
+import { Repeat, RotateCcw, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useStoredState } from '@/lib/storage';
 
 interface AdhkarCardProps {
     item: AdhkarItem;
@@ -15,18 +16,11 @@ interface AdhkarCardProps {
 
 export default function AdhkarCard({ item, index, categoryFilename, totalItems }: AdhkarCardProps) {
     const storageKey = `adhkar_${categoryFilename}_${index}`;
-    const [count, setCount] = useState(0);
-    const [mounted, setMounted] = useState(false);
+    const [count, setCount] = useStoredState<number>(storageKey, 0);
     const [justCompleted, setJustCompleted] = useState(false);
     const cardRef = useRef<HTMLDivElement>(null);
     const { t } = useLanguage();
     const isCompleted = count >= item.repeat;
-
-    useEffect(() => {
-        const saved = localStorage.getItem(storageKey);
-        if (saved) setCount(parseInt(saved, 10) || 0);
-        setMounted(true);
-    }, [storageKey]);
 
     const scrollToNext = useCallback(() => {
         setTimeout(() => {
@@ -41,7 +35,6 @@ export default function AdhkarCard({ item, index, categoryFilename, totalItems }
         if (count < item.repeat) {
             const newCount = count + 1;
             setCount(newCount);
-            localStorage.setItem(storageKey, newCount.toString());
 
             if (navigator.vibrate) navigator.vibrate(15);
 
@@ -53,16 +46,13 @@ export default function AdhkarCard({ item, index, categoryFilename, totalItems }
                 }
             }
         }
-    }, [count, item.repeat, storageKey, index, totalItems, scrollToNext]);
+    }, [count, item.repeat, setCount, index, totalItems, scrollToNext]);
 
     const reset = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
         setCount(0);
         setJustCompleted(false);
-        localStorage.setItem(storageKey, '0');
-    }, [storageKey]);
-
-    if (!mounted) return null;
+    }, [setCount]);
 
     const progress = (count / item.repeat) * 100;
     const remaining = item.repeat - count;

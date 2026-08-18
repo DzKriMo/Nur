@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Book, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import HomeDashboard from '@/components/home/HomeDashboard';
 
 export default function Home() {
     const { t, dir } = useLanguage();
@@ -68,6 +69,8 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            <HomeDashboard />
 
             {/* Features Grid */}
             <section className="px-4 md:px-6 pb-24">

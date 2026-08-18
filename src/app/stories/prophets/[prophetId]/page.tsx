@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { prophetsStories } from '@/data/stories/prophets';
+import ReadingProgress from '@/components/stories/ReadingProgress';
 
 export default function ProphetStoryPage() {
     const params = useParams();
@@ -33,6 +34,7 @@ export default function ProphetStoryPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+            <ReadingProgress key={prophetId} storyId={prophetId} />
             <div className="max-w-3xl mx-auto">
                 <Link href="/stories/prophets" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 mb-6 transition-colors">
                     {dir === 'rtl' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}

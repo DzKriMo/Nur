@@ -6,16 +6,16 @@ import { cn } from '@/lib/utils';
 import { Book, Heart, MessageCircle, Info, Home, Moon, Sun, Menu, X, Clock, Scroll, GraduationCap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect } from 'react';
+import NextPrayerWidget from '@/components/prayer/NextPrayerWidget';
+import { useState } from 'react';
+import { useMounted } from '@/lib/storage';
 
 export default function Navbar() {
     const pathname = usePathname();
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => setMounted(true), []);
+    const mounted = useMounted();
 
     const links = [
         { href: '/', label: t('nav.home'), icon: Home },
@@ -83,6 +83,7 @@ export default function Navbar() {
                         </div>
 
                         <div className="flex items-center gap-1">
+                            <NextPrayerWidget />
                             <button
                                 onClick={toggleTheme}
                                 className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"

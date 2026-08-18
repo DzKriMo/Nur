@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useStoredState } from '@/lib/storage';
 
 type Theme = 'light' | 'dark';
 
@@ -12,27 +13,14 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setTheme] = useState<Theme>('light');
-    const [mounted, setMounted] = useState(false);
+    const [theme, setTheme] = useStoredState<Theme>('nur-theme', 'light');
 
     useEffect(() => {
-        setMounted(true);
-        const saved = localStorage.getItem('nur-theme') as Theme;
-        if (saved === 'dark' || saved === 'light') {
-            setTheme(saved);
-            document.documentElement.classList.toggle('dark', saved === 'dark');
-        } else {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setTheme(prefersDark ? 'dark' : 'light');
-            document.documentElement.classList.toggle('dark', prefersDark);
-        }
-    }, []);
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+    }, [theme]);
 
     const toggleTheme = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-        localStorage.setItem('nur-theme', newTheme);
-        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
     return (
