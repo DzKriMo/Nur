@@ -1,4 +1,4 @@
-import { getSurah, getTranslation } from '@/lib/data';
+import { getSurah, getTranslation, getSurahs } from '@/lib/data';
 import VerseView from '@/components/quran/VerseView';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -14,9 +14,11 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { chapterId } = await params;
     const surah = await getSurah(chapterId);
+    const surahs = await getSurahs();
+    const arabicName = surahs.find(s => s.index === chapterId)?.titleAr ?? surah.name;
     return {
-        title: `سورة ${surah.name}`,
-        description: `سورة ${surah.name} - ${surah.count} آية. اقرأ واستمع مع الترجمة الإنجليزية والتفسير.`,
+        title: `سورة ${arabicName}`,
+        description: `سورة ${arabicName} - ${surah.count} آية. اقرأ واستمع مع الترجمة الإنجليزية والتفسير.`,
         alternates: { canonical: `/quran/${chapterId}` },
     };
 }
