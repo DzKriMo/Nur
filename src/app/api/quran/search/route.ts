@@ -10,7 +10,20 @@ interface VerseEntry {
     surahNameAr: string;
     verseNum: string;
     arabic: string;
+    arabicNorm: string;
     english: string;
+}
+
+/** Strips Arabic diacritics (tashkeel) and normalizes letter variants so searches work without them. */
+function normalizeArabic(text: string): string {
+    return text
+        .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D3-\u08E1\u0640]/g, '')
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ؤ/g, 'و')
+        .replace(/ھ/g, 'ه')
+        .replace(/ۀ/g, 'ه')
+        .replace(/ے/g, 'ي');
 }
 
 let corpusCache: VerseEntry[] | null = null;
@@ -51,6 +64,7 @@ async function loadQuranCorpus(): Promise<VerseEntry[]> {
                 surahNameAr: meta?.titleAr ?? '',
                 verseNum,
                 arabic: text,
+                arabicNorm: normalizeArabic(text),
                 english: trans[key] ?? '',
             });
         }
@@ -71,11 +85,11 @@ function getCorpus(): Promise<VerseEntry[]> {
 }
 
 function scoreVerse(verse: VerseEntry, query: string, englishQuery: string): number {
-    const arabic = verse.arabic.toLowerCase();
+    const arabic = verse.arabicNorm;
     const english = verse.english.toLowerCase();
 
-    if (verse.arabic === query) return 10;
-    if (verse.arabic.startsWith(query)) return 7;
+    if (arabic === query) return 10;
+    if (arabic.startsWith(query)) return 7;
     if (arabic.includes(query)) return 5;
 
     if (verse.english.toLowerCase() === englishQuery) return 9;
@@ -97,12 +111,13 @@ export async function GET(request: NextRequest) {
         return Response.json({ results: [], query: q ?? '' });
     }
 
-    const query = q.toLowerCase();
+    const query = normalizeArabic(q.toLowerCase());
+    const englishQuery = q.toLowerCase();
     const corpus = await getCorpus();
 
     const scored: { verse: VerseEntry; score: number }[] = [];
     for (const verse of corpus) {
-        const score = scoreVerse(verse, query, query);
+        const score = scoreVerse(verse, query, englishQuery);
         if (score > 0) scored.push({ verse, score });
     }
 

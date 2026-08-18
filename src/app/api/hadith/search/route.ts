@@ -14,12 +14,35 @@ interface SearchResult {
     href: string;
 }
 
+/** Strips Arabic diacritics (tashkeel) and normalizes letter variants so searches work without them. */
+function normalizeArabic(text: string): string {
+    return text
+        .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D3-\u08E1\u0640]/g, '')
+        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ؤ/g, 'و')
+        .replace(/ھ/g, 'ه')
+        .replace(/ۀ/g, 'ه')
+        .replace(/ے/g, 'ي');
+}
+
+const normCache = new Map<number, string>();
+
+function normAr(text: string, id: number): string {
+    let n = normCache.get(id);
+    if (n === undefined) {
+        n = normalizeArabic(text);
+        normCache.set(id, n);
+    }
+    return n;
+}
+
 function scoreHadith(arabic: string, english: string, narrator: string, query: string): number {
-    const ar = arabic.toLowerCase();
+    const ar = arabic;
     const en = english.toLowerCase();
     const na = narrator.toLowerCase();
 
-    if (arabic === query) return 10;
+    if (ar === query) return 10;
     if (ar.startsWith(query)) return 7;
     if (ar.includes(query)) return 5;
 
@@ -41,7 +64,7 @@ export async function GET(request: NextRequest) {
         return Response.json({ results: [], query: q ?? '' });
     }
 
-    const query = q.toLowerCase();
+    const query = normalizeArabic(q.toLowerCase());
     const bookInfos = await getHadithBooks();
 
     const scored: { result: SearchResult; score: number }[] = [];
@@ -55,7 +78,7 @@ export async function GET(request: NextRequest) {
         }
 
         for (const hadith of book.hadiths) {
-            const score = scoreHadith(hadith.arabic, hadith.english.text, hadith.english.narrator, query);
+            const score = scoreHadith(normAr(hadith.arabic, hadith.id), hadith.english.text, hadith.english.narrator, query);
             if (score > 0) {
                 scored.push({
                     score,

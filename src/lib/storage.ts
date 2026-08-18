@@ -40,7 +40,9 @@ function getStore<T>(key: string, initial: T): Store<T> {
     const listeners = new Set<() => void>();
 
     const store: Store<T> = {
-        value,
+        get value() {
+            return value;
+        },
         listeners,
         subscribe(cb: () => void) {
             listeners.add(cb);
@@ -48,9 +50,9 @@ function getStore<T>(key: string, initial: T): Store<T> {
                 listeners.delete(cb);
             };
         },
-        getSnapshot: () => store.value,
+        getSnapshot: () => value,
         set(next: T | ((prev: T) => T)) {
-            const prev = store.value;
+            const prev = value;
             const computed = typeof next === 'function' ? (next as (p: T) => T)(prev) : next;
             if (Object.is(computed, prev)) return;
             value = computed;
