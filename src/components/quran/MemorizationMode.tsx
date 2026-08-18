@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Howl } from 'howler';
 import { SurahContent } from '@/types';
 import {
@@ -126,9 +126,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Live detection state (kept in refs so recognition callbacks stay fresh)
-    const finalAltStreamsRef = useRef<string[]>([]);
-    const interimAltStreamsRef = useRef<string[]>([]);
+    // Live detection state (kept in refs so recognition callbacks stay fresh).
+    // Per alternative: finalized token stream (persistent, trimmed as the
+    // frontier advances) + current interim transcript text.
+    const finalTokensRef = useRef<string[][]>([]);
+    const interimTextRef = useRef<string[]>([]);
     const revealedRef = useRef(0);
     const missedSetRef = useRef<Set<number>>(new Set());
     const keepListeningRef = useRef(false);
@@ -138,16 +140,24 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const receivedSpeechRef = useRef(false);
     const noSpeechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const targetWordsRef = useRef<string[]>([]);
+    const lastResultsLengthRef = useRef(0);
+    const resultsCutoffRef = useRef(0);
 
-    const verses: VerseItem[] = Object.entries(surah.verse).map(([key, text]) => ({
-        verseNum: key.split('_')[1],
-        text,
-    }));
+    const verses = useMemo<VerseItem[]>(
+        () => Object.entries(surah.verse).map(([key, text]) => ({
+            verseNum: key.split('_')[1],
+            text,
+        })),
+        [surah.verse]
+    );
 
-    const rangeVerses = verses.filter((v) => {
-        const n = parseInt(v.verseNum, 10);
-        return n >= fromVerse && n <= toVerse;
-    });
+    const rangeVerses = useMemo(
+        () => verses.filter((v) => {
+            const n = parseInt(v.verseNum, 10);
+            return n >= fromVerse && n <= toVerse;
+        }),
+        [verses, fromVerse, toVerse]
+    );
 
     const currentVerse = rangeVerses[Math.min(currentIdx, rangeVerses.length - 1)];
 
@@ -156,20 +166,28 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         currentIdxRef.current = currentIdx;
     }, [currentIdx]);
 
-    // Reset recitation state whenever the current verse changes
+    // Reset recitation state whenever the current verse changes. Depends on the
+    // stable verseNum (currentVerse object ref would change every render and
+    // wipe the live reveal mid-verse).
     useEffect(() => {
-        finalAltStreamsRef.current = [];
-        interimAltStreamsRef.current = [];
+        finalTokensRef.current = [];
+        interimTextRef.current = [];
         revealedRef.current = 0;
         missedSetRef.current = new Set();
         completedRef.current = false;
         targetWordsRef.current = currentVerse ? normalizeArabicTokens(currentVerse.text) : [];
+        // Drop recognition results older than this verse so stale audio from
+        // the previous verse can't pollute the new one's alignment.
+        resultsCutoffRef.current = lastResultsLengthRef.current;
+        receivedSpeechRef.current = false;
         setRevealedWords(0);
         setSkippedIndices([]);
         setResult(null);
         setCelebration(null);
         setError(null);
-    }, [currentIdx, currentVerse]);
+        setNoSpeechHint(false);
+        setLiveTranscript('');
+    }, [currentIdx, currentVerse?.verseNum, currentVerse]);
 
     const todayVerses = getTodayVerses(progress);
     const streak = getStreak(progress);
@@ -238,17 +256,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const completeVerse = useCallback(() => {
         if (completedRef.current) return;
         completedRef.current = true;
-        hardStopRef.current = true;
-        keepListeningRef.current = false;
-        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
-        if (recognitionRef.current) {
-            recognitionRef.current.onresult = null;
-            recognitionRef.current.onend = null;
-            recognitionRef.current.onerror = null;
-            try { recognitionRef.current.stop(); } catch {}
-            recognitionRef.current = null;
-        }
-        setIsListening(false);
+        // Keep the mic live across verses so the next verse's recitation is
+        // caught immediately. Per-verse state (streams, frontier, target) is
+        // reset when the index advances; results older than the reset are cut.
+        keepListeningRef.current = true;
+        setIsListening(true);
         setIsRestarting(false);
 
         const target = targetWordsRef.current;
@@ -265,11 +277,12 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             autoContinueRef.current = true;
             advanceTimerRef.current = setTimeout(() => {
                 setCurrentIdx(idx + 1);
-            }, 2200);
+            }, 1400);
         } else {
-            advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 2200);
+            stopRecognition();
+            advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 1400);
         }
-    }, [rangeVerses.length, recordAttempt]);
+    }, [rangeVerses.length, recordAttempt, stopRecognition]);
 
     const createRecognition = useCallback(() => {
         if (hardStopRef.current) return;
@@ -286,8 +299,12 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.maxAlternatives = MAX_ALTERNATIVES;
+        // Each recognition instance has its own results array index space.
+        lastResultsLengthRef.current = 0;
+        resultsCutoffRef.current = 0;
 
         recognition.onresult = (event) => {
+            lastResultsLengthRef.current = event.results.length;
             if (completedRef.current || hardStopRef.current) return;
             setSpeechUnsupported(false);
             setMicError(null);
@@ -302,44 +319,59 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             const text = last?.[0]?.transcript ?? '';
             if (text) setLiveTranscript(text);
 
-            for (let i = event.resultIndex; i < event.results.length; i++) {
+            // Skip results finalized before this verse began (verse reset sets
+            // resultsCutoffRef to the previous verse's result count).
+            const startRes = Math.max(event.resultIndex, resultsCutoffRef.current);
+            for (let i = startRes; i < event.results.length; i++) {
                 const res = event.results[i];
                 for (let a = 0; a < Math.min(MAX_ALTERNATIVES, res.length); a++) {
                     const text = res[a]?.transcript ?? '';
                     if (!text) continue;
                     if (res.isFinal) {
-                        finalAltStreamsRef.current[a] = (finalAltStreamsRef.current[a] ?? '') + text + ' ';
+                        if (!finalTokensRef.current[a]) finalTokensRef.current[a] = [];
+                        finalTokensRef.current[a].push(...normalizeArabicTokens(text));
                     } else {
-                        interimAltStreamsRef.current[a] = text + ' ';
+                        interimTextRef.current[a] = text;
                     }
                 }
             }
 
-            const target = targetWordsRef.current;
-            if (target.length === 0) return;
-
-            // Combined chronological streams: finalized speech (stable) + live interim
+            // Combined chronological streams: finalized tokens (persistent) + live interim
             const streams: string[][] = [];
             for (let a = 0; a < MAX_ALTERNATIVES; a++) {
-                const finalPart = finalAltStreamsRef.current[a] ?? '';
-                const interimPart = interimAltStreamsRef.current[a] ?? '';
-                streams.push(normalizeArabicTokens(finalPart + ' ' + interimPart));
+                streams.push([
+                    ...(finalTokensRef.current[a] ?? []),
+                    ...normalizeArabicTokens(interimTextRef.current[a] ?? ''),
+                ]);
             }
 
-            // Fresh alignment of the full cumulative transcript. Reveal is kept
-            // monotonic (frontier only moves forward); words the engine can't
-            // recognize get marked as missed (skip-ahead) so the verse keeps
-            // flowing instead of stalling on one misheard word.
-            const { consumed, missed } = alignTokensMulti(streams, target, 0, LOOKAHEAD);
+            // Fresh alignment anchored at the current revealed frontier, so
+            // re-reciting already-revealed words (breath, restarts) never
+            // disturbs the reveal and long verses stay monotonic. Reveal is
+            // kept monotonic; words the engine can't recognize get marked as
+            // missed (skip-ahead) so the verse keeps flowing. After an advance
+            // the consumed stream prefix is dropped so repeated words don't
+            // push the frontier word past the lookahead window.
+            const target = targetWordsRef.current;
+            if (target.length === 0) return;
             const frontier = revealedRef.current;
-            if (consumed > frontier) {
-                for (const m of missed) {
-                    if (m >= frontier) missedSetRef.current.add(m);
-                }
-                revealedRef.current = consumed;
-                setRevealedWords(consumed);
+            const { consumed, missed, cursors } = alignTokensMulti(streams, target, frontier, LOOKAHEAD);
+            const newFrontier = frontier + consumed;
+            if (newFrontier > frontier) {
+                for (const m of missed) missedSetRef.current.add(m);
+                revealedRef.current = newFrontier;
+                setRevealedWords(newFrontier);
                 setSkippedIndices(Array.from(missedSetRef.current).sort((a, b) => a - b));
-                if (consumed >= target.length) {
+                for (let a = 0; a < MAX_ALTERNATIVES; a++) {
+                    const finalTokens = finalTokensRef.current[a] ?? [];
+                    if (cursors[a] >= finalTokens.length) {
+                        finalTokensRef.current[a] = [];
+                        interimTextRef.current[a] = '';
+                    } else {
+                        finalTokensRef.current[a] = finalTokens.slice(cursors[a]);
+                    }
+                }
+                if (newFrontier >= target.length) {
                     completeVerse();
                 }
             }
@@ -350,15 +382,17 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 recognitionRef.current = null;
             }
             // Chrome stops recognition after silence; if the user still wants to
-            // continue, seamlessly restart so live detection never dies.
-            if (keepListeningRef.current && !hardStopRef.current && !completedRef.current) {
+            // continue, seamlessly restart so live detection never dies. This
+            // also covers the short verse-transition window where completedRef
+            // is set while the mic stays live.
+            if (keepListeningRef.current && !hardStopRef.current) {
                 setIsRestarting(true);
                 restartTimerRef.current = setTimeout(() => {
                     setIsRestarting(false);
                     // If the mic has been live a while with no speech, nudge the user.
                     if (!receivedSpeechRef.current) setNoSpeechHint(true);
                     createRecognition();
-                }, 350);
+                }, 150);
             } else {
                 setIsListening(false);
             }
@@ -404,8 +438,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setNoSpeechHint(false);
         setLiveTranscript('');
         receivedSpeechRef.current = false;
-        finalAltStreamsRef.current = [];
-        interimAltStreamsRef.current = [];
+        finalTokensRef.current = [];
+        interimTextRef.current = [];
         revealedRef.current = 0;
         missedSetRef.current = new Set();
         completedRef.current = false;
@@ -423,13 +457,25 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         startListeningRef.current = startListening;
     }, [startListening]);
 
-    // Auto-continue: when a verse is fully revealed, the next verse appears and
-    // we restart listening automatically so the session flows verse to verse.
+    // Auto-continue: when a verse is fully revealed, the next verse appears. The
+    // recognition instance is kept alive across the transition so the user can
+    // start reciting the next verse immediately; only re-arm the per-verse
+    // no-speech timer here (state was reset by the verse-change effect).
     useEffect(() => {
         if (autoContinueRef.current) {
             autoContinueRef.current = false;
             if (tab === 'memorize') {
-                startListeningRef.current();
+                if (recognitionRef.current) {
+                    keepListeningRef.current = true;
+                    setIsListening(true);
+                    setIsRestarting(false);
+                    if (noSpeechTimerRef.current) clearTimeout(noSpeechTimerRef.current);
+                    noSpeechTimerRef.current = setTimeout(() => {
+                        if (!receivedSpeechRef.current && keepListeningRef.current) setNoSpeechHint(true);
+                    }, 5000);
+                } else {
+                    startListeningRef.current();
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -476,6 +522,14 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             setCelebration('range_complete');
         }
     }, [rangeVerses.length, stopRecognition]);
+
+    const prevVerse = useCallback(() => {
+        stopRecognition();
+        const idx = currentIdxRef.current;
+        if (idx - 1 >= 0) {
+            setCurrentIdx(idx - 1);
+        }
+    }, [stopRecognition]);
 
     // ---- Listen & Repeat playback ----
     const playVerse = useCallback((idx: number) => {
@@ -765,9 +819,9 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
 
                     <div className="flex items-center justify-center gap-4 mt-5">
                         <button
-                            onClick={() => { stopSound(); if (!isListening) skipVerse(); }}
+                            onClick={() => { stopSound(); if (!isListening) prevVerse(); }}
                             className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
-                            title={t('quran.skip_verse')}
+                            title={t('quran.prev_verse')}
                         >
                             <SkipForward size={18} className="rotate-180" />
                         </button>

@@ -53,6 +53,19 @@ export function normalizeArabicTokens(text: string): string[] {
     return normalizeArabic(text).split(' ').filter(Boolean);
 }
 
+// Muqatta'at (disjoint letters) opening a number of surahs. Reciters say the
+// LETTER NAMES (e.g. "ألف لام ميم" for "الم"), so matching must accept those.
+const MUQATTAAT_TOKENS = new Set(['الم', 'المص', 'الر', 'المر', 'كهيعص', 'طه', 'طسم', 'طس', 'يس', 'ص', 'حم', 'عسق', 'ق', 'ن']);
+
+const ARABIC_LETTER_NAMES: Record<string, string> = {
+    'ا': 'الف', 'ب': 'با', 'ج': 'جيم', 'د': 'دال', 'ه': 'ها',
+    'و': 'واو', 'ز': 'زاي', 'ح': 'حا', 'ط': 'طا', 'ي': 'يا',
+    'ك': 'كاف', 'ل': 'لام', 'م': 'ميم', 'ن': 'نون', 'س': 'سين',
+    'ع': 'عين', 'ف': 'فا', 'ص': 'صاد', 'ق': 'قاف', 'ر': 'را',
+    'ش': 'شين', 'ت': 'تا', 'ث': 'ثا', 'خ': 'خا', 'ذ': 'ذال',
+    'ض': 'ضاد', 'ظ': 'ظا', 'غ': 'غين',
+};
+
 function levenshtein(a: string, b: string): number {
     const m = a.length;
     const n = b.length;
@@ -126,17 +139,48 @@ export interface AlignResult {
     consumed: number;
     /** Absolute target indices that were skipped as unrecognized (riwaya/ASR variants). */
     missed: number[];
+    /** End cursor position in each alternative stream after alignment. */
+    cursors: number[];
+}
+
+/**
+ * Try to match a single target word against a token stream starting at `cursor`.
+ * Returns the next cursor position on success, or -1. Muqatta'at tokens (الم,
+ * ق, كهيعص…) are also matched against the sequence of their letter names
+ * (ألف لام ميم, قاف, كاف ها يا عين صاد) as reciters pronounce them.
+ */
+function matchTokenInStream(tokens: string[], cursor: number, word: string, lookahead: number): number {
+    const end = Math.min(tokens.length, cursor + lookahead);
+    for (let k = cursor; k < end; k++) {
+        if (isWordMatch(tokens[k], word)) return k + 1;
+    }
+    if (MUQATTAAT_TOKENS.has(word)) {
+        const names = [...word].map((c) => ARABIC_LETTER_NAMES[c]).filter(Boolean);
+        if (names.length > 0) {
+            const searchEnd = Math.min(tokens.length, cursor + lookahead + names.length);
+            for (let start = cursor; start < searchEnd; start++) {
+                let p = start;
+                let matched = 0;
+                for (const name of names) {
+                    let q = p;
+                    while (q < tokens.length && !isWordMatch(tokens[q], name)) q++;
+                    if (q >= tokens.length) break;
+                    p = q + 1;
+                    matched++;
+                }
+                if (matched === names.length) return p;
+            }
+        }
+    }
+    return -1;
 }
 
 function tryMatchStream(altStreams: string[][], cursors: number[], word: string, lookahead: number): boolean {
     for (let a = 0; a < altStreams.length; a++) {
-        const tokens = altStreams[a];
-        const end = Math.min(tokens.length, cursors[a] + lookahead);
-        for (let k = cursors[a]; k < end; k++) {
-            if (isWordMatch(tokens[k], word)) {
-                cursors[a] = k + 1;
-                return true;
-            }
+        const next = matchTokenInStream(altStreams[a], cursors[a], word, lookahead);
+        if (next >= 0) {
+            cursors[a] = next;
+            return true;
         }
     }
     return false;
@@ -172,7 +216,7 @@ export function alignTokensMulti(
         }
         break;
     }
-    return { consumed: i - startIndex, missed };
+    return { consumed: i - startIndex, missed, cursors };
 }
 
 export function compareRecitation(spoken: string, target: string): { accuracy: number; missing: string[] } {
