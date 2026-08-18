@@ -6,14 +6,14 @@ import { SurahContent } from '@/types';
 import {
     Brain, Play, Pause, Mic, MicOff, ChevronLeft, ChevronRight,
     CheckCircle2, XCircle, AlertCircle, Flame, Target, Trophy, SkipForward,
-    RotateCcw, ListMusic, Award, Star,
+    RotateCcw, ListMusic, Award, Star, Volume2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStoredState } from '@/lib/storage';
 import {
     DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY,
-    normalizeArabicTokens, matchSpokenWords, recordVerse,
+    normalizeArabicTokens, alignTokensMulti, recordVerse,
     getTodayVerses, getStreak, getTotalVerses, getSurahProgress,
     getUnlockedMilestones, getNewlyUnlockedMilestones,
     MemorizationState,
@@ -34,8 +34,14 @@ interface SpeechRecognitionAlternative {
     transcript: string;
 }
 
+interface SpeechRecognitionResult {
+    isFinal: boolean;
+    length: number;
+    [index: number]: SpeechRecognitionAlternative;
+}
+
 interface SpeechRecognitionResultEvent {
-    results: Array<{ isFinal: boolean; [index: number]: SpeechRecognitionAlternative }>;
+    results: Array<SpeechRecognitionResult>;
     resultIndex: number;
 }
 
@@ -61,6 +67,8 @@ type SpeechWindow = Window & {
 };
 
 const REPEAT_OPTIONS = [1, 2, 3, 5, 7];
+const MAX_ALTERNATIVES = 3;
+const MAX_STALL_EVENTS = 6;
 
 interface RecitationResult {
     accuracy: number;
@@ -78,7 +86,9 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     const [currentIdx, setCurrentIdx] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isListening, setIsListening] = useState(false);
+    const [isRestarting, setIsRestarting] = useState(false);
     const [revealedWords, setRevealedWords] = useState(0);
+    const [skippedIndices, setSkippedIndices] = useState<number[]>([]);
     const [speechUnsupported, setSpeechUnsupported] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<RecitationResult | null>(null);
@@ -101,12 +111,20 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
     const versesRef = useRef<HTMLDivElement | null>(null);
     const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const transcriptRef = useRef('');
-    const cursorRef = useRef(0);
-    const targetWordsRef = useRef<string[]>([]);
+    // Live detection state (kept in refs so recognition callbacks stay fresh)
+    const finalAltStreamsRef = useRef<string[]>([]);
+    const interimAltStreamsRef = useRef<string[]>([]);
+    const revealedRef = useRef(0);
+    const skippedRef = useRef(0);
+    const stallStreakRef = useRef(0);
+    const keepListeningRef = useRef(false);
+    const hardStopRef = useRef(false);
+    const completedRef = useRef(false);
     const autoContinueRef = useRef(false);
+    const targetWordsRef = useRef<string[]>([]);
 
     const verses: VerseItem[] = Object.entries(surah.verse).map(([key, text]) => ({
         verseNum: key.split('_')[1],
@@ -127,10 +145,15 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
 
     // Reset recitation state whenever the current verse changes
     useEffect(() => {
-        transcriptRef.current = '';
-        cursorRef.current = 0;
+        finalAltStreamsRef.current = [];
+        interimAltStreamsRef.current = [];
+        revealedRef.current = 0;
+        skippedRef.current = 0;
+        stallStreakRef.current = 0;
+        completedRef.current = false;
         targetWordsRef.current = currentVerse ? normalizeArabicTokens(currentVerse.text) : [];
         setRevealedWords(0);
+        setSkippedIndices([]);
         setResult(null);
         setCelebration(null);
         setError(null);
@@ -155,6 +178,9 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     }, []);
 
     const stopRecognition = useCallback(() => {
+        hardStopRef.current = true;
+        keepListeningRef.current = false;
+        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
         if (recognitionRef.current) {
             recognitionRef.current.onresult = null;
             recognitionRef.current.onend = null;
@@ -163,6 +189,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             recognitionRef.current = null;
         }
         setIsListening(false);
+        setIsRestarting(false);
     }, []);
 
     const onExitMode = useCallback(() => {
@@ -193,10 +220,46 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
             celebrationTimerRef.current = setTimeout(() => setMilestoneCelebration(null), 4000);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chapterId, currentVerse]);
+    }, [chapterId, currentVerse, setProgress]);
 
-    const startListening = useCallback(() => {
+    const completeVerse = useCallback(() => {
+        if (completedRef.current) return;
+        completedRef.current = true;
+        hardStopRef.current = true;
+        keepListeningRef.current = false;
+        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+        if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onend = null;
+            recognitionRef.current.onerror = null;
+            try { recognitionRef.current.stop(); } catch {}
+            recognitionRef.current = null;
+        }
+        setIsListening(false);
+        setIsRestarting(false);
+
+        const target = targetWordsRef.current;
+        const revealed = revealedRef.current;
+        const total = target.length;
+        const accuracy = total > 0 ? Math.round((revealed / total) * 100) : 0;
+        const missing = target.slice(revealed);
+        recordAttempt(accuracy);
+        setResult({ accuracy, revealed, total, missing });
+        setCelebration(accuracy >= 85 ? 'verse_complete' : 'practice_more');
+
+        const idx = currentIdxRef.current;
+        if (idx + 1 < rangeVerses.length) {
+            autoContinueRef.current = true;
+            advanceTimerRef.current = setTimeout(() => {
+                setCurrentIdx(idx + 1);
+            }, 2200);
+        } else {
+            advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 2200);
+        }
+    }, [rangeVerses.length, recordAttempt]);
+
+    const createRecognition = useCallback(() => {
+        if (hardStopRef.current) return;
         const win = window as SpeechWindow;
         const SR = win.SpeechRecognition || win.webkitSpeechRecognition;
         if (!SR) {
@@ -204,56 +267,65 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             return;
         }
 
-        stopRecognition();
-        setSpeechUnsupported(false);
-        setResult(null);
-        setCelebration(null);
-        transcriptRef.current = '';
-        cursorRef.current = 0;
-        setRevealedWords(0);
-
         const recognition = new SR();
         recognition.lang = 'ar-SA';
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.maxAlternatives = 1;
+        recognition.maxAlternatives = MAX_ALTERNATIVES;
 
         recognition.onresult = (event) => {
-            let interim = '';
-            let final = '';
+            if (completedRef.current || hardStopRef.current) return;
+            setSpeechUnsupported(false);
+
+            let hasNewFinal = false;
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const res = event.results[i];
-                const transcript = res[0]?.transcript ?? '';
-                if (res.isFinal) final += transcript + ' ';
-                else interim += transcript + ' ';
+                for (let a = 0; a < Math.min(MAX_ALTERNATIVES, res.length); a++) {
+                    const text = res[a]?.transcript ?? '';
+                    if (!text) continue;
+                    if (res.isFinal) {
+                        finalAltStreamsRef.current[a] = (finalAltStreamsRef.current[a] ?? '') + text + ' ';
+                        hasNewFinal = true;
+                    } else {
+                        interimAltStreamsRef.current[a] = text + ' ';
+                    }
+                }
             }
-            if (final) transcriptRef.current = transcriptRef.current + final;
-            const combined = transcriptRef.current + ' ' + interim;
 
             const target = targetWordsRef.current;
             if (target.length === 0) return;
-            const spokenTokens = normalizeArabicTokens(combined);
-            const matched = matchSpokenWords(spokenTokens, target, cursorRef.current);
-            if (matched > 0) {
-                cursorRef.current += matched;
-                setRevealedWords(cursorRef.current);
-                if (cursorRef.current >= target.length) {
-                    // Verse fully revealed — record and auto-advance
-                    const accuracy = Math.round((cursorRef.current / target.length) * 100);
-                    recordAttempt(accuracy);
-                    stopRecognition();
-                    setResult({ accuracy, revealed: cursorRef.current, total: target.length, missing: [] });
-                    setCelebration('verse_complete');
-                    const idx = currentIdxRef.current;
-                    if (idx + 1 < rangeVerses.length) {
-                        autoContinueRef.current = true;
-                        advanceTimerRef.current = setTimeout(() => {
-                            setCurrentIdx(idx + 1);
-                        }, 2200);
-                    } else {
-                        advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 2200);
-                    }
+
+            // Combined chronological streams: finalized speech (stable) + live interim
+            const streams: string[][] = [];
+            for (let a = 0; a < MAX_ALTERNATIVES; a++) {
+                const finalPart = finalAltStreamsRef.current[a] ?? '';
+                const interimPart = interimAltStreamsRef.current[a] ?? '';
+                streams.push(normalizeArabicTokens(finalPart + ' ' + interimPart));
+            }
+
+            const matched = alignTokensMulti(streams, target, skippedRef.current);
+            const candidate = skippedRef.current + matched;
+            const next = Math.max(revealedRef.current, candidate);
+
+            if (next > revealedRef.current) {
+                revealedRef.current = next;
+                stallStreakRef.current = 0;
+            } else if (hasNewFinal && candidate <= revealedRef.current) {
+                stallStreakRef.current += 1;
+                if (stallStreakRef.current >= MAX_STALL_EVENTS && skippedRef.current + matched < target.length) {
+                    // User said a word the engine can't match — mark it missed and move on
+                    skippedRef.current += 1;
+                    stallStreakRef.current = 0;
                 }
+            }
+
+            setRevealedWords(revealedRef.current);
+            const skippedArr: number[] = [];
+            for (let s = 0; s < skippedRef.current; s++) skippedArr.push(s);
+            setSkippedIndices(skippedArr);
+
+            if (revealedRef.current >= target.length) {
+                completeVerse();
             }
         };
 
@@ -261,7 +333,17 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             if (recognitionRef.current === recognition) {
                 recognitionRef.current = null;
             }
-            setIsListening(false);
+            // Chrome stops recognition after silence; if the user still wants to
+            // continue, seamlessly restart so live detection never dies.
+            if (keepListeningRef.current && !hardStopRef.current && !completedRef.current) {
+                setIsRestarting(true);
+                restartTimerRef.current = setTimeout(() => {
+                    setIsRestarting(false);
+                    createRecognition();
+                }, 350);
+            } else {
+                setIsListening(false);
+            }
         };
 
         recognition.onerror = () => {
@@ -279,7 +361,24 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
             setIsListening(false);
             setSpeechUnsupported(true);
         }
-    }, [rangeVerses.length, recordAttempt, stopRecognition]);
+    }, [completeVerse]);
+
+    const startListening = useCallback(() => {
+        hardStopRef.current = false;
+        keepListeningRef.current = true;
+        setResult(null);
+        setCelebration(null);
+        setError(null);
+        finalAltStreamsRef.current = [];
+        interimAltStreamsRef.current = [];
+        revealedRef.current = 0;
+        skippedRef.current = 0;
+        stallStreakRef.current = 0;
+        completedRef.current = false;
+        setRevealedWords(0);
+        setSkippedIndices([]);
+        createRecognition();
+    }, [createRecognition]);
 
     const startListeningRef = useRef(startListening);
     useEffect(() => {
@@ -299,23 +398,36 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     }, [currentIdx]);
 
     const stopListening = useCallback(() => {
+        hardStopRef.current = true;
+        keepListeningRef.current = false;
+        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+        if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onend = null;
+            recognitionRef.current.onerror = null;
+            try { recognitionRef.current.stop(); } catch {}
+            recognitionRef.current = null;
+        }
+        setIsListening(false);
+        setIsRestarting(false);
+
         const target = targetWordsRef.current;
-        const revealed = cursorRef.current;
-        stopRecognition();
-        if (target.length > 0) {
-            const accuracy = Math.round((revealed / target.length) * 100);
+        const revealed = revealedRef.current;
+        const total = target.length;
+        if (total > 0) {
+            const accuracy = Math.round((revealed / total) * 100);
             const missing = target.slice(revealed);
             recordAttempt(accuracy);
-            setResult({ accuracy, revealed, total: target.length, missing });
+            setResult({ accuracy, revealed, total, missing });
             if (accuracy >= 85) {
                 setCelebration('perfect');
             } else if (accuracy >= 50) {
                 setCelebration('great');
             } else {
-                setCelebration(null);
+                setCelebration('practice_more');
             }
         }
-    }, [recordAttempt, stopRecognition]);
+    }, [recordAttempt]);
 
     const skipVerse = useCallback(() => {
         stopRecognition();
@@ -410,6 +522,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
     };
 
     const currentDisplayWords = currentVerse ? currentVerse.text.split(' ').filter(Boolean) : [];
+    const skippedSet = new Set(skippedIndices);
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 p-5 md:p-6">
@@ -522,10 +635,10 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
 
                         {tab === 'memorize' ? (
                             <>
-                                {isListening && (
+                                {(isListening || isRestarting) && (
                                     <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                        {t('quran.listening')}
+                                        <span className={cn("w-2 h-2 rounded-full bg-emerald-500", isListening ? "animate-pulse" : "animate-ping")} />
+                                        {isRestarting ? '·' : t('quran.listening')}
                                     </p>
                                 )}
                                 <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
@@ -534,25 +647,35 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                                             key={i}
                                             className={cn(
                                                 "inline-block transition-all duration-300 mx-0.5",
-                                                i < revealedWords
-                                                    ? "text-emerald-700 dark:text-emerald-400"
-                                                    : "text-slate-300 dark:text-slate-600"
+                                                i < revealedWords && !skippedSet.has(i)
+                                                    ? "text-emerald-700 dark:text-emerald-400 font-medium"
+                                                    : skippedSet.has(i)
+                                                        ? "text-red-400 dark:text-red-500 line-through"
+                                                        : "text-slate-300 dark:text-slate-600"
                                             )}
                                         >
-                                            {i < revealedWords ? word : '••••'}
+                                            {i < revealedWords || skippedSet.has(i) ? word : '••••'}
                                         </span>
                                     ))}
                                 </p>
-                                {!isListening && !result && revealedWords > 0 && (
+                                {!isListening && !isRestarting && !result && revealedWords > 0 && (
                                     <p className="text-sm text-slate-500 dark:text-slate-400">
                                         {revealedWords}/{targetWordsRef.current.length} {t('quran.words_revealed')}
                                     </p>
                                 )}
                             </>
                         ) : (
-                            <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
-                                {currentVerse.text}
-                            </p>
+                            <>
+                                {isPlaying && (
+                                    <p className="text-xs font-medium text-violet-600 dark:text-violet-400 flex items-center gap-2">
+                                        <Volume2 size={13} />
+                                        {t('quran.listening')}
+                                    </p>
+                                )}
+                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
+                                    {currentVerse.text}
+                                </p>
+                            </>
                         )}
                     </>
                 ) : (
@@ -576,7 +699,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
 
                     <div className="flex items-center justify-center gap-4 mt-5">
                         <button
-                            onClick={() => { if (isPlaying) { stopSound(); } if (!isListening) skipVerse(); }}
+                            onClick={() => { stopSound(); if (!isListening) skipVerse(); }}
                             className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
                             title={t('quran.skip_verse')}
                         >
@@ -588,7 +711,7 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                             className={cn(
                                 "w-14 h-14 rounded-full text-white flex items-center justify-center shadow-lg transition-colors",
                                 isListening
-                                    ? "bg-red-500 hover:bg-red-600"
+                                    ? "bg-red-500 hover:bg-red-600 animate-pulse"
                                     : "bg-emerald-600 hover:bg-emerald-700"
                             )}
                             title={isListening ? t('quran.stop_mic') : t('quran.tap_mic')}
@@ -670,7 +793,10 @@ export default function MemorizationMode({ surah, chapterId, onExit }: Memorizat
                             {celebration === 'range_complete' && t('quran.range_complete')}
                             {celebration === 'perfect' && t('quran.perfect')}
                             {celebration === 'great' && t('quran.great')}
-                            <span className="font-normal opacity-80">· {t('quran.auto_advancing')}</span>
+                            {celebration === 'practice_more' && t('quran.practice_more')}
+                            {celebration === 'verse_complete' && (
+                                <span className="font-normal opacity-80">· {t('quran.auto_advancing')}</span>
+                            )}
                         </div>
                     )}
 

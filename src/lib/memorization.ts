@@ -106,6 +106,39 @@ export function matchSpokenWords(spokenTokens: string[], targetWords: string[], 
     return revealed;
 }
 
+/**
+ * Multi-alternative greedy alignment. Each ASR alternative is an independent
+ * chronological token stream; a target word is revealed when ANY stream matches
+ * it in order within the lookahead window. This dramatically improves hit-rate
+ * on Arabic where the top alternative is frequently wrong.
+ * `startIndex` allows resuming alignment after force-skipped (stuck) words.
+ */
+export function alignTokensMulti(
+    altStreams: string[][],
+    targetWords: string[],
+    startIndex = 0,
+    lookahead = 4
+): number {
+    const cursors = altStreams.map(() => 0);
+    let revealed = 0;
+    for (let i = startIndex; i < targetWords.length; i++) {
+        let found = false;
+        for (let a = 0; a < altStreams.length && !found; a++) {
+            const tokens = altStreams[a];
+            for (let k = cursors[a]; k < Math.min(tokens.length, cursors[a] + lookahead); k++) {
+                if (isWordMatch(tokens[k], targetWords[i])) {
+                    cursors[a] = k + 1;
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) break;
+        revealed++;
+    }
+    return revealed;
+}
+
 export function compareRecitation(spoken: string, target: string): { accuracy: number; missing: string[] } {
     const targetWords = normalizeArabicTokens(target);
     const spokenWords = normalizeArabicTokens(spoken);
