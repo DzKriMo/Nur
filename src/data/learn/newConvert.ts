@@ -112,7 +112,7 @@ export const newConvertLessons: NewConvertLesson[] = [
         title: 'How to Pray',
         titleAr: 'كيفية الصلاة',
         content: '1. Face the Qibla (direction of Mecca)\n2. Say "Allahu Akbar" (Allah is Greatest)\n3. Recite Al-Fatiha and another surah\n4. Bow (Ruku) saying "Subhana Rabbiyal Adheem"\n5. Stand up saying "Sami Allahu liman hamidah"\n6. Prostrate (Sujud) saying "Subhana Rabbiyal A\'la"\n7. Sit and testify\n8. Say "Assalamu Alaikum" to finish\n\nDon\'t worry if you make mistakes — Allah knows your intention.',
-        contentAr: '1. استقبل القبلة (اتجاه مكة)\n2. قل "الله أكبر"\n3. اقرأ الفاتحة وسورة أخرى\n4. اركع saying "سبحان ربي العظيم"\n5. قم saying "سمع الله لمن حمده"\n6. اسجد saying "سبحان ربي الأعلى"\n7. اجلس وashhad\n8. قل "السلام عليكم" للانتهاء\n\nلا تقلق لو أخطأت — الله يعلم نيتك.'
+        contentAr: '1. استقبل القبلة (اتجاه مكة)\n2. قل "الله أكبر"\n3. اقرأ الفاتحة وسورة أخرى\n4. اركع قائلاً "سبحان ربي العظيم"\n5. قم قائلاً "سمع الله لمن حمده"\n6. اسجد قائلاً "سبحان ربي الأعلى"\n7. اجلس وتشهد\n8. قل "السلام عليكم" للانتهاء\n\nلا تقلق لو أخطأت — الله يعلم نيتك.'
       }
     ]
   },
@@ -126,7 +126,7 @@ export const newConvertLessons: NewConvertLesson[] = [
         title: 'What is Sawm?',
         titleAr: 'ما هو الصيام؟',
         content: 'Sawm is fasting during the month of Ramadan, the ninth month of the Islamic calendar. Muslims abstain from food, drink, and other physical needs from dawn to sunset. Fasting teaches patience, self-discipline, and empathy for those less fortunate.',
-        contentAr: 'الصيام هو الإمساك عن الطعام والشراب والNeeds الجسدية من الفجر إلى المغرب خلال شهر رمضان. يُعلم الصيام الصبر والانضباط الذاتي والتعاطف مع المحتاجين.',
+        contentAr: 'الصيام هو الإمساك عن الطعام والشراب وسائر الحاجات الجسدية من الفجر إلى المغرب خلال شهر رمضان. يُعلم الصيام الصبر والانضباط الذاتي والتعاطف مع المحتاجين.',
         quiz: {
           question: 'When does fasting begin each day?',
           questionAr: 'متى يبدأ الصيام كل يوم؟',

@@ -28,7 +28,7 @@ export const prophetsStories: ProphetStory[] = [
     era: 'Beginning of Creation',
     eraAr: 'بداية الخلق',
     summary: 'Allah created Adam (AS) from clay and breathed His spirit into him. He was the first prophet and the first human being.',
-    summaryAr: 'خلق الله تعالى آدم عليه السلام من طين ونفخ فيه من روحه. وكان أول نبي وأول إنسان.',
+    summaryAr: 'خلق الله تعالى آدم عليه السلام من طين ونفخ فيه من روحه، وكان أول نبي وأول إنسان.',
     fullStory: `The story of Prophet Adam (peace be upon him) is one of the most profound in Islamic tradition. Allah Almighty created Adam from clay, shaping him with His own hands, and then breathed into him of His spirit.
 
 When Allah told the angels that He was going to create a vicegerent (khalifah) on earth, they asked: "Will You place therein one who will cause corruption and shed blood?" Allah replied that He knows what they do not know.
@@ -38,15 +38,15 @@ After creating Adam, Allah taught him the names of all things and commanded the 
 Allah then taught Adam the words of repentance and dwelt him in Paradise with his wife Hawwa (Eve). They were given one prohibition: not to approach a certain tree. Iblis tempted them, and they both ate from it. When they realized their mistake, they repented to Allah, and He forgave them.
 
 From Adam, Allah sent prophets and messengers to guide humanity. Adam is considered the first prophet, and his story teaches us about creation, free will, repentance, and the consequences of disobedience.`,
-    fullStoryAr: `تعد قصة آدم عليه السلام من أعظم القصص في التراث الإسلامي. خلق الله تعالى آدم من طين، وشكّله بيده_handling، ثم نفخ فيه من روحه.
+    fullStoryAr: `تعد قصة آدم عليه السلام من أعظم القصص في التراث الإسلامي. خلق الله تعالى آدم من طين وشكّله بيده، ثم نفخ فيه من روحه.
 
-حين أخبر الله الملائكة أنه سيجعل في الأرض خليفة، سألوا: "أتجعل فيها من يفسد فيها ويسفك الدماء؟" فقال: "إني أعلم ما لا تعلمون."
+حين أخبر الله الملائكة أنه سيجعل في الأرض خليفة، سألوا: «أتجعل فيها من يفسد فيها ويسفك الدماء؟» فقال: «إني أعلم ما لا تعلمون».
 
-بعد خلق آدم، علّمه الله أسماء كل شيء وأمر الملائكة بالسجود له. سجد جميع الملائكة إلا إبليس (الشيطان) الذي امتنع من الكبر، قائلاً إنه خُلق من النار بينما خلق آدم من الطين. هذا العصيان أدى إلى طرده.
+بعد خلق آدم، علّمه الله أسماء كل شيء وأمر الملائكة بالسجود له، فسجد جميع الملائكة إلا إبليس الذي امتنع من الكبر، قائلاً إنه خُلق من النار بينما خُلق آدم من الطين، وهذا العصيان أدى إلى طرده من رحمة الله.
 
-ثم علّمه الله كلمات التوبة وأسكنه في الجنة مع زوجته حواء. كانت هناك حرمة واحدة: لا يقتربا من شجرة معينة. أغرىهما إبليس فأكلا منها. حين أدركوا خطأهما، تابا إلى الله فغفر لهما.
+ثم علّمه الله كلمات التوبة وأسكنه في الجنة مع زوجته حواء، وكانت لهما حرمة واحدة: ألا يقتربا من شجرة معينة. فأغواهما إبليس وأكلا منها، وحين أدركا خطأهما تابا إلى الله فغفر لهما.
 
-من آدم أرسل الله أنبياء ومرسلين لتوجيه البشرية. يعتبر آدم أول نبي، وتعلمنا قصته عن الخلق والإرادة الحرة والتوبة وعواقب العصيان.`,
+ومن ذرية آدم أرسل الله الأنبياء والمرسلين لتوجيه البشرية. يعتبر آدم أول نبي، وتعلمنا قصته عن الخلق والإرادة الحرة والتوبة وعواقب المعصية.`,
     keyLessons: [
       'Allah created humans with dignity and purpose',
       'Pride and arrogance can lead to fall',
@@ -54,10 +54,10 @@ From Adam, Allah sent prophets and messengers to guide humanity. Adam is conside
       'We are all descendants of Adam, making us equal'
     ],
     keyLessonsAr: [
-      'خلق الله الإنسان بكرامة وpurpose',
+      'خلق الله الإنسان بكرامة وله هدف',
       'الكبر والغرور قد يؤديان إلى السقوط',
       'التوبة مقبولة دائماً عند الله',
-      'جميعنا من ذرية آدم مما يجعلنا متساويين'
+      'جميعنا من ذرية آدم، مما يجعلنا متساوين'
     ],
     relatedSurahs: ['Al-Baqarah (2:30-37)', 'Al-A\'raf (7:19-25)', 'Ta-Ha (20:115-123)'],
     svgColor: '#059669'
@@ -71,7 +71,7 @@ From Adam, Allah sent prophets and messengers to guide humanity. Adam is conside
     era: '~2500 BCE (estimated)',
     eraAr: 'حوالي 2500 قبل الميلاد (تقديري)',
     summary: 'Nuh (AS) called his people to Allah for 950 years. When they refused, Allah saved him and the believers in a great ark during the Great Flood.',
-    summaryAr: 'دعا نوح عليه السلام قومه إلى الله لمدة 950 عاماً. حين رفضوا، نجاه الله والمؤمنين في سفينة عظيمة خلال الطوفان العظيم.',
+    summaryAr: 'دعا نوح عليه السلام قومه إلى الله تسعمائة وخمسين عاماً، وحين رفضوا نجاه الله والمؤمنين في سفينة عظيمة خلال الطوفان.',
     fullStory: `Prophet Nuh (peace be upon him) is one of the most patient prophets in Islamic history. He was sent to a people who worshipped idols and rejected the message of monotheism.
 
 Nuh called his people to worship Allah alone for 950 years. Despite his persistent efforts, only a few believed in him. His own wife and one of his sons disbelieved and drowned in the flood.
@@ -81,15 +81,15 @@ When all hope of his people's guidance was lost, Allah commanded Nuh to build an
 The ark sailed for months as water covered the earth. Eventually, the flood subsided, and the ark came to rest on Mount Judi. Nuh and the believers disembarked, and the human race continued from those who survived.
 
 The story of Nuh teaches us about patience, perseverance in calling to truth, and Allah's power over all things.`,
-    fullStoryAr: `يعد نوح عليه السلام من أصبر الأنبياء في التاريخ الإسلامي. أُرسل إلى قوم كانوا يعبدون الأصنام ويرفضون رسالة التوحيد.
+    fullStoryAr: `يعد نوح عليه السلام من أصبر الأنبياء في التاريخ الإسلامي، أُرسل إلى قوم كانوا يعبدون الأصنام ويرفضون رسالة التوحيد.
 
-دعا نوح قومه إلى عبادة الله وحده لمدة 950 عاماً. رغم جهوده المستمرة، قلّ من آمن به. زوجته وأحد أبنائه كفرا وغرقا في الطوفان.
+دعا نوح قومه إلى عبادة الله وحده تسعمائة وخمسين عاماً، ورغم جهوده المستمرة قلّ من آمن به، حتى إن زوجته وأحد أبنائه كفرا وغرقا في الطوفان.
 
-حين ضاعت كل أمل في هداية قومه، أمره الله ببناء سفينة. بنى السفينة بإلهام إلهي، وحين جاء الطوفان، أخذ معه أسرته والمؤمنين serta من كل حيوان.
+حين يئس من هداية قومه، أمره الله ببناء السفينة، فبناها بإلهام إلهي، وحين جاء الطوفان حمل معه أهله والمؤمنين ومن كل حيوان زوجين اثنين.
 
-أبحرت السفينة لمدة أشهر وغطت الماء الأرض. استقرت السفينة في النهاية على جبل الجودي. نزل نوح والمؤمنين، وتكامل الجنس البشري من الناجين.
+أبحرت السفينة شهوراً والماء يغطي الأرض، ثم انكشف الطوفان واستوت السفينة على جبل الجودي، فنزل نوح والمؤمنون وتكاثر الناس من بعدهم.
 
-تعلمنا من قصة نوح عن الصبر والمثابرة في الدعوة إلى الحق وقدرة الله على كل شيء.`,
+تعلمنا من قصة نوح الصبر والمثابرة في الدعوة إلى الحق، وقدرة الله على كل شيء.`,
     keyLessons: [
       'Patience in calling to truth, even when few listen',
       'Allah saves the believers in times of trial',
@@ -97,10 +97,10 @@ The story of Nuh teaches us about patience, perseverance in calling to truth, an
       'Allah\'s plan always prevails'
     ],
     keyLessonsAr: [
-      'الصبر في الدعوة إلى الحق حتى لو قلّ المستمعون',
+      'الصبر في الدعوة إلى الحق حتى لو قلّ المستجيبون',
       'ينجي الله المؤمنين في أوقات الابتلاء',
       'للعصيان عواقب وخيمة',
-      'مخطط الله ي.prevails دائماً'
+      'مشروع الله ينتصر دائماً'
     ],
     relatedSurahs: ['Nuh (71)', 'Hud (11:25-49)', 'Al-Mu\'minun (23:23-30)'],
     svgColor: '#0284c7'
@@ -114,7 +114,7 @@ The story of Nuh teaches us about patience, perseverance in calling to truth, an
     era: '~2000 BCE (estimated)',
     eraAr: 'حوالي 2000 قبل الميلاد (تقديري)',
     summary: 'Ibrahim (AS) rejected idol worship, was thrown into fire, and built the Kaaba. He is the father of prophets and the friend of Allah.',
-    summaryAr: 'رفض إبراهيم عليه السلام عبادة الأصنام، وأُلقي في النار، وبنى الكعبة. وهو أب الأنبياء وخليل الله.',
+    summaryAr: 'رفض إبراهيم عليه السلام عبادة الأصنام وأُلقي في النار وبنى الكعبة، وهو أبو الأنبياء وخليل الله.',
     fullStory: `Prophet Ibrahim (peace be upon him) is known as the "Friend of Allah" (Khalilullah) and is one of the greatest prophets. He is considered the patriarch of the Abrahamic faiths.
 
 Born in Iraq, Ibrahim rejected the idol worship of his people from a young age. He questioned the stars, the moon, and the sun, concluding that none of them could be his Lord. He declared his faith in the One Creator.
@@ -126,17 +126,17 @@ Allah commanded the fire: "O fire, be coolness and safety upon Ibrahim." He emer
 Ibrahim later migrated to Canaan and then to Egypt. Allah tested him with various trials, including the command to sacrifice his son Ismail. Both Ibrahim and Ismail submitted to Allah's will, but Allah replaced Ismail with a ram.
 
 Ibrahim, along with his son Ismail, built the Kaaba in Mecca, establishing it as the first house of worship for humanity.`,
-    fullStoryAr: `يُعرف إبراهيم عليه السلام بـ "خليل الله" وهو من أعظم الأنبياء. يُعتبر أبا الأديان الإبراهيمية.
+    fullStoryAr: `يُعرف إبراهيم عليه السلام بـ «خليل الله»، وهو من أعظم الأنبياء ويُعتبر أبا الأديان الإبراهيمية.
 
-وُلد في العراق ورفض عبادة الأصنام منذ صغره. سأل عن النجوم والقمر والشمس، وتوصل إلى أن لا أحد منها يمكن أن يكون ربه. أعلن إيمانه بالخالق الواحد.
+وُلد في العراق ورفض عبادة الأصنام منذ صغره، فتأمل في النجوم والقمر والشمس وخلص إلى أنه لا يليق بعبادته سوى الله الواحد الأحد، فأعلن إيمانه بالخالق.
 
-حين أصرّ قومه على الشرك، دمّر آلهتهم تاركاً الأكبر. حين واجههم، طلب منهم أن يسألوا الأكبر الذي بالطبع لا يستطيع الكلام. أغضبهم فألقوه في النار.
+حين أصرّ قومه على الشرك، دمّر أصنامهم وترك الأكبر منها، وحين واجههم طلب منهم أن يسألوا الأكبر، وبالطبع لم يستطع الكلام، فغضبوا وألقوه في النار.
 
-أمر الله النار: "يا نار كوني برداً وسلاماً على إبراهيم." خرج سالماً. هذا المعجزة زادت إيمانه وإيمان من شاهدها.
+فأمر الله النار أن تكون برداً وسلاماً على إبراهيم، فخرج منها سالماً، وزادت هذه المعجزة إيمانه وإيمان من شاهدها.
 
-هاجر إبراهيم لاحقاً إلى كنعان ثم مصر. ابتلاه الله بتجارب مختلفة، بما في ذلك أمر التضحية بابنه إسماعيل. خضعا لإرادة الله، لكن الله استبدل إسماعيل بكبش.
+هاجر إبراهيم إلى كنعان ثم إلى مصر، وابتلاه الله بتجارب عظيمة، منها أمره بالتضحية بابنه إسماعيل، فخضعا لإرادة الله، وافتدى الله إسماعيل بذبح عظيم.
 
-بنى إبراهيم مع ابنه إسماعيل الكعبة في مكة، وجعلها أول بيت معبود للبشرية.`,
+بنى إبراهيم مع ابنه إسماعيل الكعبة في مكة، فجعلها أول بيت للعبادة في الأرض.`,
     keyLessons: [
       'Questioning to find truth is a sign of wisdom',
       'Allah protects His faithful servants',
@@ -144,10 +144,10 @@ Ibrahim, along with his son Ismail, built the Kaaba in Mecca, establishing it as
       'Building for Allah\'s sake leaves an eternal legacy'
     ],
     keyLessonsAr: [
-      'السؤال من أجل إيجاد الحقيقة علامة حكمة',
-      'ينجي الله عباده المؤمنين',
-      'الإيمان الحقيقي يتطلب الخضوع الكامل لإرادة الله',
-      'البناء من أجل الله يترك إرثاً دائماً'
+      'البحث عن الحقيقة بالسؤال علامة من علامات الحكمة',
+      'يحفظ الله عباده المؤمنين',
+      'الإيمان الحقيقي يتطلب التسليم الكامل لله',
+      'البناء من أجل الله يترك أثراً باقياً'
     ],
     relatedSurahs: ['Al-Baqarah (2:124-141)', 'Al-An\'am (6:74-83)', 'Ibrahim (14:35-41)', 'Al-Hajj (22:26-33)'],
     svgColor: '#d97706'
@@ -161,7 +161,7 @@ Ibrahim, along with his son Ismail, built the Kaaba in Mecca, establishing it as
     era: '~1900 BCE (estimated)',
     eraAr: 'حوالي 1900 قبل الميلاد (تقديري)',
     summary: 'Ismail (AS) was the son of Ibrahim who was willing to be sacrificed for Allah. The Kaaba was built by his father and himself.',
-    summaryAr: 'إسماعيل عليه السلام هو ابن إبراهيم الذي كان مستعداً للتضحية من أجل الله. بُنيت الكعبة من قبل أبيه وأبيه.',
+    summaryAr: 'إسماعيل عليه السلام هو ابن إبراهيم الذي استسلم للتضحية في سبيل الله، وبُنيت الكعبة على يديه مع أبيه.',
     fullStory: `Prophet Ismail (peace be upon him) was the eldest son of Prophet Ibrahim and Hajjar (Hagar). His story is deeply connected to the annual Hajj pilgrimage.
 
 When Sarah, Ibrahim's wife, could not have children, she gave Hajar to Ibrahim as a wife. Ismail was born to them. Later, Allah blessed Ibrahim and Sarah with a son, Ishaq (Isaac).
@@ -173,17 +173,17 @@ The most profound test came when Ibrahim saw in a dream that he must sacrifice I
 This event is commemorated annually during Eid al-Adha, where Muslims worldwide sacrifice animals in remembrance of Ibrahim's and Ismail's devotion.
 
 Ismail grew up in Mecca, and together with his father Ibrahim, he built the Kaaba. He is considered the ancestor of the Arab people and particularly the tribe of Quraysh.`,
-    fullStoryAr: `يعد إسماعيل عليه السلام الابن الأكبر للنبي إبراهيم وهاجر. ترتبط قصته بشدة بحجMuslimsAnnual.
+    fullStoryAr: `يعد إسماعيل عليه السلام الابن الأكبر للنبي إبراهيم وهاجر، وترتبط قصته ارتباطاً وثيقاً بمناسك الحج السنوية.
 
-حين لم تستطع سارة، زوجة إبراهيم، الإنجاب، أعطتها هاجر لإبراهيم زوجة. ولد إسماعيل لهما. لاحقاً، بارك الله لإبراهيم وسارة بإسماعيل إسماعيل.
+حين تأخرت سارة زوجة إبراهيم عن الإنجاب، وهبت هاجر لإبراهيم زوجةً، فولدت له إسماعيل، ثم رزق الله إبراهيم وسارة إسحاق.
 
-ابتلاه الله بأمر بترك هاجر وإسماعيل في وادٍ مقفر في مكة. هاجر الم Dichotomy جريت بين جبلي الصفا والمروة سبع مرات. سبب الله تعالى زمزم من تحت قدمي إسماعيل.
+ابتلى الله إبراهيم بأمره أن يترك هاجر وإسماعيل في وادٍ غير ذي زرع في مكة، فسعت هاجر بين الصفا والمروة سبع مرات تبحث عن الماء، ففجر الله عين زمزم من تحت قدمي إسماعيل.
 
-جاء الابتلاء الأعمق حين رأى إبراهيم في المنام أنه يجب أن يضحي بإسماعيل. خضعا لإرادة الله. حين أعد إبراهيم تنفيذ الأمر، ناداه الله وقدم له كبشاً بدلاً.
+جاء الابتلاء الأعظم حين رأى إبراهيم في المنام أنه يذبح ابنه، فخضعا معاً لأمر الله، وحين همّ إبراهيم بتنفيذ الذبح ناداه الله وفداه بكبش عظيم.
 
-يُحتفل بهذا الحدث سنوياً في عيد الأضحى، حيث يضحي المسلمون في جميع أنحاء العالم تذكيراً بudevotion إبراهيم وإسماعيل.
+يُحتفل بهذا الحدث كل عام في عيد الأضحى، حيث يضحي المسلمون في أنحاء العالم إحياءً لذكرى طاعة إبراهيم وإسماعيل.
 
-نشأ إسماعيل في مكة، وقام مع أبيه ببناء الكعبة. يُعتبر سلف القبائل العربية وخاصة قريش.`,
+نشأ إسماعيل في مكة وبنى مع أبيه الكعبة، ويُعتبر سلفاً للقبائل العربية ولا سيما قريش.`,
     keyLessons: [
       'Absolute submission to Allah is the essence of faith',
       'Allah tests those He loves most',
@@ -191,10 +191,10 @@ Ismail grew up in Mecca, and together with his father Ibrahim, he built the Kaab
       'Sacrifice for Allah\'s sake brings great reward'
     ],
     keyLessonsAr: [
-      'الخضوع المطلق لله جوهر الإيمان',
-      'يبتلى الله من يحبهم أكثر',
-      'زمزم معجزة مستمرة حتى اليوم',
-      'التضحية من أجل الله تجلب عظيم الأجر'
+      'التسليم المطلق لله جوهر الإيمان',
+      'يبتلي الله من يحبهم أكثر',
+      'زمزم معجزة مستمرة إلى اليوم',
+      'التضحية في سبيل الله تجلب أجراً عظيماً'
     ],
     relatedSurahs: ['Al-Baqarah (2:127-129)', 'As-Saffat (37:100-113)'],
     svgColor: '#7c3aed'
@@ -208,7 +208,7 @@ Ismail grew up in Mecca, and together with his father Ibrahim, he built the Kaab
     era: 'Time of Ibrahim',
     eraAr: 'زمن إبراهيم',
     summary: 'Lut (AS) was sent to the people of Sodom who practiced immorality. They were destroyed by a rain of stones.',
-    summaryAr: 'أُرسل لوط عليه السلام إلى قوم سدوم الذين مارسوا الفسوق. دمروا بمطر من الحجارة.',
+    summaryAr: 'أُرسل لوط عليه السلام إلى قوم سدوم الذين ارتكبوا الفواحش، فدمّرهم الله بمطر من الحجارة.',
     fullStory: `Prophet Lut (peace be upon him) was the nephew of Prophet Ibrahim. He was sent to the people of the cities of Sodom and Gomorrah, who were committing terrible acts of immorality.
 
 The people of Lut had abandoned natural relations and instead practiced lewd acts publicly. Lut warned them repeatedly, but they persisted in their evil ways. They even threatened to expel him and his family from the city.
@@ -220,17 +220,17 @@ Allah sent upon the cities a rain of stones made of baked clay. The punishment w
 Only Lut and his daughters were saved. They took refuge in a cave, and from his daughters, Lut's descendants continued.
 
 The story of Lut is a reminder of the consequences of moral corruption and the importance of maintaining righteousness.`,
-    fullStoryAr: `أُرسل لوط عليه السلام وهو ابن عم إبراهيم إلى أهل مدن سدوم وعمورة الذين كانوا يرتكبون أفعالاً فاحشة.
+    fullStoryAr: `أُرسل لوط عليه السلام وهو ابن أخي إبراهيم إلى أهل مدينتي سدوم وعمورة الذين كانوا يرتكبون أفعالاً فاحشة شنعاء.
 
-ترك قوم لوط العلاقات الطبيعية ومارسوا الفحشاء علناً.حذرهم لوط مراراً، لكنهم أصرّوا على طريقتهم. thậm chí هددوا بترحيله وعائلته من المدينة.
+ترك قوم لوط الفطرة السليمة ومارسوا الفاحشة علناً، فحذّرهم لوط مراراً، لكنهم أصروا على طريقهم، بل هددوه بطرده هو وأهله من المدينة.
 
-حين جاءت الملائكة لإبراهيم بنبأ العقوبة، أُصيب لوط بقلق شديد. زارت الملائكة لوط وأبلغته بال.destroy الوشيك، وأمروا ب отделه وعائلته في الليل وعدم النظر إلى الوراء.
+حين بشّرت الملائكة إبراهيم بالعذاب، حزن لوط حزناً شديداً، ثم زارته الملائكة وأخبرته بالعذاب الوشيك، وأمرته أن يخرج بأهله ليلاً وألا يلتفت أحد منهم.
 
-أرسل الله على المدن مطراً من الحجارة المخبأة. كانت العقوبة بالغة الشدة فدمّرت المدن تماماً. زوجة لوط التي كفرت هلكت مع بقية الكافرين.
+أنزل الله على المدن مطراً من حجارة من سجيل، فكان العذاب أليماً ودمّرت المدن تماماً، وهلكت زوجة لوط الكافرة مع الكافرين.
 
-نجا لوط وبناته فقط. لجأوا في كهف، ومن بناته تكاملت ذرية لوط.
+نجا لوط وبناته فقط، ولجأوا إلى كهف، ومن بناته تكاثرت ذريته.
 
-تذكير قصة لوط بعواقب الفساد الأخلاقي وأهمية الحفاظ على الصدق.`,
+قصة لوط تذكير بعواقب الفساد الأخلاقي وأهمية التمسك بالاستقامة.`,
     keyLessons: [
       'Moral corruption leads to destruction',
       'Patience in delivering the message, even when rejected',
@@ -239,9 +239,9 @@ The story of Lut is a reminder of the consequences of moral corruption and the i
     ],
     keyLessonsAr: [
       'الفساد الأخلاقي يؤدي إلى الدمار',
-      'الصبر في إيصال الرسالة حتى لو رُفضت',
-      'عقوبة الله مؤكدة للمصرين على الذنوب',
-      'اتباع الإلهي يحمي من الدمار'
+      'الصبر في تبليغ الرسالة حتى مع الرفض',
+      'عقاب الله محقق للمصرين على الذنوب',
+      'اتباع الهدى يحفظ من الهلاك'
     ],
     relatedSurahs: ['Hud (11:77-83)', 'Al-Hijr (15:61-77)', 'Ash-Shu\'ara (26:160-175)'],
     svgColor: '#dc2626'
@@ -251,11 +251,11 @@ The story of Lut is a reminder of the consequences of moral corruption and the i
     name: 'Prophet Yusuf',
     nameAr: 'يوسف عليه السلام',
     title: 'The Beautiful',
-    titleAr: 'الحسين',
+    titleAr: 'الجميل',
     era: '~1700 BCE (estimated)',
     eraAr: 'حوالي 1700 قبل الميلاد (تقديري)',
     summary: 'Yusuf (AS) was thrown into a well by his brothers, sold into slavery in Egypt, and eventually became a minister. His story is the most detailed in the Quran.',
-    summaryAr: 'أُلقي يوسف عليه السلام في البئر من قبل إخوته، وبُيع عبداً في مصر، وأصبح وزيراً. قصته هي التفصيلية في القرآن.',
+    summaryAr: 'أُلقي يوسف عليه السلام في البئر من قبل إخوته، وبُيع في مصر، ثم أصبح وزيراً. قصته من أطول القصص في القرآن.',
     fullStory: `The story of Prophet Yusuf (peace be upon him) is narrated in detail in Surah Yusuf, the only surah that tells an entire story from beginning to end.
 
 Yusuf was the son of Prophet Yaqub (Jacob). He had eleven brothers who were jealous of him because he was their father's favorite. They plotted against him and threw him into a well.
@@ -267,17 +267,17 @@ In prison, Yusuf interpreted dreams for his fellow prisoners. When the king of E
 Impressed, the king appointed Yusuf as minister. When famine struck, Yusuf's brothers came to Egypt seeking food. Through a series of events, Yusuf revealed his identity to them. He forgave them and said: "No blame on you today. Allah will forgive you, and He is the Most Merciful of the merciful."
 
 The story of Yusuf teaches us about patience, forgiveness, and trust in Allah's plan.`,
-    fullStoryAr: `تُروى قصة يوسف عليه السلام بالتفصيل في سورة يوسف، وهي السورة الوحيدة التي تروي قصة كاملة من البداية إلى النهاية.
+    fullStoryAr: `تُروى قصة يوسف عليه السلام بالتفصيل في سورة يوسف، وهي السورة الوحيدة التي تروي قصة كاملة من أولها إلى آخرها.
 
-كان يوسف ابن يعقوب عليه السلام. كان لديه أحد عشر أخاً وكانوا يغارون منه لأنه المفضل عند أبيهم. دبروا له وألقوه في البئر.
+كان يوسف ابن يعقوب عليه السلام، وله أحد عشر أخاً كانوا يغارون منه لأنه كان أحبّ إلى أبيهم، فدبّروا له مكيدة وألقوه في البئر.
 
-وجدت قافلة يوسف وبيعته في مصر لمسؤول رفيع. نشأ يوسف في مصر واشتُهر بجماله وتقواه. حاولت زوجة سيده أن تغويه، لكنه رفض. اتهمته زوجة سيده زوراً فسُجن.
+التقطته قافلة وبيعته في مصر إلى عزيز مصر، فنشأ يوسف معروفاً بجماله وتقواه، وراودته امرأة العزيز عن نفسه فأبى، فاتهمته ظلماً وسُجن.
 
-في السجن، فسّر يوسف أحلام رفاقه. حين رأى ملك مصر حلمها مزعجاً، جُلب يوسف لتأويله. تنبأ بسبع سنوات من الوفرة تليها سبع سنوات من القحط.
+في السجن فسّر يوسف رؤيا أصحابه، وحين رأى ملك مصر رؤيا مزعجة، جُلب يوسف لتأويلها، فنبأه بسبع سنين من الخصب تليها سبع من الجدب.
 
-أعجب الملك وعيّن يوسف وزيراً.حين جاء القحط، جاء إخوة يوسف إلى مصر طالبين الطعام. من خلال سلسلة من الأحداث، كشف يوسف عن هويتهم. عفا عنهم وقال: "لا لوم عليكم اليوم يغفر الله لكم وهو أرحم الراحمين."
+أعجب الملك بحكمته فجعله على خزائن الأرض، وحين جاء الجدب قدم إخوة يوسف إلى مصر يطلبون الطعام، فكشف لهم يوسف عن نفسه بعد سلسلة من الأحداث، وعفا عنهم وقال: «لا تثريب عليكم اليوم، يغفر الله لكم وهو أرحم الراحمين».
 
-تعلمنا من قصة يوسف عن الصبر والمغفرة والثقة بمخطط الله.`,
+تعلمنا من قصة يوسف الصبر والعفو وحسن الظن بالله والثقة بتدبيره.`,
     keyLessons: [
       'Patience through hardship leads to Allah\'s help',
       'Forgiveness is better than revenge',
@@ -285,9 +285,9 @@ The story of Yusuf teaches us about patience, forgiveness, and trust in Allah's 
       'Modesty and piety are always rewarded'
     ],
     keyLessonsAr: [
-      'الصبر عبر العسر يقود إلى نصر الله',
-      'المغفرة أفضل من الانتقام',
-      'مخطط الله دائماً مثالي',
+      'الصبر على البلاء يقود إلى نصر الله',
+      'العفو خير من الانتقام',
+      'تدبير الله دائماً في صالح العبد',
       'العفة والتقوى تُكافأ دائماً'
     ],
     relatedSurahs: ['Yusuf (12)'],
@@ -302,7 +302,7 @@ The story of Yusuf teaches us about patience, forgiveness, and trust in Allah's 
     era: '~1300 BCE (estimated)',
     eraAr: 'حوالي 1300 قبل الميلاد (تقديري)',
     summary: 'Musa (AS) was saved from Pharaoh, spoke to Allah on Mount Sinai, and led the Israelites out of Egypt with many miracles.',
-    summaryAr: 'نجا موسى عليه السلام من فرعون، و北宋 Barmore مع الله على جبل سيناء، وقاد بني إسرائيل من مصر بالعديد من المعجزات.',
+    summaryAr: 'نجا موسى عليه السلام من فرعون، وكلمه الله على جبل الطور، وقاد بني إسرائيل خارج مصر بمعجزات كثيرة.',
     fullStory: `Prophet Musa (peace be upon him) is one of the most prominent prophets in Islam, Christianity, and Judaism. He is known as "Kaluamullah" (the Speaker to Allah) because he spoke directly with Allah.
 
 Born during a time when Pharaoh was killing newborn Israelite boys, Musa's mother placed him in a basket on the Nile. He was found by Pharaoh's wife and raised in the royal palace.
@@ -314,17 +314,17 @@ Allah gave Musa many miracles: his staff turned into a serpent, his hand glowed 
 Pharaoh refused to believe and pursued the Israelites. When they reached the Red Sea, Musa struck it with his staff, and it parted. The Israelites crossed safely, but Pharaoh and his army were drowned.
 
 Musa led the Israelites for forty years in the wilderness, receiving the Torah and guiding them with divine law.`,
-    fullStoryAr: `يعد موسى عليه السلام من أبرز الأنبياء في الإسلام والمسيحية واليهودية. يُعرف بـ "كليم الله" لأنه تحدث مباشرة مع الله.
+    fullStoryAr: `يعد موسى عليه السلام من أبرز الأنبياء في الإسلام والمسيحية واليهودية، ويُعرف بـ «كليم الله» لأنه كلمه الله مباشرة.
 
-وُلد في وقت كان فيه فرعون يقتل صغار بنى إسرائيل. وضعته أمه في سلة على النيل. وجدته زوجة فرعون وربّته في القصر الملكي.
+وُلد في وقت كان فرعون يذبح أبناء بني إسرائيل، فوضعته أمه في تابوت على النيل، فالتقطته امرأة فرعون وربّته في القصر الملكي.
 
-كشاب، قتل موسى مصرياً بالخطأ وهرب إلى مدين. هناك تزوج وعاش راعياً لعشر سنوات. ذات يوم، رأى ناراً على جبل سيناء وذهب للتحقيق. هناك، تحدث الله إليه مباشرة وعّنه نبياً.
+في شبابه قتل موسى مصرياً بالخطأ فهرب إلى مدين، فتزوج وعاش راعياً عشر سنين، ثم رأى ناراً على جبل الطور فذهب إليها، فكلمه الله واصطفاه نبياً.
 
-أعطاه الله معجزات كثيرة: تحوّل عصاه إلى ثعبان، يده تتوهج当他 وضعها على صدره، وشق البحر الأحمر. واجه فرعون برسل الله لتحرير بني إسرائيل.
+أعطاه الله معجزات: عصا تتحول إلى ثعبان، ويداً تخرج بيضاء، وشقّ البحر، فذهب إلى فرعون برسالة تحرير بني إسرائيل من العبودية.
 
-رفض فرعون الإيمان وطارد بني إسرائيل.حين وصلوا إلى البحر الأحمر، ضربه موسى بعصاه فشق.عبر بنى إسرائيل بأمان، لكن فرعون وجيوشه غرقوا.
+رفض فرعون الإيمان وطارد بني إسرائيل، وعند البحر الأحمر ضرب موسى البحر بعصاه فانفلق، فعبر بنو إسرائيل بأمان وغرق فرعون وجنوده.
 
-قاد موسى بني إسرائيل أربعين سنة في البرية، متلقياً التوراة ويوجههم بالقانون الإلهي.`,
+قاد موسى بني إسرائيل أربعين سنة في التيه، متلقياً التوراة وهادياً إياهم بشرع الله.`,
     keyLessons: [
       'Allah chooses the unlikely for great missions',
       'Confronting tyranny with truth and divine help',
@@ -332,10 +332,10 @@ Musa led the Israelites for forty years in the wilderness, receiving the Torah a
       'God\'s help comes at the most critical moment'
     ],
     keyLessonsAr: [
-      'يختار الله غير المتوقع للمهام العظيمة',
-      'مواجهة الظلم بالحق والمساعدة الإلهية',
-      'المعجزات تؤكد النبوة',
-      'come help come help comes at the most critical moment'
+      'يختار الله غير المتوقع للمهمات العظيمة',
+      'مواجهة الطغيان بالحق وبعون الله',
+      'المعجزات تصدّق النبوة',
+      'نصر الله يأتي في أصعب اللحظات'
     ],
     relatedSurahs: ['Al-Baqarah (2:51-73)', 'Ta-Ha (20:9-98)', 'Al-Qasas (28:3-43)'],
     svgColor: '#ea580c'
@@ -345,11 +345,11 @@ Musa led the Israelites for forty years in the wilderness, receiving the Torah a
     name: 'Prophet Dawud',
     nameAr: 'داود عليه السلام',
     title: 'The King and Psalmist',
-    titleAr: 'الملك والمرتل',
+    titleAr: 'الملك والمرتّل',
     era: '~1000 BCE (estimated)',
     eraAr: 'حوالي 1000 قبل الميلاد (تقديري)',
     summary: 'Dawud (AS) was a king, prophet, and warrior who defeated Goliath and was given the Zabur (Psalms).',
-    summaryAr: 'داود عليه السلام كان ملكاً ونبياً ومحارباً هزم جالوت وأُعطي الزبور.',
+    summaryAr: 'كان داود عليه السلام ملكاً ونبياً ومحارباً، هزم جالوت وأُعطي الزبور.',
     fullStory: `Prophet Dawud (peace be upon him) is one of the most beloved prophets in Islamic tradition. He was a king, prophet, warrior, and poet who was given the Zabur (Psalms) by Allah.
 
 As a young shepherd, Dawud was called to face the giant Goliath (Jalut) in battle against the Philistines. While the seasoned soldiers of Israel trembled in fear, the young Dawud stepped forward with only a sling and five stones.
@@ -361,17 +361,17 @@ Allah made Dawud king and gave him the Zabur. He was known for his beautiful voi
 Dawud was given a special gift: the ability to understand the language of birds and to shape iron with his hands. He used these gifts in the service of Allah and his people.
 
 The story of Dawud teaches us about courage, faith, and the importance of using one's talents in the service of Allah.`,
-    fullStoryAr: `يعد داود عليه السلام من أحباب الأنبياء في التراث الإسلامي. كان ملكاً ونبياً ومحارباً وشاعراً أُعطي الزبور من الله.
+    fullStoryAr: `يعد داود عليه السلام من أحب الأنبياء إلى المسلمين، كان ملكاً ونبياً ومحارباً وشاعراً أُعطي الزبور من الله.
 
-كراعٍ صغير، نُادِي داود لمواجهة العملاق جالوت في معركة ضد الفلسطينين. بينما ارتجف جنود إسرائيل المخضرمون من الخوف، تقدم داود الشاب بمنجاة فقط وخمس حجارة.
+كراعٍ صغير، استُدعي داود لمواجهة العملاق جالوت في حرب ضد الفلسطينيين، وبينما ارتعب جنود بني إسرائيل تقدم داود الشاب بمقلاع وخمسة حجارة فقط.
 
-ألقى داود حجرة أصابت جبهة جالوت وقتلتاه. هرب الفلسطينيون في ذعر، وفاز بنو إسرائيل نصراً حاسماً. هذا الحدث أسّس لسمعة داود كمحارب شجاع.
+رمى داود حجراً أصاب جبهة جالوت فأرداه قتيلاً، وهرب الفلسطينيون مذعورين، وحقق بنو إسرائيل نصراً حاسماً، وأصبح داود بطلاً مشهوراً.
 
-جعله الله ملكاً وأعطاه الزبور. اشتُهر بصوته الجميل و Devotion له. حين كان يحمد الله، الجبل والطيور كانت تنضم إليه في التكبير.
+جعله الله ملكاً وآتاه الزبور، وكان صوته جميلاً يسبح الله فتُجيب الجبال والطيور معه بالتسبيح.
 
-أُعطي داود هدايا خاصة: فهم لغة الطيور وتشكيل الحديد بيديه. استخدم هذه الهدايا في خدمة الله وشعبه.
+أعطاه الله نعمة فهم لغة الطير وإلانة الحديد بيديه، فاستخدم هذه النعم في خدمة الله وخدمة شعبه.
 
-تعلمنا من قصة داود عن الشجاعة والإيمان وأهمية استخدام موهباتك في خدمة الله.`,
+تعلمنا من قصة داود الشجاعة والإيمان وأهمية توظيف المواهب في خدمة الله.`,
     keyLessons: [
       'Courage comes from faith in Allah',
       'Allah uses the weak to defeat the strong',
@@ -379,10 +379,10 @@ The story of Dawud teaches us about courage, faith, and the importance of using 
       'Talents should be used in Allah\'s service'
     ],
     keyLessonsAr: [
-      'الشجاعة تأتي من الإيمان بالله',
+      'الشجاعة تنبع من الإيمان بالله',
       'يستخدم الله الضعفاء لهزيمة الأقوياء',
-      'الشكر والعبادة تزيد البركات',
-      'يجب استخدام الموهبات في خدمة الله'
+      'الشكر والعبادة يزيدان النعم',
+      'يجب توظيف المواهب في خدمة الله'
     ],
     relatedSurahs: ['Al-Baqarah (2:251)', 'Saad (38:17-26)', 'Al-Anbiya (21:78-80)'],
     svgColor: '#b45309'
@@ -396,7 +396,7 @@ The story of Dawud teaches us about courage, faith, and the importance of using 
     era: '~950 BCE (estimated)',
     eraAr: 'حوالي 950 قبل الميلاد (تقديري)',
     summary: 'Sulaiman (AS) was given wisdom, ruled over jinn and animals, and had a magnificent kingdom. He could understand the speech of birds and ants.',
-    summaryAr: 'سليمان عليه السلام أُعطي الحكمة، وحكم على الجن والحيوان، وكان له مملكة عظيمة. كان يفهم كلام الطيور والنمل.',
+    summaryAr: 'أُعطي سليمان عليه السلام الحكمة وسخر له الجن والريح، وكان يفهم لغة الطير والنمل.',
     fullStory: `Prophet Sulaiman (peace be upon him) was the son of Dawud and one of the most powerful prophets in terms of worldly authority. He was granted wisdom, dominion over jinn, and understanding of the speech of all creatures.
 
 Sulaiman inherited his father's kingdom and expanded it greatly. He had a magnificent throne that was described in the Quran as being made of gold and silver, adorned with precious gems.
@@ -410,19 +410,19 @@ The ant, one of the creatures Sulaiman could understand, warned its people about
 Sulaiman was also known for his wisdom in judgment. The famous story of the two women claiming the same baby, where he suggested dividing the baby in two, showcases his wisdom.
 
 When Sulaiman died, he was standing with his staff, supporting himself. The jinn continued working, thinking he was alive, until a termite ate through his staff and he fell. This shows that even the greatest of worldly power is temporary.`,
-    fullStoryAr: `يعد سليمان عليه السلام ابن داود وأقوى الأنبياء من حيث السلطة الدنيوية. أُعطي الحكمة وال dominion على الجن وفهم كلام جميع المخلوقات.
+    fullStoryAr: `يعد سليمان عليه السلام ابن داود وأقوى الأنبياء سلطاناً في الأرض، آتاه الله الحكمة وسخر له الجن والريح وفهم لغة كل المخلوقات.
 
-ورث سليمان مملكة أبيه ووسّعها بشكل كبير. كان له عرش عظيم وصف في القرآن بأنه مصنوع من الذهب والفضة ومزين بالأحجار الكريمة.
+ورث سليمان ملك أبيه ووسّعه، وكان له عرش عظيم وصفه القرآن بأنه من ذهب وفضة مرصع بالجواهر.
 
-أمر الجن ببناء له قصور ومعالم فخمة. الرياح كانت خاضعة له وتهب بأمره. كان لديه جيوش من البشر والجن والطيور.
+أمر الجن ببناء القصور والمعالم الفخمة، وسخرت له الريح تجري بأمره، وكان له جنود من الإنس والجن والطير.
 
-من أشهر القصص عن سليمان تلك المتعلقة بالملكة بلقيس (بلكيس). حين سمعت عن مملكته وحكمته، أرسلت له هدايا فخمة. سليمان الذي لم يتأثر بالثروات الدنيا، دعاها إلى قصره حيث رأت أرضاً من الزجاج بماء تحتها، وظننتها بركة.
+من أشهر قصصه قصة ملكة سبأ بلقيس، حين سمعت بملكه وحكمته أرسلت له هدية، فلم يلتفت إليها سليمان، ودعاها إلى قصره، فرأت أرضاً من زجاج تحتها ماء فظنته ماءً.
 
-النملة، من المخلوقات التي كان سليمان يفهمها، حذرت قومها من جيوش سليمان المتقدمة. هذا يدل على سيطرته على أصغر المخلوقات.
+النملة التي فهم سليمان قولها حذرت قومها من جيوشه، فيظهر بذلك سلطانه على أصغر المخلوقات.
 
-يُعرف سليمان أيضاً بحكمته في القضاء. القصة الشهيرة للمرأتين المتنازعتين على نفس الطفل، حيث اقترح تقسيم الطفل إلى نصفين، تُظهر حكمته.
+عُرف سليمان بالحكمة في القضاء، وأشهر ذلك قصته في حكمه بين المرأتين المتنازعتين على الطفل.
 
-حين مات سليمان، كان واقفاً بعصاه ي support himself. استمر الجن في العمل ظناً منهم أنه حي، حتى أكلت حشرة العصا فسقط. هذا يدل على أن حتى أعظم سلطة دنيوية مؤقتة.`,
+حين توفي سليمان كان متكئاً على عصاه، فظل الجن يعملون ظانين أنه حي، حتى أكلت الأرضة عصاه فسقط، فتبين أن الجن لا يعلمون الغيب، وأن سلطان الدنيا زائل.`,
     keyLessons: [
       'Wisdom is the greatest gift from Allah',
       'Worldly power is temporary',
@@ -431,9 +431,9 @@ When Sulaiman died, he was standing with his staff, supporting himself. The jinn
     ],
     keyLessonsAr: [
       'الحكمة أعظم هدية من الله',
-      'السلطة الدنيا مؤقتة',
+      'سلطان الدنيا زائل',
       'حتى أصغر المخلوقات لها قيمة',
-      'العدل والأمانة ضرورية في القيادة'
+      'العدل والأمانة أساسان في القيادة'
     ],
     relatedSurahs: ['Al-Baqarah (2:102)', 'An-Naml (27:15-44)', 'Saad (38:30-40)'],
     svgColor: '#0891b2'
@@ -447,7 +447,7 @@ When Sulaiman died, he was standing with his staff, supporting himself. The jinn
     era: '~700 BCE (estimated)',
     eraAr: 'حوالي 700 قبل الميلاد (تقديري)',
     summary: 'Yunus (AS) was swallowed by a whale after leaving his people. He repented in the whale\'s belly and was saved by Allah.',
-    summaryAr: 'ابتلعه الحوت بعد مغادرته قومه. تاب في بطن الحوت ونجاه الله.',
+    summaryAr: 'ابتلعه الحوت بعد مغادرته قومه، فتاب في بطن الحوت ونجاه الله.',
     fullStory: `Prophet Yunus (peace be upon him), known as "Dhun-Nun" (the One of the Whale), is one of the most emotionally moving stories in the Quran.
 
 Yunus was sent to the people of Nineveh in modern-day Iraq. He called them to worship Allah and abandon their idolatry, but they refused to listen. Frustrated, Yunus left his people without Allah's permission, warning them that punishment would come.
@@ -461,19 +461,17 @@ In the belly of the whale, in complete darkness, surrounded by water on all side
 Allah heard his prayer and commanded the whale to release him. Yunus was cast onto the shore, weak and ill. Allah grew a tree to shade him and provided for him. He then sent Yunus back to his people, who now believed.
 
 The story of Yunus teaches us that Allah's mercy is always greater than His punishment, and that sincere repentance is never rejected.`,
-    fullStoryAr: `يعد يونس عليه السلام المعروف بـ "ذو النون" من أحاسس القصص في القرآن.
+    fullStoryAr: `يعد يونس عليه السلام الملقب بـ «ذي النون» من أكثر القصص تأثيراً في القرآن.
 
-أُرسل يونس إلى أهل نينوى في العراق الحديث. دعاهم إلى عبادة الله وترك الشرك، لكنهم رفضوا الاستماع. غاضباً، غادر يونس قومه دون إذن الله، محذراً إياهم بأن العقوبة قادمة.
+أُرسل يونس إلى أهل نينوى في العراق القديم، فدعاهم إلى عبادة الله وترك الشرك، لكنهم رفضوا، فخرج من بينهم مغاضباً محذراً من نزول العذاب.
 
-حين غادر يونس، رأى أهل نينوى علامات الدمار الوشيك. تابوا بصدق، وقبل الله توبتهم وعفا عنهم.
+بعد خروجه رأى أهل نينوى علامات العذاب فتابوا توبة صادقة، فقبل الله توبتهم وصرف عنهم العذاب.
 
-في هذه الأثناء، ركب يونس سفينة أصابتها عاصفة مروعة.حين ألقى البحارة القرعة لتحديد من يُلقى في البحر لتخفيف السفينة، وقعت القرعة على يونس. أُلقى في البحر حيث ابتلعه حوت عظيم.
+ركب يونس سفينة فجاءتها عاصفة شديدة، فاقترع البحارة لتخفيف السفينة فوقعت القرعة عليه، فأُلقى في البحر فالتقمه حوت عظيم.
 
-في بطن الحوت، في ظلام تام، محاطاً بالماء من كل جانب، نادى يونس في اليأس: "لا إله إلا أنت سبحانك إني كنت من الظالمين."
+في بطن الحوت في الظلمات الثلاث نادى: «لا إله إلا أنت سبحانك إني كنت من الظالمين»، فاستجاب الله له وأمر الحوت أن يلفظه إلى الشاطئ وهو سقيم، فأنبت عليه شجرة من يقطين تظله.
 
-سمع الله دعاءه وأمر الحوت بإطلاقه. أُلقي يونس على الشاطئ، ضعيفاً ومريضاً. نبت الله شجعة ليظله ورزقه. ثم أعاده الله إلى قومه الذين آمنوا.
-
-تعلمنا من قصة يونس أن رحمة الله دائماً أكبر من عقابه، والتوبة الصادقة لا تُرفض أبداً.`,
+ثم أرسله الله إلى قومه الذين آمنوا جميعاً، فتعلمنا أن رحمة الله أوسع من عقابه، وأن التوبة الصادقة لا تُرد أبداً.`,
     keyLessons: [
       'Allah\'s mercy is greater than His punishment',
       'Sincere repentance is always accepted',
@@ -481,10 +479,10 @@ The story of Yunus teaches us that Allah's mercy is always greater than His puni
       'Even in the darkest moments, Allah hears our prayers'
     ],
     keyLessonsAr: [
-      'رحمة الله دائماً أكبر من عقابه',
+      'رحمة الله أوسع من عقابه',
       'التوبة الصادقة مقبولة دائماً',
-      'لا يجب أن نترك واجباتنا بدون إذن الله',
-      'حتى في أحلك اللحظات، الله يسمع صلاتنا'
+      'لا ينبغي ترك الواجب بغير إذن الله',
+      'الله يسمع دعاءنا حتى في أحلك اللحظات'
     ],
     relatedSurahs: ['Yunus (10:98)', 'Al-Anbiya (21:87-88)', 'As-Saffat (37:139-148)'],
     svgColor: '#0369a1'
@@ -498,7 +496,7 @@ The story of Yunus teaches us that Allah's mercy is always greater than His puni
     era: '~4 BCE - 30 CE',
     eraAr: '4 قبل الميلاد - 30 ميلادي',
     summary: 'Isa (AS) was born to Maryam (Mary) without a father, performed miracles by Allah\'s permission, and is the Messiah.',
-    summaryAr: 'عيسى عليه السلام وُلد لماريام بدون أب، وأ.perform miracles بإذن الله، وهو المسيح.',
+    summaryAr: 'وُلد عيسى عليه السلام لمريم دون أب، وأجرى المعجزات بإذن الله، وهو المسيح.',
     fullStory: `Prophet Isa (peace be upon him), known as Jesus in Christianity, is one of the most important prophets in Islam. He is referred to as "Kalimatullah" (the Word of Allah) and "Ruhullah" (the Spirit of Allah).
 
 Isa was born to Maryam (Mary), a righteous woman chosen by Allah above all women. The story of his birth is narrated in Surah Maryam and Surah Al-Imran.
@@ -510,17 +508,17 @@ She called out in despair, wishing she had died before this. The angel told her 
 Isa performed many miracles by Allah's permission: healing the blind, curing lepers, raising the dead, and knowing what people had in their houses. He was given the Injeel (Gospel) to guide the Children of Israel.
 
 The Quran emphasizes that Isa was a prophet and servant of Allah, not divine himself. He will return before the Day of Judgment to defeat the false messiah (Dajjal) and establish justice on earth.`,
-    fullStoryAr: `يعد عيسى عليه السلام المعروف بيسوع في المسيحية من أهم الأنبياء في الإسلام. يُشار إليه بـ "كلمة الله" و "روح الله".
+    fullStoryAr: `يعد عيسى عليه السلام من أهم الأنبياء في الإسلام، ويُشار إليه بـ «كلمة الله» و«روح منه».
 
-وُلد عيسى لماريام (مريم)، امرأة صديقة اختارها الله فوق جميع النساء. تُروى قصة ميلاده في سورة مريم و سورة آل عمران.
+وُلد لمريم، المرأة الصديقة التي اصطفاها الله على نساء العالمين، وتُروى قصة ميلاده في سورة مريم وسورة آل عمران.
 
-حين كانت مريم شابة م devote to worship، ظهر لها الملاك جبريل وأخبرها بأنها ستحمل ابناً رغم أنها لم يمسسها رجل. أُصيبت بالقلق واختبأت، لكن حين ألمها المخاض، وجدها نخلة.
+بينما كانت مريم منصرفة للعبادة، جاءها الملاك جبريل وبشرها بغلام من غير أن يمسها بشر، فأجابها بأنه رسول ربها ليهبها غلاماً زكياً.
 
-نادت في اليأس متمنية الموت قبل هذا. أخبرها الملاك لا تحزني و[rescue] الله تدفقاً تحتك ونخلاً فوقك. نطق الطفل عيسى من المهد دفاعاً عن س母亲.
+حين جاءها المخاض أوت إلى جذع النخلة، ونادت: «يا ليتني مت قبل هذا»، فناداها ألا تحزن وقد جعل الله تحتها سرياً ونخلاً، فنطق عيسى من المهد مدافعاً عن أمه.
 
-أ perform عيسى المعجزات بإذن الله: شفاء الأعمى وعلاج البرص وإحياء الموتى ومعرفة ما في بيوت الناس. أُعطي الإنجيل لتوجيه بني إسرائيل.
+أجرى عيسى المعجزات بإذن الله: يبرئ الأكمه والأبرص ويحيي الموتى ويعلم ما يأكلون ويدخرون، وآتاه الله الإنجيل لهداية بني إسرائيل.
 
-يؤكد القرآن أن عيسى كان نبياً وعبداً لله، لا إلهاً بنفسه. سيعود قبل يوم القيامة لهزيمة الدجال و establish العدالة على الأرض.`,
+يؤكد القرآن أن عيسى نبي وعبد من عباد الله وليس إلهاً، وأنه سينزل قبل يوم القيامة ليكسر الصليب ويقتل الدجال ويقيم العدل في الأرض.`,
     keyLessons: [
       'Allah\'s power is beyond human comprehension',
       'Miracles are by Allah\'s permission, not by the prophet\'s own power',
@@ -528,10 +526,10 @@ The Quran emphasizes that Isa was a prophet and servant of Allah, not divine him
       'The birth of Isa shows Allah\'s ability to create without precedent'
     ],
     keyLessonsAr: [
-      'قدرة الله تتجاوز تصور البشري',
-      'المعجزات بإذن الله وليس بقوة النبي',
-      'عيسى نبي وعبد لله لا إله',
-      'ميلاد عيسى يُظهر قدرة الله على الخلق بدون سبق'
+      'قدرة الله تتجاوز تصور البشر',
+      'المعجزات تكون بإذن الله لا بقدرة النبي',
+      'عيسى نبي وعبد لله وليس إلهاً',
+      'ميلاد عيسى دليل على قدرة الله على الخلق من غير سابق'
     ],
     relatedSurahs: ['Al-Imran (3:45-59)', 'Maryam (19:16-36)', 'Al-Anbiya (21:91)'],
     svgColor: '#059669'
@@ -545,7 +543,7 @@ The Quran emphasizes that Isa was a prophet and servant of Allah, not divine him
     era: '570-632 CE',
     eraAr: '570-632 ميلادي',
     summary: 'Muhammad (PBUH) is the final prophet and messenger of Allah. He received the Quran through Jibreel and established the religion of Islam.',
-    summaryAr: 'محمد صلى الله عليه وسلم هو النبي والرسول الأخير لله. تلقى القرآن من جبريل وأسس دين الإسلام.',
+    summaryAr: 'محمد صلى الله عليه وسلم آخر الأنبياء والمرسلين، تلقى القرآن من جبريل وأسس دين الإسلام.',
     fullStory: `Prophet Muhammad (peace and blessings be upon him) is the final prophet and messenger of Allah, sent to all of humanity. He is known as "Al-Amin" (the Trustworthy) and "Al-Mustafa" (the Chosen One).
 
 Born in Mecca in 570 CE, Muhammad was orphaned at a young age. He grew up known for his honesty, generosity, and moral character. He worked as a shepherd and later as a merchant.
@@ -561,21 +559,21 @@ Over the next 23 years, the message of Islam spread throughout Arabia. Muhammad 
 Before his death in 632 CE, Muhammad delivered his farewell sermon, emphasizing equality, justice, and the rights of all people. He left behind the Quran as the literal word of Allah and the Sunnah as his practical example.
 
 The story of Muhammad teaches us about the perfect character, mercy to all creation, and the importance of following divine guidance.`,
-    fullStoryAr: `يعد محمد صلى الله عليه وسلم النبي والرسول الأخير لله، أُرسل إلى جميع البشرية. يُعرف بـ "الأمين" و "المصطفى".
+    fullStoryAr: `يعد محمد صلى الله عليه وسلم خاتم الأنبياء والمرسلين، أُرسل إلى الناس كافة، ويُعرف بـ «الأمين» و«المصطفى».
 
-وُلد في مكة عام 570 ميلادي وتجسس في سن صغيرة. نشأ معروفاً بصدقه وكرمه وأخلاقه. عمل راعياً ثم تاجراً.
+وُلد في مكة عام 570 ميلادي ويتيم الأبوين في صغره، فنشأ معروفاً بصدقه وكرم أخلاقه، وعمل راعياً ثم تاجراً.
 
-في سن الأربعين، حين كان يتأمل في غار حراء، ظهر له الملاك جبريل بأول وحي: "اقرأ بسم ربك الذي خلق." هذا أشار إلى بداية نبوته.
+في سن الأربعين، وهو يتعبد في غار حراء، نزل عليه جبريل بأول وحي: «اقرأ باسم ربك الذي خلق»، فكانت بداية نبوته.
 
-في أول ثلاث سنوات، دعا محمد سراً إلى الإسلام. بعد الإذن الإلهي، بدأ ي preached publicly.اضطهدت قريش المسلمين الأوائل، مما دفع كثيرين للهجرة إلى الحبشة.
+دعا سراً ثلاث سنين، ثم أُمر بإعلان الدعوة علناً، فاضطهدته قريش واضطهدت المسلمين، وهاجر كثيرون إلى الحبشة.
 
-بعد 13 عاماً من الاضطهاد في مكة، هاجر محمد وأتباعه إلى المدينة (الهجرة)، حيث أسس أول مجتمع مسلم.جمع بين دوره كنبي و رجل دولة وقائد عسكري.
+بعد ثلاث عشرة سنة من الاضطهاد، هاجر النبي وأصحابه إلى المدينة، حيث أسس أول مجتمع إسلامي، وجمع بين النبوة والسياسة والقيادة.
 
-في الـ 23 عاماً التالية، انتشر رسالة الإسلام في جميع أنحاء الجزيرة العربية. فتح مكة بسلام ودمّر الأصنام حول الكعبة وأسس عبادة الله التوحيدية.
+في ثلاث وعشرين سنة انتشر الإسلام في جزيرة العرب، وفتح النبي مكة فتحاً مبيناً، وكسر الأصنام حول الكعبة، وأقام التوحيد.
 
-قبل وفاته عام 632 ميلادي، ألقى محمد خطبته الأخيرة مؤكداً على المساواة والعدالة وحقوق جميع الناس. ترك القرآن كلام الله الحرفي والسنة كمثال عملي.
+قبل وفاته عام 632 خطب النبي خطبة الوداع مؤكداً على المساواة والعدالة وحقوق الناس، وترك للأمة القرآن كلام الله والسنة مثالاً عملياً.
 
-تعلمنا من قصة محمد عن الكمال الأخلاقي والرحمة لكل المخلوقات وأهمية اتباع الإلهي.`,
+تعلمنا من سيرة النبي الكمال في الأخلاق والرحمة بكل الخلق وأهمية اتباع الهدى.`,
     keyLessons: [
       'The perfect example of character and conduct',
       'Mercy to all of creation',
@@ -583,10 +581,10 @@ The story of Muhammad teaches us about the perfect character, mercy to all creat
       'The Quran is the final and preserved divine revelation'
     ],
     keyLessonsAr: [
-      'الكمال في الأخلاق والسلوك',
-      'الرحمة بكل المخلوقات',
-      'الصبر والمثابرة يقودان إلى النصر',
-      'القرآن هو الوحي الإلهي الأخير والمحفوظ'
+      'الكمال في الخلق والسلوك',
+      'الرحمة بجميع المخلوقات',
+      'الصبر والمثابرة يؤديان إلى النصر',
+      'القرآن هو الوحي الخاتم المحفوظ'
     ],
     relatedSurahs: ['Al-Ahzab (33:40)', 'Al-Fath (48:1-3)', 'Al-Qalam (68:1-4)'],
     svgColor: '#16a34a'

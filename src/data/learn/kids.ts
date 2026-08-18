@@ -34,7 +34,7 @@ export const kidsLessons: KidsLesson[] = [
         title: 'Allah sees everything',
         titleAr: 'الله يرى كل شيء',
         content: 'Allah sees everything you do, even when no one is watching. When you do good things, Allah is happy with you. When you make a mistake, Allah still loves you — just say sorry and try again!',
-        contentAr: 'الله يرى كل شيء تفعله، حتى عندما لا أحد يراك.حين تفعل أشياء جيدة، الله سعيد بك.حين تخطئ، الله يحبك أيضاً — فقط قل آسف وحاول مرة أخرى!',
+        contentAr: 'الله يرى كل شيء تفعله، حتى عندما لا أحد يراك. حين تفعل أشياء جيدة، الله سعيد بك. حين تخطئ، الله يحبك أيضاً — فقط قل آسف وحاول مرة أخرى!',
         funFact: 'Allah is closer to you than your own heartbeat!',
         funFactAr: 'الله أقرب إليك من نبضات قلبك!'
       }
@@ -76,7 +76,7 @@ export const kidsLessons: KidsLesson[] = [
         title: 'Kindness to others',
         titleAr: 'الطيبة مع الآخرين',
         content: 'Allah loves people who are kind! Smile at your friends, help your mom and dad, share your toys, and say nice words. Even a smile is charity in Islam!',
-        contentAr: 'يحب الله الناس الطيبين! ابتسم لأصدقائك، ساعد أمك وأبيك، شارك لعبتك،وقل كلمات لطيفة. حتى الابتسامة صدقة في الإسلام!',
+        contentAr: 'يحب الله الناس الطيبين! ابتسم لأصدقائك، ساعد أمك وأبيك، شارك لعبتك، وقل كلمات لطيفة. حتى الابتسامة صدقة في الإسلام!',
         funFact: 'The Prophet Muhammad (PBUH) was the kindest person ever!',
         funFactAr: 'كان النبي محمد صلى الله عليه وسلم أكثر الناس طيبة!'
       },
