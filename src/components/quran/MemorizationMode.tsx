@@ -489,7 +489,9 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
 
         const padSurah = chapterId.padStart(3, '0');
         const padVerse = verse.verseNum.padStart(3, '0');
-        const src = `/audio/${padSurah}/${padVerse}.mp3`;
+        const src = riwaya === 'warsh'
+            ? `/api/audio-warsh/${padSurah}/${padVerse}`
+            : `/audio/${padSurah}/${padVerse}.mp3`;
 
         const sound = new Howl({
             src: [src],
@@ -520,7 +522,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         isPlayingRef.current = true;
         setIsPlaying(true);
         sound.play();
-    }, [chapterId, rangeVerses, repeats, stopSound]);
+    }, [chapterId, rangeVerses, repeats, stopSound, riwaya]);
 
     const togglePlay = useCallback(() => {
         if (isPlayingRef.current) {

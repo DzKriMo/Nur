@@ -107,7 +107,9 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
 
         const padSurah = chapterId.padStart(3, '0');
         const padVerse = verseNum.padStart(3, '0');
-        const src = `/audio/${padSurah}/${padVerse}.mp3`;
+        const src = riwaya === 'warsh'
+            ? `/api/audio-warsh/${padSurah}/${padVerse}`
+            : `/audio/${padSurah}/${padVerse}.mp3`;
 
         const newSound = new Howl({
             src: [src],
