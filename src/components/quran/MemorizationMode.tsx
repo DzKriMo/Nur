@@ -6,7 +6,7 @@ import { SurahContent } from '@/types';
 import {
     Brain, Play, Pause, Mic, MicOff, ChevronLeft, ChevronRight,
     CheckCircle2, XCircle, AlertCircle, Flame, Target, Trophy, SkipForward,
-    RotateCcw, ListMusic, Award, Star, Volume2,
+    RotateCcw, ListMusic, Award, Star, Volume2, RefreshCw, Square, Eye, EyeOff,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -106,6 +106,10 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const [result, setResult] = useState<RecitationResult | null>(null);
     const [celebration, setCelebration] = useState<string | null>(null);
     const [milestoneCelebration, setMilestoneCelebration] = useState<number | null>(null);
+    const [reviewActive, setReviewActive] = useState(false);
+    const [reviewList, setReviewList] = useState<VerseItem[]>([]);
+    const [reviewSummary, setReviewSummary] = useState<{ total: number; strong: number } | null>(null);
+    const [isHearing, setIsHearing] = useState(false);
     const [progress, setProgress] = useStoredState<MemorizationState>(
         MEMORIZATION_STORAGE_KEY,
         DEFAULT_MEMORIZATION_STATE
@@ -125,6 +129,9 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const celebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hearRef = useRef<Howl | null>(null);
+    const reviewActiveRef = useRef(false);
+    const reviewStrongRef = useRef(0);
 
     // Live detection state (kept in refs so recognition callbacks stay fresh).
     // Per alternative: finalized token stream (persistent, trimmed as the
@@ -159,7 +166,13 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         [verses, fromVerse, toVerse]
     );
 
-    const currentVerse = rangeVerses[Math.min(currentIdx, rangeVerses.length - 1)];
+    const activeVerses = reviewActive ? reviewList : rangeVerses;
+
+    const currentVerse = activeVerses[Math.min(currentIdx, activeVerses.length - 1)];
+
+    useEffect(() => {
+        reviewActiveRef.current = reviewActive;
+    }, [reviewActive]);
 
     // Keep the ref in sync with the index (also updated by auto-advance)
     useEffect(() => {
@@ -192,7 +205,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setCelebration(null);
         setError(null);
         setNoSpeechHint(false);
-    }, [currentIdx, currentVerse?.verseNum, currentVerse]);
+        setReviewSummary(null);
+    }, [currentIdx, currentVerse?.verseNum, currentVerse, reviewActive]);
 
     const todayVerses = getTodayVerses(progress);
     const streak = getStreak(progress);
@@ -228,22 +242,33 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setIsRestarting(false);
     }, []);
 
+    const stopHearing = useCallback(() => {
+        if (hearRef.current) {
+            try { hearRef.current.stop(); } catch {}
+            hearRef.current.unload();
+            hearRef.current = null;
+        }
+        setIsHearing(false);
+    }, []);
+
     const onExitMode = useCallback(() => {
         stopSound();
         stopRecognition();
+        stopHearing();
         if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
         if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
         onExit();
-    }, [onExit, stopSound, stopRecognition]);
+    }, [onExit, stopSound, stopRecognition, stopHearing]);
 
     useEffect(() => {
         return () => {
             stopSound();
             stopRecognition();
+            stopHearing();
             if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
             if (celebrationTimerRef.current) clearTimeout(celebrationTimerRef.current);
         };
-    }, [stopSound, stopRecognition]);
+    }, [stopSound, stopRecognition, stopHearing]);
 
     const recordAttempt = useCallback((accuracy: number) => {
         const prev = progressRef.current;
@@ -282,16 +307,23 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setCelebration(accuracy >= 85 ? 'verse_complete' : 'practice_more');
 
         const idx = currentIdxRef.current;
-        if (idx + 1 < rangeVerses.length) {
+        if (idx + 1 < activeVerses.length) {
             autoContinueRef.current = true;
             advanceTimerRef.current = setTimeout(() => {
                 setCurrentIdx(idx + 1);
+            }, 1400);
+        } else if (reviewActiveRef.current) {
+            if (accuracy >= 85) reviewStrongRef.current += 1;
+            stopRecognition();
+            setReviewSummary({ total: activeVerses.length, strong: reviewStrongRef.current });
+            advanceTimerRef.current = setTimeout(() => {
+                setCelebration('review_complete');
             }, 1400);
         } else {
             stopRecognition();
             advanceTimerRef.current = setTimeout(() => setCelebration('range_complete'), 1400);
         }
-    }, [rangeVerses.length, recordAttempt, stopRecognition]);
+    }, [activeVerses.length, recordAttempt, stopRecognition]);
 
     const createRecognition = useCallback(() => {
         if (hardStopRef.current) return;
@@ -441,6 +473,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     }, [completeVerse]);
 
     const startListening = useCallback(() => {
+        stopHearing();
         hardStopRef.current = false;
         keepListeningRef.current = true;
         setResult(null);
@@ -462,7 +495,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         noSpeechTimerRef.current = setTimeout(() => {
             if (!receivedSpeechRef.current && keepListeningRef.current) setNoSpeechHint(true);
         }, 5000);
-    }, [createRecognition]);
+    }, [createRecognition, stopHearing]);
 
     const startListeningRef = useRef(startListening);
     useEffect(() => {
@@ -536,21 +569,26 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
 
     const skipVerse = useCallback(() => {
         stopRecognition();
+        stopHearing();
         const idx = currentIdxRef.current;
-        if (idx + 1 < rangeVerses.length) {
+        if (idx + 1 < activeVerses.length) {
             setCurrentIdx(idx + 1);
+        } else if (reviewActiveRef.current) {
+            setReviewSummary({ total: activeVerses.length, strong: reviewStrongRef.current });
+            setCelebration('review_complete');
         } else {
             setCelebration('range_complete');
         }
-    }, [rangeVerses.length, stopRecognition]);
+    }, [activeVerses.length, stopRecognition, stopHearing]);
 
     const prevVerse = useCallback(() => {
         stopRecognition();
+        stopHearing();
         const idx = currentIdxRef.current;
         if (idx - 1 >= 0) {
             setCurrentIdx(idx - 1);
         }
-    }, [stopRecognition]);
+    }, [stopRecognition, stopHearing]);
 
     // Resume recitation from a tapped word: keep everything before it revealed
     // and re-anchor the live detection there, so a mistake mid-verse (or a
@@ -559,6 +597,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         if (tab !== 'memorize') return;
         const target = targetWordsRef.current;
         if (!target.length || index < 0 || index >= target.length) return;
+        stopHearing();
         if (advanceTimerRef.current) {
             clearTimeout(advanceTimerRef.current);
             advanceTimerRef.current = null;
@@ -573,11 +612,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setSkippedIndices([]);
         setResult(null);
         setCelebration(null);
-    }, [tab, isListening]);
+    }, [tab, isListening, stopHearing]);
 
     // ---- Listen & Repeat playback ----
     const playVerse = useCallback((idx: number) => {
-        const verse = rangeVerses[idx];
+        const verse = activeVerses[idx];
         if (!verse) return;
 
         if (soundRef.current) {
@@ -601,7 +640,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 } else {
                     repeatCountRef.current = 0;
                     const nextIdx = idx + 1;
-                    if (nextIdx < rangeVerses.length) {
+                    if (nextIdx < activeVerses.length) {
                         playVerse(nextIdx);
                     } else {
                         stopSound();
@@ -620,7 +659,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         isPlayingRef.current = true;
         setIsPlaying(true);
         sound.play();
-    }, [chapterId, rangeVerses, repeats, stopSound, riwaya]);
+    }, [chapterId, activeVerses, repeats, stopSound, riwaya]);
 
     const togglePlay = useCallback(() => {
         if (isPlayingRef.current) {
@@ -632,14 +671,15 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     }, [playVerse, stopSound]);
 
     const jumpTo = useCallback((idx: number) => {
-        const clamped = Math.max(0, Math.min(idx, rangeVerses.length - 1));
+        const clamped = Math.max(0, Math.min(idx, activeVerses.length - 1));
+        stopHearing();
         currentIdxRef.current = clamped;
         setCurrentIdx(clamped);
         if (isPlayingRef.current) {
             repeatCountRef.current = 0;
             playVerse(clamped);
         }
-    }, [playVerse, rangeVerses.length]);
+    }, [playVerse, activeVerses.length, stopHearing]);
 
     const changeFrom = (val: number) => {
         const v = Math.max(1, Math.min(val, toVerse, surah.count));
@@ -655,12 +695,85 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setToVerse(v);
         stopSound();
         stopRecognition();
+        stopHearing();
         currentIdxRef.current = 0;
         setCurrentIdx(0);
     };
 
+    // Hear the current verse once (e.g. from the memorize tab), then — when
+    // requested — automatically open the mic so the user recites from memory.
+    const hearCurrentVerse = useCallback((autoListenAfter = false) => {
+        if (isHearing) {
+            stopHearing();
+            return;
+        }
+        const verse = activeVerses[currentIdxRef.current];
+        if (!verse) return;
+        stopRecognition();
+
+        const padSurah = chapterId.padStart(3, '0');
+        const padVerse = verse.verseNum.padStart(3, '0');
+        const src = riwaya === 'warsh'
+            ? `/api/audio-warsh/${padSurah}/${padVerse}`
+            : `/audio/${padSurah}/${padVerse}.mp3`;
+
+        const sound = new Howl({
+            src: [src],
+            html5: true,
+            onend: () => {
+                if (hearRef.current === sound) {
+                    hearRef.current = null;
+                    setIsHearing(false);
+                }
+                if (autoListenAfter && tab === 'memorize') {
+                    startListeningRef.current();
+                }
+            },
+            onloaderror: () => {
+                if (hearRef.current === sound) {
+                    hearRef.current = null;
+                    setIsHearing(false);
+                }
+                setError('audio_missing');
+            },
+        });
+
+        hearRef.current = sound;
+        setIsHearing(true);
+        sound.play();
+    }, [activeVerses, chapterId, isHearing, riwaya, stopHearing, stopRecognition, tab]);
+
+    // Review mode: re-test the surah's already-mastered verses for retention.
+    const startReview = useCallback(() => {
+        const mastered = verses.filter((v) => progressRef.current.surahs[chapterId]?.[v.verseNum]?.mastered);
+        if (mastered.length === 0) return;
+        stopRecognition();
+        stopHearing();
+        stopSound();
+        setReviewList(mastered);
+        reviewStrongRef.current = 0;
+        setReviewSummary(null);
+        setReviewActive(true);
+        currentIdxRef.current = 0;
+        setCurrentIdx(0);
+    }, [verses, chapterId, stopRecognition, stopHearing, stopSound]);
+
+    const stopReview = useCallback(() => {
+        stopRecognition();
+        stopHearing();
+        if (advanceTimerRef.current) {
+            clearTimeout(advanceTimerRef.current);
+            advanceTimerRef.current = null;
+        }
+        setReviewSummary(null);
+        setReviewActive(false);
+        currentIdxRef.current = 0;
+        setCurrentIdx(0);
+    }, [stopRecognition, stopHearing]);
+
     const currentDisplayWords = currentVerse ? currentVerse.text.split(' ').filter(Boolean) : [];
     const skippedSet = new Set(skippedIndices);
+    const showHints = progress.showHints ?? true;
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 p-5 md:p-6">
@@ -686,7 +799,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             {/* Tab switcher */}
             <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-4">
                 <button
-                    onClick={() => { stopRecognition(); setTab('memorize'); }}
+                    onClick={() => { stopRecognition(); stopHearing(); setTab('memorize'); }}
                     className={cn(
                         "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         tab === 'memorize'
@@ -698,7 +811,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                     {t('quran.memorize_tab')}
                 </button>
                 <button
-                    onClick={() => { stopRecognition(); setTab('listen'); }}
+                    onClick={() => { stopRecognition(); stopHearing(); setTab('listen'); }}
                     className={cn(
                         "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         tab === 'listen'
@@ -711,57 +824,78 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 </button>
             </div>
 
-            {/* Range + repeats controls */}
+            {/* Range + repeats controls (or review banner) */}
             <div className="flex flex-wrap items-center gap-3 mb-5">
-                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <span>{t('quran.from')}</span>
-                    <select
-                        value={fromVerse}
-                        onChange={(e) => changeFrom(parseInt(e.target.value, 10))}
-                        className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    >
-                        {verses.map((v) => (
-                            <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
-                        ))}
-                    </select>
-                </label>
-
-                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <span>{t('quran.to')}</span>
-                    <select
-                        value={toVerse}
-                        onChange={(e) => changeTo(parseInt(e.target.value, 10))}
-                        className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
-                    >
-                        {verses.map((v) => (
-                            <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
-                        ))}
-                    </select>
-                </label>
-
-                {tab === 'listen' && (
-                    <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                        <span>{t('quran.repeats')}</span>
-                        <select
-                            value={repeats}
-                            onChange={(e) => setRepeats(parseInt(e.target.value, 10))}
-                            className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                {reviewActive ? (
+                    <>
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 text-xs font-semibold">
+                            <RefreshCw size={12} />
+                            {t('quran.review_mode')}
+                        </span>
+                        <span className="text-sm text-slate-600 dark:text-slate-300">
+                            {Math.min(currentIdx + 1, reviewList.length)}/{reviewList.length}
+                        </span>
+                        <button
+                            onClick={stopReview}
+                            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                         >
-                            {REPEAT_OPTIONS.map((r) => (
-                                <option key={r} value={r}>{r}×</option>
-                            ))}
-                        </select>
-                    </label>
-                )}
+                            <XCircle size={14} />
+                            {t('quran.stop_review')}
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                            <span>{t('quran.from')}</span>
+                            <select
+                                value={fromVerse}
+                                onChange={(e) => changeFrom(parseInt(e.target.value, 10))}
+                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            >
+                                {verses.map((v) => (
+                                    <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
+                                ))}
+                            </select>
+                        </label>
 
-                {tab === 'listen' && (
-                    <button
-                        onClick={() => setTab('memorize')}
-                        className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors"
-                    >
-                        <Mic size={15} />
-                        {t('quran.tap_mic')}
-                    </button>
+                        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                            <span>{t('quran.to')}</span>
+                            <select
+                                value={toVerse}
+                                onChange={(e) => changeTo(parseInt(e.target.value, 10))}
+                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            >
+                                {verses.map((v) => (
+                                    <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
+                                ))}
+                            </select>
+                        </label>
+
+                        {tab === 'listen' && (
+                            <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                                <span>{t('quran.repeats')}</span>
+                                <select
+                                    value={repeats}
+                                    onChange={(e) => setRepeats(parseInt(e.target.value, 10))}
+                                    className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                >
+                                    {REPEAT_OPTIONS.map((r) => (
+                                        <option key={r} value={r}>{r}×</option>
+                                    ))}
+                                </select>
+                            </label>
+                        )}
+
+                        {tab === 'listen' && (
+                            <button
+                                onClick={() => setTab('memorize')}
+                                className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-colors"
+                            >
+                                <Mic size={15} />
+                                {t('quran.tap_mic')}
+                            </button>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -799,7 +933,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                                         : "text-slate-300 dark:text-slate-600"
                                             )}
                                         >
-                                            {i < revealedWords || skippedSet.has(i) ? word : '••••'}
+                                            {i < revealedWords || skippedSet.has(i)
+                                                ? word
+                                                : showHints
+                                                    ? word[0] + '•'.repeat(Math.min(3, Math.max(1, word.length - 1)))
+                                                    : '••••'}
                                         </span>
                                     ))}
                                 </p>
@@ -863,7 +1001,39 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         </p>
                     )}
 
-                    <div className="flex items-center justify-center gap-4 mt-5">
+                    {isHearing && (
+                        <p className="text-xs font-medium text-violet-600 dark:text-violet-400 flex items-center justify-center gap-2 mt-3">
+                            <Volume2 size={13} className="animate-pulse" />
+                            {t('quran.playing')}
+                        </p>
+                    )}
+
+                    <div className="flex items-center justify-center gap-3 mt-4">
+                        <button
+                            onClick={() => hearCurrentVerse(true)}
+                            className={cn(
+                                "flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors",
+                                isHearing
+                                    ? "bg-violet-600 border-violet-600 text-white"
+                                    : "bg-white dark:bg-slate-800 border-violet-200 dark:border-violet-900 text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+                            )}
+                            title={t('quran.hear_then_recite')}
+                        >
+                            {isHearing ? <Square size={14} /> : <Volume2 size={14} />}
+                            {isHearing ? t('quran.stop_hear') : t('quran.hear_then_recite')}
+                        </button>
+
+                        <button
+                            onClick={() => setProgress({ ...progress, showHints: !showHints })}
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            title={t('quran.first_letters')}
+                        >
+                            {showHints ? <Eye size={14} /> : <EyeOff size={14} />}
+                            {t('quran.first_letters')}
+                        </button>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-4 mt-4">
                         <button
                             onClick={() => { stopSound(); if (!isListening) prevVerse(); }}
                             className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors"
@@ -941,9 +1111,9 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             )}
 
             <div className="flex items-center justify-center mt-4 gap-1 text-sm text-slate-500 dark:text-slate-400">
-                <span>{currentIdx + 1}</span>
+                <span>{Math.min(currentIdx + 1, activeVerses.length)}</span>
                 <span>/</span>
-                <span>{rangeVerses.length}</span>
+                <span>{activeVerses.length}</span>
             </div>
 
             {/* Result / celebration panel */}
@@ -965,8 +1135,24 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             {celebration === 'perfect' && t('quran.perfect')}
                             {celebration === 'great' && t('quran.great')}
                             {celebration === 'practice_more' && t('quran.practice_more')}
+                            {celebration === 'review_complete' && t('quran.review_complete')}
                             {celebration === 'verse_complete' && (
                                 <span className="font-normal opacity-80">· {t('quran.auto_advancing')}</span>
+                            )}
+                        </div>
+                    )}
+
+                    {reviewSummary && (
+                        <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium bg-violet-50 text-violet-700 dark:bg-violet-900/20 dark:text-violet-400">
+                            <RefreshCw size={16} />
+                            {t('quran.review_summary')}: {reviewSummary.strong}/{reviewSummary.total}
+                            {reviewActive && (
+                                <button
+                                    onClick={stopReview}
+                                    className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+                                >
+                                    {t('quran.stop_review')}
+                                </button>
                             )}
                         </div>
                     )}
@@ -996,13 +1182,20 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             )}
 
                             {result.accuracy < 85 && (
-                                <div className="flex gap-2 pt-1">
+                                <div className="flex flex-wrap gap-2 pt-1">
                                     <button
                                         onClick={() => { setResult(null); if (!isListening) startListening(); }}
                                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
                                     >
                                         <RotateCcw size={15} />
                                         {t('quran.retry_verse')}
+                                    </button>
+                                    <button
+                                        onClick={() => hearCurrentVerse(false)}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        <Volume2 size={15} />
+                                        {t('quran.hear_again')}
                                     </button>
                                     <button
                                         onClick={skipVerse}
@@ -1091,6 +1284,15 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                 </span>
                             ))}
                         </div>
+                    )}
+                    {!reviewActive && surahProgress.mastered > 0 && (
+                        <button
+                            onClick={startReview}
+                            className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+                        >
+                            <RefreshCw size={14} />
+                            {t('quran.review_mastered')} ({surahProgress.mastered})
+                        </button>
                     )}
                 </div>
             </div>

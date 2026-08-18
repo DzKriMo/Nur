@@ -19,12 +19,15 @@ export interface MemorizationState {
     // dayKey ('YYYY-MM-DD') -> list of `${surahId}:${verseNum}` completed that day
     days: Record<string, string[]>;
     dailyGoal: number;
+    // Show the first letter of hidden words as a recall hint (defaults to true).
+    showHints: boolean;
 }
 
 export const DEFAULT_MEMORIZATION_STATE: MemorizationState = {
     surahs: {},
     days: {},
     dailyGoal: 5,
+    showHints: true,
 };
 
 export const MEMORIZATION_STORAGE_KEY = 'nur-memorization';

@@ -246,6 +246,16 @@ export const translations = {
         'quran.mic_error': 'Speech recognition ran into an error. Tap the mic to try again.',
         'quran.insecure_context': 'Speech recognition needs a secure connection. Open https://nur.lat and try again.',
         'quran.no_speech_hint': 'No speech detected yet. Check your microphone and make sure it is allowed.',
+        'quran.playing': 'Playing...',
+        'quran.hear_then_recite': 'Hear then recite',
+        'quran.hear_again': 'Hear again',
+        'quran.stop_hear': 'Stop audio',
+        'quran.first_letters': 'Show first letters',
+        'quran.review_mode': 'Review',
+        'quran.stop_review': 'End review',
+        'quran.review_mastered': 'Review memorized verses',
+        'quran.review_complete': 'Review complete!',
+        'quran.review_summary': 'Verses still strong',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'Search All Hadith',
@@ -567,6 +577,16 @@ export const translations = {
         'quran.mic_error': 'حدث خطأ في التعرف على الكلام. اضغط على الميكروفون لإعادة المحاولة.',
         'quran.insecure_context': 'التعرف على الكلام يتطلب اتصالاً آمناً. افتح https://nur.lat وحاول مرة أخرى.',
         'quran.no_speech_hint': 'لم يتم رصد أي صوت بعد. تحقق من الميكروفون ومن السماح باستخدامه.',
+        'quran.playing': 'جاري التشغيل...',
+        'quran.hear_then_recite': 'اسمع ثم اقرأ',
+        'quran.hear_again': 'اسمع مرة أخرى',
+        'quran.stop_hear': 'إيقاف الصوت',
+        'quran.first_letters': 'إظهار الحروف الأولى',
+        'quran.review_mode': 'مراجعة',
+        'quran.stop_review': 'إنهاء المراجعة',
+        'quran.review_mastered': 'مراجعة الآيات المحفوظة',
+        'quran.review_complete': 'اكتملت المراجعة!',
+        'quran.review_summary': 'آيات لا تزال متقنة',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'بحث شامل في الحديث',
