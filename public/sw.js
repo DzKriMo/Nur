@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nur-app-v2';
+const CACHE_NAME = 'nur-app-v3';
 
 // Lightweight, essential content precached at install so it works offline by default:
 // app shell + full Quran text (114 surah pages) + adhkar categories.
@@ -23,7 +23,10 @@ const APP_SHELL = [
     '/saved',
 ];
 
-const QURAN_PAGES = Array.from({ length: 114 }, (_, i) => `/quran/${i + 1}`);
+// The app links to chapters with zero-padded ids (surah.index = "001"), so we
+// precache the padded form. The SW match helper also normalizes unpadded urls
+// (used by prev/next links) so both resolve offline.
+const QURAN_PAGES = Array.from({ length: 114 }, (_, i) => `/quran/${String(i + 1).padStart(3, '0')}`);
 const ADHKAR_PAGES = [
     '/adhkar/azkar_sabah.json',
     '/adhkar/azkar_massa.json',
@@ -58,6 +61,24 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
+// Try to match a request against the cache, normalizing quran chapter urls
+// (e.g. /quran/2 vs /quran/002 both resolve to whichever form is cached).
+async function matchCached(request, url) {
+    let hit = await caches.match(request);
+    if (hit) return hit;
+
+    const m = url.pathname.match(/^\/quran\/(\d+)$/);
+    if (m) {
+        const num = parseInt(m[1], 10);
+        const candidates = [`/quran/${String(num).padStart(3, '0')}`, `/quran/${num}`];
+        for (const candidate of candidates) {
+            hit = await caches.match(candidate);
+            if (hit) return hit;
+        }
+    }
+    return undefined;
+}
+
 self.addEventListener('fetch', (event) => {
     const request = event.request;
 
@@ -77,7 +98,7 @@ self.addEventListener('fetch', (event) => {
                     caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
                     return response;
                 })
-                .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
+                .catch(() => matchCached(request, url).then((cached) => cached || caches.match('/')))
         );
         return;
     }
@@ -104,8 +125,16 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // RSC payload requests for client-side navigation — network only.
+    // Offline they fail, and Next.js falls back to a full page load which
+    // the navigate handler resolves from the cache.
+    if (url.searchParams.has('_rsc') || request.headers.get('RSC')) {
+        event.respondWith(fetch(request));
+        return;
+    }
+
     // Everything else — network with cache fallback
     event.respondWith(
-        fetch(request).catch(() => caches.match(request))
+        fetch(request).catch(() => matchCached(request, url))
     );
 });
