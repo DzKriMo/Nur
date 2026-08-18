@@ -104,7 +104,7 @@ export default function KidsPage() {
                             )}
 
                             {hasQuiz && (
-                                <Quiz quiz={step.quiz!} onAnswer={handleQuizAnswer} />
+                                <Quiz key={currentStep} quiz={step.quiz!} onAnswer={handleQuizAnswer} />
                             )}
 
                             {showCompletion && (
