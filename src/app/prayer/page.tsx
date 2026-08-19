@@ -20,6 +20,7 @@ import {
 } from '@/lib/prayer';
 import Qibla from '@/components/prayer/Qibla';
 import PrayerNotifications from '@/components/prayer/PrayerNotifications';
+import PrayerTracker from '@/components/prayer/PrayerTracker';
 
 interface CityResult {
     lat: string;
@@ -297,6 +298,10 @@ export default function PrayerPage() {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+
+                        <div className="mb-8">
+                            <PrayerTracker />
                         </div>
 
                         {coords && (

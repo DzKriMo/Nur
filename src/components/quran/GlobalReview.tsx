@@ -5,7 +5,7 @@ import { Loader2, Layers, BookMarked } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStoredState } from '@/lib/storage';
 import {
-    DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY, getAllMasteredVerses,
+    DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY, getAllMasteredVerses, getDueVerses,
 } from '@/lib/memorization';
 import { SurahContent } from '@/types';
 import MemorizationMode, { MemorizationExternalVerse } from './MemorizationMode';
@@ -24,13 +24,15 @@ export default function GlobalReview() {
     const [session, setSession] = useState<{ surah: SurahContent; verses: MemorizationExternalVerse[] } | null>(null);
 
     const mastered = useMemo(() => getAllMasteredVerses(progress), [progress]);
+    const due = useMemo(() => getDueVerses(progress), [progress]);
+    const reviewList = due.length > 0 ? due : mastered;
 
     const start = useCallback(async () => {
-        if (mastered.length === 0 || loading) return;
+        if (reviewList.length === 0 || loading) return;
         setLoading(true);
         setError(null);
         try {
-            const surahIds = [...new Set(mastered.map((m) => m.surahId))];
+            const surahIds = [...new Set(reviewList.map((m) => m.surahId))];
             const fetched = await Promise.all(
                 surahIds.map(async (id) => {
                     const res = await fetch(`/api/quran/surah/${id}`);
@@ -39,7 +41,7 @@ export default function GlobalReview() {
                 })
             );
             const byId = new Map(fetched.map((s) => [s.index, s]));
-            const verses: MemorizationExternalVerse[] = mastered.flatMap((m) => {
+            const verses: MemorizationExternalVerse[] = reviewList.flatMap((m) => {
                 const surah = byId.get(m.surahId);
                 if (!surah) return [];
                 const text = surah.verse[`verse_${m.verseNum}`] ?? surah.verse[m.verseNum];
@@ -63,7 +65,7 @@ export default function GlobalReview() {
         } finally {
             setLoading(false);
         }
-    }, [mastered, loading, isAr]);
+    }, [reviewList, loading, isAr]);
 
     if (active && session) {
         return (
@@ -87,10 +89,15 @@ export default function GlobalReview() {
                 className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-gold-500/50 hover:text-gold-600 dark:hover:text-gold-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {loading ? <Loader2 size={15} className="animate-spin" /> : <Layers size={15} />}
-                {isAr ? 'مراجعة كل المحفوظ' : 'Review All Memorized'}
+                {isAr ? 'مراجعة المحفوظ' : 'Review Memorized'}
                 <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">
-                    {mastered.length}
+                    {due.length > 0 ? due.length : mastered.length}
                 </span>
+                {due.length > 0 && (
+                    <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+                        {isAr ? 'مستحقة' : 'due'}
+                    </span>
+                )}
             </button>
             {error && (
                 <p className="mt-2 text-xs text-red-600 dark:text-red-400 flex items-center gap-1">

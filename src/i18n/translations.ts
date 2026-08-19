@@ -183,6 +183,8 @@ export const translations = {
         'common.copied': 'Copied!',
         'common.back_to': 'Back to',
         'common.verses': 'Verses',
+        'common.day': 'day',
+        'common.days': 'days',
 
         // 404
         'not_found.title': 'Page Not Found',
@@ -266,6 +268,9 @@ export const translations = {
         'quran.review_complete': 'Review complete!',
         'quran.review_summary': 'Verses still strong',
         'quran.global_review': 'Global Review',
+        'quran.review_due': 'Review due',
+        'quran.review_all': 'Review all',
+        'quran.next_review': 'Next review',
         'quran.font_size': 'Arabic text size',
         'quran.words_to_strengthen': 'Words to strengthen',
         'quran.share_image': 'Share verse image',
@@ -317,6 +322,14 @@ export const translations = {
         'prayer.method_6': 'Dubai',
         'prayer.method_7': 'Moonsighting Committee',
         'prayer.location_saved': 'Location saved',
+        'prayer.tracker_title': 'Today\'s prayers',
+        'prayer.tracker_desc': 'Mark each prayer as you complete it',
+        'prayer.tracker_done': 'Done',
+        'prayer.tracker_qada': 'Qada',
+        'prayer.tracker_streak': 'day streak',
+        'prayer.tracker_week': 'This week',
+        'prayer.tracker_recorded': 'prayers',
+        'prayer.tracker_complete_days': 'complete days',
 
         // Chat
         'chat.sending': 'Thinking...',
@@ -540,6 +553,8 @@ export const translations = {
         'common.copied': 'تم النسخ!',
         'common.back_to': 'رجوع إلى',
         'common.verses': 'آيات',
+        'common.day': 'يوم',
+        'common.days': 'أيام',
 
         // 404
         'not_found.title': 'الصفحة غير موجودة',
@@ -621,8 +636,11 @@ export const translations = {
         'quran.stop_review': 'إنهاء المراجعة',
         'quran.review_mastered': 'مراجعة الآيات المحفوظة',
         'quran.review_complete': 'اكتملت المراجعة!',
-        'quran.review_summary': 'آيات لا تزال متقنة',
+        'quran.review_summary': 'الآيات ما تزال قوية',
         'quran.global_review': 'مراجعة المحفوظ',
+        'quran.review_due': 'مراجعة المستحقة',
+        'quran.review_all': 'مراجعة الكل',
+        'quran.next_review': 'المراجعة القادمة',
         'quran.font_size': 'حجم الخط العربي',
         'quran.words_to_strengthen': 'كلمات لتقويتها',
         'quran.share_image': 'مشاركة الآية كصورة',
@@ -674,6 +692,14 @@ export const translations = {
         'prayer.method_6': 'دبي',
         'prayer.method_7': 'لجنة رؤية الهلال',
         'prayer.location_saved': 'تم حفظ الموقع',
+        'prayer.tracker_title': 'صلاة اليوم',
+        'prayer.tracker_desc': 'علّم على كل صلاة عند أدائها',
+        'prayer.tracker_done': 'أدّيتها',
+        'prayer.tracker_qada': 'قضاء',
+        'prayer.tracker_streak': 'يوم متواصل',
+        'prayer.tracker_week': 'هذا الأسبوع',
+        'prayer.tracker_recorded': 'صلاة',
+        'prayer.tracker_complete_days': 'أيام كاملة',
 
         // Chat
         'chat.sending': 'يفكر...',

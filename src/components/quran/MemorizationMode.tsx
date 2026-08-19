@@ -17,6 +17,7 @@ import {
     normalizeArabicTokens, alignTokensMulti, recordVerse,
     getTodayVerses, getStreak, getTotalVerses, getSurahProgress,
     getUnlockedMilestones, getNewlyUnlockedMilestones, getSurahWeakWords,
+    countDueVersesInSurah, getVerseInterval,
     MemorizationState,
 } from '@/lib/memorization';
 
@@ -116,6 +117,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const [liveTranscript, setLiveTranscript] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<RecitationResult | null>(null);
+    const [srsInterval, setSrsInterval] = useState<number | null>(null);
     const [celebration, setCelebration] = useState<string | null>(null);
     const [milestoneCelebration, setMilestoneCelebration] = useState<number | null>(null);
     const [reviewActive, setReviewActive] = useState(false);
@@ -221,6 +223,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setRevealedWords(0);
         setSkippedIndices([]);
         setResult(null);
+        setSrsInterval(null);
         setCelebration(null);
         setError(null);
         setNoSpeechHint(false);
@@ -244,6 +247,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const totalVerses = getTotalVerses(progress);
     const surahProgress = getSurahProgress(progress, chapterId);
     const surahWeakWords = getSurahWeakWords(progress, chapterId);
+    const surahDueCount = countDueVersesInSurah(progress, chapterId);
     const unlockedMilestones = getUnlockedMilestones(totalVerses);
     const dailyGoal = progress.dailyGoal;
     const goalProgress = Math.min(100, Math.round((todayVerses / Math.max(1, dailyGoal)) * 100));
@@ -308,6 +312,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         const surahId = currentVerse.surahId ?? chapterId;
         const next = recordVerse(prev, surahId, currentVerse.verseNum, accuracy, missing);
         setProgress(next);
+        setSrsInterval(getVerseInterval(next, surahId, currentVerse.verseNum));
         const newly = getNewlyUnlockedMilestones(prevTotal, getTotalVerses(next));
         if (newly.length > 0) {
             setMilestoneCelebration(newly[newly.length - 1]);
@@ -776,14 +781,24 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         sound.play();
     }, [activeVerses, chapterId, isHearing, riwaya, stopHearing, stopRecognition, tab]);
 
-    // Review mode: re-test the surah's already-mastered verses for retention.
-    const startReview = useCallback(() => {
+    // Review mode: re-test the surah's mastered verses for retention. When
+    // spaced-repetition verses are due, the session reviews those first and
+    // only falls back to all mastered verses when nothing is due yet.
+    const startReview = useCallback((dueOnly = true) => {
+        const now = Date.now();
         const mastered = verses.filter((v) => progressRef.current.surahs[chapterId]?.[v.verseNum]?.mastered);
         if (mastered.length === 0) return;
+        const due = dueOnly
+            ? mastered.filter((v) => {
+                  const rec = progressRef.current.surahs[chapterId]?.[v.verseNum];
+                  return rec && (rec.nextReview === undefined || rec.nextReview <= now);
+              })
+            : mastered;
+        const list = due.length > 0 ? due : mastered;
         stopRecognition();
         stopHearing();
         stopSound();
-        setReviewList(mastered);
+        setReviewList(list);
         reviewStrongRef.current = 0;
         setReviewSummary(null);
         setReviewActive(true);
@@ -1209,6 +1224,13 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                 <span className="opacity-70 ml-auto">({result.revealed}/{result.total})</span>
                             </div>
 
+                            {srsInterval !== null && (
+                                <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <RefreshCw size={12} />
+                                    {t('quran.next_review')}: {srsInterval} {srsInterval === 1 ? t('common.day') : t('common.days')}
+                                </p>
+                            )}
+
                             {result.missing.length > 0 ? (
                                 <p className="text-sm text-slate-600 dark:text-slate-300">
                                     {t('quran.weak_words')}: <span className="font-arabic">{result.missing.slice(0, 8).join(' · ')}</span>
@@ -1340,13 +1362,23 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         </div>
                     )}
                     {!reviewActive && surahProgress.mastered > 0 && (
-                        <button
-                            onClick={startReview}
-                            className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
-                        >
-                            <RefreshCw size={14} />
-                            {t('quran.review_mastered')} ({surahProgress.mastered})
-                        </button>
+                        <>
+                            <button
+                                onClick={() => startReview(true)}
+                                className="mt-3 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-violet-600 hover:bg-violet-700 text-white transition-colors"
+                            >
+                                <RefreshCw size={14} />
+                                {surahDueCount > 0
+                                    ? `${t('quran.review_due')} (${surahDueCount})`
+                                    : t('quran.review_mastered')}
+                            </button>
+                            <button
+                                onClick={() => startReview(false)}
+                                className="mt-1.5 w-full text-center text-xs text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                            >
+                                {t('quran.review_all')} ({surahProgress.mastered})
+                            </button>
+                        </>
                     )}
                 </div>
                 )}

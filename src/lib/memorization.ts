@@ -11,6 +11,12 @@ export interface VerseRecord {
     // Normalized Arabic words that were missed on this verse, with counts
     // accumulated across attempts (used for "words to strengthen").
     weakWords?: Record<string, number>;
+    // Spaced repetition: the next scheduled review timestamp and the current
+    // interval (in days). Verses without a nextReview (mastered before SRS)
+    // are treated as due immediately.
+    nextReview?: number;
+    intervalDays?: number;
+    lapses?: number;
 }
 
 export interface SurahProgress {
@@ -38,6 +44,11 @@ export const MEMORIZATION_STORAGE_KEY = 'nur-memorization';
 export const MASTERY_THRESHOLD = 85;
 
 export const MILESTONES = [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2000, 5000];
+
+// Spaced-repetition review ladder (in days). A verse advances one rung after
+// a strong review and drops back to the first rung after a lapse.
+export const SRS_INTERVALS = [1, 3, 7, 15, 30, 60];
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function dayKey(d = new Date()): string {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -327,6 +338,42 @@ export function getAllMasteredVerses(state: MemorizationState): { surahId: strin
     return out;
 }
 
+/** True if a mastered verse is due for a spaced-repetition review today. */
+export function isVerseDue(v: VerseRecord, now = Date.now()): boolean {
+    return v.mastered && (v.nextReview === undefined || v.nextReview <= now);
+}
+
+/** Mastered verses due for review across every surah (SRS queue). */
+export function getDueVerses(state: MemorizationState): { surahId: string; verseNum: string }[] {
+    const out: { surahId: string; verseNum: string }[] = [];
+    const now = Date.now();
+    for (const [surahId, surah] of Object.entries(state.surahs)) {
+        for (const v of Object.values(surah)) {
+            if (isVerseDue(v, now)) out.push({ surahId, verseNum: v.verseNum });
+        }
+    }
+    return out;
+}
+
+export function countDueVerses(state: MemorizationState): number {
+    return getDueVerses(state).length;
+}
+
+export function countDueVersesInSurah(state: MemorizationState, surahId: string): number {
+    const surah = state.surahs[surahId] ?? {};
+    const now = Date.now();
+    let count = 0;
+    for (const v of Object.values(surah)) {
+        if (isVerseDue(v, now)) count++;
+    }
+    return count;
+}
+
+/** The next review interval (days) scheduled for a verse, or null if unknown. */
+export function getVerseInterval(state: MemorizationState, surahId: string, verseNum: string): number | null {
+    return state.surahs[surahId]?.[verseNum]?.intervalDays ?? null;
+}
+
 export function getUnlockedMilestones(total: number): number[] {
     return MILESTONES.filter((m) => total >= m);
 }
@@ -352,6 +399,21 @@ export function recordVerse(
         if (normalized) weakWords[normalized] = (weakWords[normalized] ?? 0) + 1;
     }
 
+    // Spaced-repetition scheduling: strong reviews climb the interval ladder,
+    // lapses drop the verse back to the shortest interval.
+    const wasStrong = accuracy >= MASTERY_THRESHOLD;
+    let intervalDays = prev?.intervalDays ?? 0;
+    if (wasStrong) {
+        const idx = SRS_INTERVALS.indexOf(intervalDays);
+        intervalDays = idx === -1
+            ? SRS_INTERVALS[0]
+            : SRS_INTERVALS[Math.min(idx + 1, SRS_INTERVALS.length - 1)];
+    } else {
+        intervalDays = SRS_INTERVALS[0];
+    }
+    const lapses = (prev?.lapses ?? 0) + (wasStrong ? 0 : 1);
+    const nextReview = Date.now() + intervalDays * DAY_MS;
+
     const record: VerseRecord = {
         verseNum,
         bestAccuracy: Math.max(prev?.bestAccuracy ?? 0, accuracy),
@@ -360,6 +422,9 @@ export function recordVerse(
         lastAccuracy: accuracy,
         updatedAt: Date.now(),
         weakWords,
+        nextReview,
+        intervalDays,
+        lapses,
     };
 
     const today = dayKey();

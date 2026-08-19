@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText } from 'lucide-react';
+import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText, ScrollText } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Riwaya, RIAWAYA_OPTIONS, setRiwayaCookie } from '@/lib/riwaya';
 import MemorizationMode from '@/components/quran/MemorizationMode';
 import VerseShare from '@/components/quran/VerseShare';
+import TafsirDrawer from '@/components/quran/TafsirDrawer';
 import { OrnamentDivider } from '@/components/layout/Ornament';
 
 const FONT_SIZE_KEY = 'nur-quran-font-size';
@@ -38,6 +39,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     const [activeJuz, setActiveJuz] = useState<string>('');
     const [memorizeMode, setMemorizeMode] = useState(false);
     const [shareTarget, setShareTarget] = useState<{ verseNum: string; text: string; translation: string } | null>(null);
+    const [tafsirTarget, setTafsirTarget] = useState<string | null>(null);
     const [fontScale, setFontScale] = useStoredState<FontSize>(FONT_SIZE_KEY, 'md');
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -190,6 +192,18 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
 
     const openShare = (verseNum: string, text: string, trans: string) => {
         setShareTarget({ verseNum, text, translation: trans });
+    };
+
+    const openTafsir = (verseNum: string) => {
+        stopSound();
+        setTafsirTarget(verseNum);
+    };
+
+    const tafsirIdx = tafsirTarget ? verses.findIndex((v) => v.verseNum === tafsirTarget) : -1;
+    const tafsirVerse = tafsirIdx >= 0 ? verses[tafsirIdx] : null;
+    const navTafsir = (delta: number) => {
+        const next = verses[tafsirIdx + delta];
+        if (next) setTafsirTarget(next.verseNum);
     };
 
     return (
@@ -358,6 +372,14 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                                     <ListMusic size={13} />
                                     <span className="hidden sm:inline">{t('quran.play_from_here')}</span>
                                 </button>
+                                <button
+                                    onClick={() => openTafsir(verse.verseNum)}
+                                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                                    title={t('quran.tafseer')}
+                                >
+                                    <ScrollText size={13} />
+                                    <span className="hidden sm:inline">{t('quran.tafseer')}</span>
+                                </button>
                             </div>
                             <button
                                 onClick={() => openShare(verse.verseNum, verse.text, verse.translation)}
@@ -411,6 +433,20 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                     text={shareTarget.text}
                     translation={shareTarget.translation}
                     onClose={() => setShareTarget(null)}
+                />
+            )}
+            {tafsirVerse && (
+                <TafsirDrawer
+                    surahName={surah.name}
+                    verseNum={tafsirVerse.verseNum}
+                    text={tafsirVerse.text}
+                    translation={tafsirVerse.translation}
+                    tafseer={tafsirVerse.tafseer}
+                    hasPrev={tafsirIdx > 0}
+                    hasNext={tafsirIdx < verses.length - 1}
+                    onPrev={() => navTafsir(-1)}
+                    onNext={() => navTafsir(1)}
+                    onClose={() => setTafsirTarget(null)}
                 />
             )}
         </div>
