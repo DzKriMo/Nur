@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText, ScrollText } from 'lucide-react';
+import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText, ScrollText, Palette } from 'lucide-react';
+import { annotateTajweed, TajweedRule } from '@/lib/tajweed';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -16,6 +17,13 @@ import TafsirDrawer from '@/components/quran/TafsirDrawer';
 import { OrnamentDivider } from '@/components/layout/Ornament';
 
 const FONT_SIZE_KEY = 'nur-quran-font-size';
+const TAJWEED_KEY = 'nur-tajweed';
+
+const TAJWEED_COLORS: Record<TajweedRule, string> = {
+    madd: 'text-gold-500 dark:text-gold-400',
+    ghunnah: 'text-emerald-600 dark:text-emerald-400',
+    qalqalah: 'text-rose-500 dark:text-rose-400',
+};
 const FONT_SIZES = {
     sm: 'text-xl md:text-2xl',
     md: 'text-2xl md:text-3xl',
@@ -41,6 +49,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     const [shareTarget, setShareTarget] = useState<{ verseNum: string; text: string; translation: string } | null>(null);
     const [tafsirTarget, setTafsirTarget] = useState<string | null>(null);
     const [fontScale, setFontScale] = useStoredState<FontSize>(FONT_SIZE_KEY, 'md');
+    const [tajweed, setTajweed] = useStoredState<boolean>(TAJWEED_KEY, false);
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
     const soundRef = useRef<Howl | null>(null);
@@ -287,6 +296,19 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         </select>
                     )}
                     <button
+                        onClick={() => setTajweed(!tajweed)}
+                        className={cn(
+                            "flex items-center gap-2 px-2.5 md:px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg text-sm",
+                            tajweed
+                                ? "bg-gold-500/20 dark:bg-gold-500/10 text-gold-700 dark:text-gold-400 ring-1 ring-gold-500/40"
+                                : "bg-slate-100 dark:bg-night-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
+                        )}
+                        title={t('quran.tajweed')}
+                    >
+                        <Palette size={16} />
+                        <span className="hidden sm:inline">{t('quran.tajweed')}</span>
+                    </button>
+                    <button
                         onClick={() => {
                             stopSound();
                             autoPlayRef.current = false;
@@ -331,6 +353,22 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             <div className="mt-5 max-w-xs mx-auto">
                                 <OrnamentDivider />
                             </div>
+                        </div>
+                    )}
+                    {tajweed && (
+                        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                            <span className="flex items-center gap-1.5">
+                                <span className="font-arabic text-base leading-none text-gold-500 dark:text-gold-400">ٱ</span>
+                                {t('tajweed.madd')}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <span className="font-arabic text-base leading-none text-emerald-600 dark:text-emerald-400">مّ</span>
+                                {t('tajweed.ghunnah')}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <span className="font-arabic text-base leading-none text-rose-500 dark:text-rose-400">دْ</span>
+                                {t('tajweed.qalqalah')}
+                            </span>
                         </div>
                     )}
                     {verses.map((verse) => (
@@ -408,9 +446,21 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         </div>
 
                         <div className="text-right mb-5">
-                            <p className={cn(FONT_SIZES[fontScale], "leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic")}>
-                                {verse.text}
-                            </p>
+                            {tajweed ? (
+                                <p className={cn(FONT_SIZES[fontScale], "leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic")}>
+                                    {annotateTajweed(verse.text).map((seg, i) =>
+                                        seg.rule ? (
+                                            <span key={i} className={TAJWEED_COLORS[seg.rule]}>{seg.text}</span>
+                                        ) : (
+                                            <span key={i}>{seg.text}</span>
+                                        )
+                                    )}
+                                </p>
+                            ) : (
+                                <p className={cn(FONT_SIZES[fontScale], "leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic")}>
+                                    {verse.text}
+                                </p>
+                            )}
                         </div>
 
                         <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-4">

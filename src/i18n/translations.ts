@@ -272,6 +272,7 @@ export const translations = {
         'quran.ayah': 'Ayah',
         'quran.audio': 'Audio',
         'quran.memorize': 'Memorize',
+        'quran.tajweed': 'Tajweed',
         'quran.memorize_mode': 'Memorization Mode',
         'quran.repeats': 'Repeats',
         'quran.hide_text': 'Hide text',
@@ -365,6 +366,11 @@ export const translations = {
         'hadith.no_saved_hadiths': 'No saved hadiths yet. Tap the bookmark on any hadith to save it.',
         'hadith.in_book': 'in',
         'hadith.grade': 'Grading',
+
+        // Tajweed highlighting
+        'tajweed.madd': 'Madd (elongation)',
+        'tajweed.ghunnah': 'Ghunnah (nasalization)',
+        'tajweed.qalqalah': 'Qalqalah (echo)',
 
         // Prayer upgrades
         'prayer.hijri': 'Hijri Date',
@@ -709,6 +715,7 @@ export const translations = {
         'quran.ayah': 'آية',
         'quran.audio': 'الصوت',
         'quran.memorize': 'الحفظ',
+        'quran.tajweed': 'التجويد',
         'quran.memorize_mode': 'وضع الحفظ',
         'quran.repeats': 'التكرار',
         'quran.hide_text': 'إخفاء النص',
@@ -802,6 +809,11 @@ export const translations = {
         'hadith.no_saved_hadiths': 'لا توجد أحاديث محفوظة بعد. اضغط على علامة الحفظ في أي حديث لحفظه.',
         'hadith.in_book': 'في',
         'hadith.grade': 'الحكم',
+
+        // Tajweed highlighting
+        'tajweed.madd': 'المد (الإطالة)',
+        'tajweed.ghunnah': 'الغنّة (الخيشومية)',
+        'tajweed.qalqalah': 'القلقلة (الاهتزاز)',
 
         // Prayer upgrades
         'prayer.hijri': 'التاريخ الهجري',
