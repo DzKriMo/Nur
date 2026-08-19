@@ -374,6 +374,85 @@ export function getVerseInterval(state: MemorizationState, surahId: string, vers
     return state.surahs[surahId]?.[verseNum]?.intervalDays ?? null;
 }
 
+export interface GlobalStats {
+    totalMastered: number;
+    totalAttempted: number;
+    totalAttempts: number;
+    averageAccuracy: number;
+    dueCount: number;
+    todayCount: number;
+    dailyGoal: number;
+    streak: number;
+    activeDays: number;
+    totalVersesLearned: number;
+}
+
+export function getGlobalStats(state: MemorizationState): GlobalStats {
+    let totalMastered = 0;
+    let totalAttempts = 0;
+    let totalAttempted = 0;
+    let accuracyWeightedSum = 0;
+    for (const surah of Object.values(state.surahs)) {
+        for (const v of Object.values(surah)) {
+            if (v.mastered) totalMastered++;
+            totalAttempted++;
+            totalAttempts += v.attempts;
+            accuracyWeightedSum += v.lastAccuracy * v.attempts;
+        }
+    }
+    return {
+        totalMastered,
+        totalAttempted,
+        totalAttempts,
+        averageAccuracy: totalAttempts > 0 ? Math.round(accuracyWeightedSum / totalAttempts) : 0,
+        dueCount: countDueVerses(state),
+        todayCount: getTodayVerses(state),
+        dailyGoal: state.dailyGoal,
+        streak: getStreak(state),
+        activeDays: Object.keys(state.days).filter((k) => (state.days[k]?.length ?? 0) > 0).length,
+        totalVersesLearned: Object.keys(state.days).reduce((n, k) => n + (state.days[k]?.length ?? 0), 0),
+    };
+}
+
+/** Mastered-verse count per surah id (the dashboard merges these with surah metadata). */
+export function getMasteryPerSurah(state: MemorizationState): Record<string, number> {
+    const out: Record<string, number> = {};
+    for (const [surahId, surah] of Object.entries(state.surahs)) {
+        let mastered = 0;
+        for (const v of Object.values(surah)) {
+            if (v.mastered) mastered++;
+        }
+        if (mastered > 0) out[surahId] = mastered;
+    }
+    return out;
+}
+
+/** Days with activity, newest first: [{ key, count }]. */
+export function getActivityDays(state: MemorizationState): { key: string; count: number }[] {
+    return Object.entries(state.days)
+        .map(([key, list]) => ({ key, count: list?.length ?? 0 }))
+        .filter((d) => d.count > 0)
+        .sort((a, b) => (a.key < b.key ? 1 : -1));
+}
+
+/** Most-missed words across the whole memorized set, weighted by miss count. */
+export function getWeakWordsGlobal(state: MemorizationState, limit = 10): { word: string; count: number }[] {
+    const counts: Record<string, number> = {};
+    for (const surah of Object.values(state.surahs)) {
+        for (const v of Object.values(surah)) {
+            if (v.weakWords) {
+                for (const [word, c] of Object.entries(v.weakWords)) {
+                    counts[word] = (counts[word] ?? 0) + c;
+                }
+            }
+        }
+    }
+    return Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([word, count]) => ({ word, count }));
+}
+
 export function getUnlockedMilestones(total: number): number[] {
     return MILESTONES.filter((m) => total >= m);
 }

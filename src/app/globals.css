@@ -154,10 +154,12 @@ body {
 html {
   scroll-behavior: smooth;
   color-scheme: light;
+  --color-cell-empty: #e8e4d8;
 }
 
 .dark {
   color-scheme: dark;
+  --color-cell-empty: #1a2a42;
 }
 
 /* Selection color — gold manuscript ink */

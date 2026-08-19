@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Book, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap, Sparkles } from 'lucide-react';
+import { Book, BookOpenText, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import HomeDashboard from '@/components/home/HomeDashboard';
 import { Crescent, KhatamStar, OrnamentDivider } from '@/components/layout/Ornament';
@@ -12,6 +12,7 @@ export default function Home() {
 
     const features = [
         { href: '/quran', icon: Book, color: 'emerald', title: t('nav.quran'), desc: t('home.features.quran') },
+        { href: '/hifz', icon: BookOpenText, color: 'gold', title: t('nav.hifz'), desc: t('home.features.hifz') },
         { href: '/hadith', icon: MessageCircle, color: 'amber', title: t('nav.hadith'), desc: t('home.features.hadith') },
         { href: '/adhkar', icon: Heart, color: 'rose', title: t('nav.adhkar'), desc: t('home.features.adhkar') },
         { href: '/names', icon: Sparkles, color: 'gold', title: t('nav.names'), desc: t('home.features.names') },

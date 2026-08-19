@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nur-app-v4';
+const CACHE_NAME = 'nur-app-v5';
 
 // Lightweight, essential content precached at install so it works offline by default:
 // app shell + full Quran text (114 surah pages) + adhkar categories.
@@ -13,6 +13,7 @@ const APP_SHELL = [
     '/adhkar',
     '/names',
     '/prayer',
+    '/hifz',
     '/stories',
     '/stories/prophets',
     '/stories/quran',

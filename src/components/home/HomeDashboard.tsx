@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { BookMarked, MessageSquareQuote, Heart, BookOpen, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { BookMarked, BookOpenText, MessageSquareQuote, Heart, BookOpen, ChevronLeft, ChevronRight, Star, Flame } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
 import { getVerseOfDay } from '@/data/daily/verses';
 import { getHadithOfDay } from '@/data/daily/hadiths';
 import NextPrayerWidget from '@/components/prayer/NextPrayerWidget';
+import { useStoredState } from '@/lib/storage';
+import { DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY, getGlobalStats } from '@/lib/memorization';
 
 const ADHKAR_LINKS = [
     { href: '/adhkar/azkar_sabah.json', key: 'adhkar.morning' as const },
@@ -29,6 +31,8 @@ export default function HomeDashboard() {
 
     const savedCount = quranBookmarks.length + hadithFavorites.length;
     const completedStoriesCount = completedStories.length;
+    const [memorization] = useStoredState(MEMORIZATION_STORAGE_KEY, DEFAULT_MEMORIZATION_STATE);
+    const hifzStats = getGlobalStats(memorization);
 
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 pb-10">
@@ -117,6 +121,18 @@ export default function HomeDashboard() {
                         >
                             <Star size={15} className="fill-amber-400 text-amber-400" />
                             {t('stories.title')} ({completedStoriesCount})
+                        </Link>
+                        <Link
+                            href="/hifz"
+                            className="flex items-center gap-2 p-3 rounded-xl bg-gold-500/10 dark:bg-gold-500/10 text-gold-700 dark:text-gold-400 hover:bg-gold-500/20 dark:hover:bg-gold-500/20 transition-colors text-sm font-medium col-span-2"
+                        >
+                            <BookOpenText size={15} />
+                            {t('home.hifz_journey')}
+                            {hifzStats.totalMastered > 0 && (
+                                <span className="flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded-full bg-gold-500/20 text-gold-700 dark:text-gold-300 ml-auto">
+                                    {hifzStats.totalMastered} · <Flame size={11} className="text-orange-500" /> {hifzStats.streak}
+                                </span>
+                            )}
                         </Link>
                     </div>
                 </div>
