@@ -32,8 +32,21 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+/* Prevent page-level horizontal overflow (mobile browsers otherwise zoom the
+   whole page out to fit, which breaks the layout). Inner scroll areas are
+   unaffected — they keep their own overflow-x:auto. */
+html,
+body {
+  overflow-x: clip;
+}
+
 .font-arabic {
   font-family: var(--font-amiri), serif;
+  /* Arabic stays right-to-left even when the app language is English (the
+     document flips to dir="ltr"). plaintext resolves direction from the
+     content's first strong character. */
+  direction: rtl;
+  unicode-bidi: plaintext;
 }
 
 .font-serif {
@@ -155,6 +168,18 @@ html {
   scroll-behavior: smooth;
   color-scheme: light;
   --color-cell-empty: #e8e4d8;
+}
+
+/* Hifz activity heatmap: width of one week column (cell + gap), so the month
+   labels align under the columns at every breakpoint. */
+.heatmap {
+  --heat-step: 12px;
+}
+
+@media (min-width: 640px) {
+  .heatmap {
+    --heat-step: 20px;
+  }
 }
 
 .dark {

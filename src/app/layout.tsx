@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ClientProviders from "@/components/providers/ClientProviders";
 import PwaRegister from "@/components/PwaRegister";
+import PinchZoomReset from "@/components/PinchZoomReset";
 import { SITE_URL, SITE_NAME, SITE_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_EN } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -108,6 +109,7 @@ export default function RootLayout({
           <Footer />
         </ClientProviders>
         <PwaRegister />
+        <PinchZoomReset />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

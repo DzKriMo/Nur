@@ -971,7 +971,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                         {isRestarting ? '·' : t('quran.listening')}
                                     </p>
                                 )}
-                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
+                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center" dir="rtl">
                                     {currentDisplayWords.map((word, i) => (
                                         <span
                                             key={i}
@@ -1018,7 +1018,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                         {t('quran.listening')}
                                     </p>
                                 )}
-                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center">
+                                <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic text-center" dir="rtl">
                                     {currentVerse.text}
                                 </p>
                             </>

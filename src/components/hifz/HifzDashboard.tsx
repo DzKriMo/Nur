@@ -112,9 +112,9 @@ export default function HifzDashboard({ surahs }: HifzDashboardProps) {
 
     return (
         <div className="space-y-6">
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
                 {statsCards.map(({ icon: Icon, color, bg, value, label, sub }) => (
-                    <div key={label} className="rounded-2xl bg-white dark:bg-night-900 border border-slate-100 dark:border-slate-800 shadow-sm p-4">
+                    <div key={label} className="w-[calc(50%-0.375rem)] lg:w-auto lg:flex-1 rounded-2xl bg-white dark:bg-night-900 border border-slate-100 dark:border-slate-800 shadow-sm p-4">
                         <div className={cn('flex items-center justify-center w-9 h-9 rounded-xl mb-2', bg, color)}>
                             <Icon size={17} />
                         </div>
@@ -134,20 +134,20 @@ export default function HifzDashboard({ surahs }: HifzDashboardProps) {
                     </span>
                 </div>
                 <div className="overflow-x-auto pb-2">
-                    <div className="flex gap-1.5 min-w-max">
-                        <div className="flex flex-col gap-1 pr-1">
+                    <div className="heatmap flex gap-1 sm:gap-1.5">
+                        <div className="flex flex-col gap-1 sm:gap-1.5 pr-1">
                             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
-                                <span key={d} className="text-[9px] text-slate-400 h-3.5 flex items-center">
+                                <span key={d} className="text-[9px] text-slate-400 h-2 sm:h-3.5 flex items-center">
                                     {i % 2 === 0 ? d : ''}
                                 </span>
                             ))}
                         </div>
                         {heatmap.weeks.map((week, col) => (
-                            <div key={col} className="flex flex-col gap-1">
+                            <div key={col} className="flex flex-col gap-1 sm:gap-1.5">
                                 {week.map(({ date, count }) => (
                                     <div
                                         key={date.toDateString()}
-                                        className="w-3.5 h-3.5 rounded-[3px]"
+                                        className="w-2 h-2 sm:w-3.5 sm:h-3.5 rounded-[2px] sm:rounded-[3px]"
                                         title={`${date.toLocaleDateString()} — ${count} ${count === 1 ? t('hifz.verse_unit') : t('hifz.verses_unit')}`}
                                         style={{
                                             backgroundColor: count === 0
@@ -161,15 +161,15 @@ export default function HifzDashboard({ surahs }: HifzDashboardProps) {
                     </div>
                 </div>
                 {monthLabels.length > 0 && (
-                    <div className="flex gap-1.5 ml-5 mt-1.5 min-w-max overflow-hidden">
+                    <div className="flex gap-1 sm:gap-1.5 ml-5 mt-1.5 overflow-hidden">
                         {monthLabels.map(({ text, col }) => (
-                            <span key={`${text}-${col}`} className="text-[9px] text-slate-400" style={{ marginLeft: col * 20 }}>
+                            <span key={`${text}-${col}`} className="text-[9px] text-slate-400" style={{ marginLeft: `calc(${col} * var(--heat-step))` }}>
                                 {text}
                             </span>
                         ))}
                     </div>
                 )}
-                <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-slate-400">
+                <div className="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-slate-400">
                     {t('hifz.less')}
                     {[0, 1, 2, 3, 4].map((i) => (
                         <span

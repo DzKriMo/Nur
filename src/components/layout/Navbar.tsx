@@ -126,7 +126,7 @@ export default function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 className={cn(
-                                    "relative flex flex-col items-center gap-0.5 p-1.5 rounded-xl transition-colors min-w-[56px]",
+                                    "relative flex flex-col items-center gap-0.5 p-1.5 rounded-xl transition-colors flex-1 min-w-0",
                                     active
                                         ? "text-gold-600 dark:text-gold-300"
                                         : "text-slate-400 dark:text-slate-500"
@@ -134,14 +134,14 @@ export default function Navbar() {
                             >
                                 {active && <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-1 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent" />}
                                 <Icon size={20} />
-                                <span className="text-[10px] font-medium">{link.label}</span>
+                                <span className="text-[10px] font-medium whitespace-nowrap">{link.label}</span>
                             </Link>
                         );
                     })}
                     <button
                         onClick={() => setMobileOpen(!mobileOpen)}
                         className={cn(
-                            "flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[56px]",
+                            "flex flex-col items-center gap-0.5 p-1.5 rounded-xl flex-1 min-w-0",
                             mobileOpen ? "text-gold-600 dark:text-gold-300" : "text-slate-400 dark:text-slate-500"
                         )}
                     >
