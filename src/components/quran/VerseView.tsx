@@ -313,7 +313,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
             ) : (
                 <div className="space-y-4">
                     {chapterId !== '001' && chapterId !== '009' && (
-                        <div className="relative arch-top overflow-hidden bg-gradient-to-b from-emerald-50 via-emerald-50/60 to-transparent dark:from-emerald-900/25 dark:via-emerald-900/15 border border-emerald-100 dark:border-emerald-900/40 pt-10 pb-8 px-6 text-center">
+                        <div className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-emerald-50/60 to-transparent dark:from-emerald-900/25 dark:via-emerald-900/15 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl pt-10 pb-8 px-6 text-center">
                             <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
                             <p className="font-arabic text-3xl md:text-4xl text-emerald-800 dark:text-emerald-200 leading-relaxed">
                                 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
@@ -332,16 +332,15 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             else verseRefs.current.delete(verse.verseNum);
                         }}
                         className={cn(
-                            "relative bg-white dark:bg-night-900 arch overflow-hidden p-5 shadow-sm border transition-all duration-300",
+                            "bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm border transition-all duration-300",
                             playingVerse === verse.verseNum
                                 ? "border-emerald-500 ring-1 ring-emerald-500/50 shadow-emerald-100 dark:shadow-none"
                                 : "border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800"
                         )}
                     >
-                        <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold-500/60 to-transparent" />
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-1.5">
-                                <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/40 flex items-center justify-center text-gold-600 dark:text-gold-300 font-medium text-xs">
+                                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-medium text-xs">
                                     {verse.verseNum}
                                 </div>
                                 <button
