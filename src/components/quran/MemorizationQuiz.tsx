@@ -5,7 +5,7 @@ import { Howl } from 'howler';
 import Link from 'next/link';
 import {
     Type, ListOrdered, Headphones, Pause, CheckCircle2, XCircle,
-    RotateCcw, Trophy, Volume2, X, Sparkles, ArrowRight, ArrowLeft, Undo2, Eraser,
+    RotateCcw, Trophy, Volume2, X, Brain, ArrowRight, ArrowLeft, Undo2, Eraser,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -197,7 +197,7 @@ export default function MemorizationQuiz({ verses, riwaya, onExit }: Memorizatio
             <div className="rounded-2xl bg-white dark:bg-night-900 border border-slate-100 dark:border-slate-800 shadow-sm p-5 md:p-6">
                 <div className="flex items-center gap-3 mb-5">
                     <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
-                        <Sparkles size={19} />
+                        <Brain size={19} />
                     </span>
                     <div>
                         <h3 className="font-semibold text-slate-800 dark:text-slate-100">{t('quiz.title')}</h3>

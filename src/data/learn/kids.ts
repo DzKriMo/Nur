@@ -242,7 +242,7 @@ export const kidsLessons: KidsLesson[] = [
     id: 'good-words',
     title: 'Magic Words!',
     titleAr: 'كلمات سحرية!',
-    icon: '✨',
+    icon: '🌙',
     color: '#0891b2',
     references: [
       'Quran 2:152 — "Remember Me; I will remember you"',

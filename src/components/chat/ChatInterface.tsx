@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, RefreshCcw, Bot, User } from 'lucide-react';
+import { Send, BookMarked, RefreshCcw, Bot, User } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
@@ -135,7 +135,7 @@ export default function ChatInterface() {
         <div className="flex flex-col h-full min-h-0">
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                    <Sparkles size={16} className="text-emerald-500" />
+                    <BookMarked size={16} className="text-emerald-500" />
                     <span>{t('chat.sources_hint')}</span>
                 </div>
                 {messages.length > 0 && (

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Book, BookOpenText, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap, Sparkles, Brain } from 'lucide-react';
+import { Book, BookOpenText, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap, Star, Brain } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import HomeDashboard from '@/components/home/HomeDashboard';
 import { Crescent, KhatamStar, OrnamentDivider } from '@/components/layout/Ornament';
@@ -16,7 +16,7 @@ export default function Home() {
         { href: '/quiz', icon: Brain, color: 'emerald', title: t('nav.quiz'), desc: t('home.features.quiz') },
         { href: '/hadith', icon: MessageCircle, color: 'amber', title: t('nav.hadith'), desc: t('home.features.hadith') },
         { href: '/adhkar', icon: Heart, color: 'rose', title: t('nav.adhkar'), desc: t('home.features.adhkar') },
-        { href: '/names', icon: Sparkles, color: 'gold', title: t('nav.names'), desc: t('home.features.names') },
+        { href: '/names', icon: Star, color: 'gold', title: t('nav.names'), desc: t('home.features.names') },
         { href: '/stories', icon: Scroll, color: 'violet', title: t('nav.stories'), desc: t('stories.subtitle') },
         { href: '/learn', icon: GraduationCap, color: 'sky', title: t('nav.learn'), desc: t('learn.subtitle') },
         { href: '/chat', icon: MessageCircle, color: 'emerald', title: t('nav.chat'), desc: t('home.features.chat') },
@@ -36,9 +36,9 @@ export default function Home() {
         <div className="min-h-screen">
             {/* Hero Section */}
             <section className="relative pt-16 md:pt-24 pb-16 md:pb-32 px-4 md:px-6 overflow-hidden">
-                <div className="absolute inset-0 pattern-khatam" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-emerald-200/30 dark:bg-emerald-900/10 rounded-full blur-3xl -z-10" />
-                <div className="absolute top-24 right-1/4 w-64 h-64 bg-emerald-300/20 dark:bg-emerald-800/10 rounded-full blur-2xl -z-10" />
+                <div className="absolute inset-0 pattern-mosaic" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gold-200/30 dark:bg-emerald-900/10 rounded-full blur-3xl -z-10" />
+                <div className="absolute top-24 right-1/4 w-64 h-64 bg-gold-300/20 dark:bg-emerald-800/10 rounded-full blur-2xl -z-10" />
                 <div className="absolute top-40 left-1/4 w-48 h-48 gold-glow -z-10" />
 
                 <div className="max-w-7xl mx-auto text-center relative z-10">

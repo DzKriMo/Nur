@@ -59,6 +59,9 @@ export function normalizeArabic(text: string): string {
         .replace(/[\uFEFF\u200B-\u200F\u2060\u00A0]/g, '')
         .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u08F0-\u08FF\u0610-\u061A\u06DD\uFD3E\uFD3F\u0300-\u036F]/g, '')
         .replace(/[أإآٱ]/g, 'ا')
+        .replace(/ؤ/g, 'و')
+        .replace(/ئ/g, 'ي')
+        .replace(/ء/g, 'ا')
         .replace(/ة/g, 'ه')
         .replace(/ى/g, 'ي')
         .replace(/[\u0660-\u0669]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
@@ -170,6 +173,13 @@ function matchTokenInStream(tokens: string[], cursor: number, word: string, look
     const end = Math.min(tokens.length, cursor + lookahead);
     for (let k = cursor; k < end; k++) {
         if (isWordMatch(tokens[k], word)) return k + 1;
+    }
+    // ASR sometimes splits a word into two tokens (e.g. "ب" + "سم" for "بسم",
+    // "ال" + "رحمن" for "الرحمن"). Try matching the concatenation of two
+    // consecutive tokens before giving up.
+    for (let k = cursor; k < end - 1; k++) {
+        const joined = tokens[k] + tokens[k + 1];
+        if (isWordMatch(joined, word)) return k + 2;
     }
     if (MUQATTAAT_TOKENS.has(word)) {
         const names = [...word].map((c) => ARABIC_LETTER_NAMES[c]).filter(Boolean);

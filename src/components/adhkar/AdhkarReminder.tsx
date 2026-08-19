@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Bell, BellRing, BellOff, Sparkles } from 'lucide-react';
+import { Bell, BellRing, BellOff, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useStoredState, getStored, setStored } from '@/lib/storage';
@@ -242,7 +242,7 @@ export default function AdhkarReminder() {
                         >
                             <div className="flex items-center gap-2">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-700 text-gold-600 dark:text-gold-300">
-                                    <Sparkles size={15} />
+                                    <Moon size={15} />
                                 </span>
                                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                                     {t(`adhkar.reminder_${part}` as never)}

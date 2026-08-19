@@ -98,7 +98,7 @@ export default function KidsPage() {
                             {funFact && (
                                 <div className="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                                     <p className="text-amber-800 dark:text-amber-200 text-sm font-arabic">
-                                        ✨ <strong>{funFact}</strong>
+                                        🌙 <strong>{funFact}</strong>
                                     </p>
                                 </div>
                             )}
