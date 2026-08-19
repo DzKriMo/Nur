@@ -91,6 +91,13 @@ export interface AdhkarCategory {
   filename: string;
 }
 
+export interface NameOfAllah {
+  number: number;
+  arabic: string;
+  transliteration: string;
+  meaning: string;
+}
+
 export interface BookInfo {
   id: string;
   name: string;

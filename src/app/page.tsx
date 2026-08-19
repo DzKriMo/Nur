@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Book, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap } from 'lucide-react';
+import { Book, Heart, MessageCircle, ArrowRight, Clock, Scroll, GraduationCap, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import HomeDashboard from '@/components/home/HomeDashboard';
 import { Crescent, KhatamStar, OrnamentDivider } from '@/components/layout/Ornament';
@@ -14,6 +14,7 @@ export default function Home() {
         { href: '/quran', icon: Book, color: 'emerald', title: t('nav.quran'), desc: t('home.features.quran') },
         { href: '/hadith', icon: MessageCircle, color: 'amber', title: t('nav.hadith'), desc: t('home.features.hadith') },
         { href: '/adhkar', icon: Heart, color: 'rose', title: t('nav.adhkar'), desc: t('home.features.adhkar') },
+        { href: '/names', icon: Sparkles, color: 'gold', title: t('nav.names'), desc: t('home.features.names') },
         { href: '/stories', icon: Scroll, color: 'violet', title: t('nav.stories'), desc: t('stories.subtitle') },
         { href: '/learn', icon: GraduationCap, color: 'sky', title: t('nav.learn'), desc: t('learn.subtitle') },
         { href: '/chat', icon: MessageCircle, color: 'emerald', title: t('nav.chat'), desc: t('home.features.chat') },
@@ -26,6 +27,7 @@ export default function Home() {
         rose: { bg: 'bg-rose-100 dark:bg-rose-900/30', icon: 'text-rose-700 dark:text-rose-400', hover: 'group-hover:bg-rose-600 group-hover:text-white' },
         violet: { bg: 'bg-violet-100 dark:bg-violet-900/30', icon: 'text-violet-700 dark:text-violet-400', hover: 'group-hover:bg-violet-600 group-hover:text-white' },
         sky: { bg: 'bg-sky-100 dark:bg-sky-900/30', icon: 'text-sky-700 dark:text-sky-400', hover: 'group-hover:bg-sky-600 group-hover:text-white' },
+        gold: { bg: 'bg-gold-500/15 dark:bg-gold-500/10', icon: 'text-gold-600 dark:text-gold-300', hover: 'group-hover:bg-gold-500 group-hover:text-white' },
     };
 
     return (

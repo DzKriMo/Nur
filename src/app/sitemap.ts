@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${SITE_URL}/quran/juz`, changeFrequency: 'weekly', priority: 0.6 },
         { url: `${SITE_URL}/hadith`, changeFrequency: 'weekly', priority: 0.9 },
         { url: `${SITE_URL}/adhkar`, changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${SITE_URL}/names`, changeFrequency: 'monthly', priority: 0.8 },
         { url: `${SITE_URL}/prayer`, changeFrequency: 'daily', priority: 0.8 },
         { url: `${SITE_URL}/stories`, changeFrequency: 'weekly', priority: 0.7 },
         { url: `${SITE_URL}/stories/prophets`, changeFrequency: 'weekly', priority: 0.8 },

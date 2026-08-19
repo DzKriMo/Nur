@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
-import { Play, Pause, Share2, Check, ListMusic, BookMarked, Brain, BookOpenText } from 'lucide-react';
+import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText } from 'lucide-react';
 import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -11,6 +11,7 @@ import { useStoredState } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import { Riwaya, RIAWAYA_OPTIONS, setRiwayaCookie } from '@/lib/riwaya';
 import MemorizationMode from '@/components/quran/MemorizationMode';
+import VerseShare from '@/components/quran/VerseShare';
 import { OrnamentDivider } from '@/components/layout/Ornament';
 
 const FONT_SIZE_KEY = 'nur-quran-font-size';
@@ -34,9 +35,9 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     const [playingVerse, setPlayingVerse] = useState<string | null>(null);
     const [, setSound] = useState<Howl | null>(null);
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
-    const [copiedVerse, setCopiedVerse] = useState<string | null>(null);
     const [activeJuz, setActiveJuz] = useState<string>('');
     const [memorizeMode, setMemorizeMode] = useState(false);
+    const [shareTarget, setShareTarget] = useState<{ verseNum: string; text: string; translation: string } | null>(null);
     const [fontScale, setFontScale] = useStoredState<FontSize>(FONT_SIZE_KEY, 'md');
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -187,21 +188,15 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
         }
     }, [playingVerse]);
 
-    const shareVerse = async (verseNum: string, text: string, trans: string) => {
-        const shareText = `${surah.name} ${verseNum}: ${text}\n\n${trans}`;
-        if (navigator.share) {
-            try { await navigator.share({ text: shareText }); } catch {}
-        } else {
-            await navigator.clipboard.writeText(shareText);
-            setCopiedVerse(verseNum);
-            setTimeout(() => setCopiedVerse(null), 2000);
-        }
+    const openShare = (verseNum: string, text: string, trans: string) => {
+        setShareTarget({ verseNum, text, translation: trans });
     };
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap justify-between items-center gap-3 bg-white/95 dark:bg-night-900/95 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 backdrop-blur-xl sticky top-[56px] md:top-[128px] z-30">
-                <div className="flex gap-1">
+            <div className="bg-white/95 dark:bg-night-900/95 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 backdrop-blur-xl sticky top-[56px] md:top-[128px] z-30">
+                <div className="grid gap-2 md:flex md:items-center md:justify-between md:gap-3">
+                <div className="flex gap-1 md:flex-none">
                     <button
                         onClick={() => setActiveTab('translation')}
                         className={cn(
@@ -225,8 +220,8 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         {t('quran.tafseer')}
                     </button>
                 </div>
-                <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 focus-within:ring-2 focus-within:ring-emerald-500" title={t('quran.riwaya')}>
+                <div className="flex flex-wrap items-center gap-1.5 md:gap-2 md:flex-none md:justify-end">
+                    <label className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 focus-within:ring-2 focus-within:ring-emerald-500" title={t('quran.riwaya')}>
                         <BookOpenText size={14} className="text-slate-400" />
                         <select
                             value={riwaya}
@@ -267,7 +262,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         <select
                             value={activeJuz}
                             onChange={(e) => jumpToJuz(e.target.value)}
-                            className="px-2 py-1.5 rounded-lg text-sm bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="px-1.5 md:px-2 py-1.5 rounded-lg text-sm bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[120px] md:max-w-none"
                         >
                             <option value="">{t('quran.jump_to_juz')}</option>
                             {juzList.map(j => (
@@ -284,7 +279,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             setMemorizeMode(true);
                         }}
                         className={cn(
-                            "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg text-sm",
+                            "flex items-center gap-2 px-2.5 md:px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg text-sm",
                             memorizeMode
                                 ? "bg-violet-600 hover:bg-violet-700 text-white"
                                 : "bg-slate-100 dark:bg-night-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
@@ -295,11 +290,12 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                     </button>
                     <button
                         onClick={playChapter}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
+                        className="flex items-center gap-2 px-2.5 md:px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-md hover:shadow-lg text-sm"
                     >
                         <Play size={16} />
                         <span className="hidden sm:inline">{t('common.listen')}</span>
                     </button>
+                </div>
                 </div>
             </div>
 
@@ -364,11 +360,11 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                                 </button>
                             </div>
                             <button
-                                onClick={() => shareVerse(verse.verseNum, verse.text, verse.translation)}
+                                onClick={() => openShare(verse.verseNum, verse.text, verse.translation)}
                                 className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors"
                                 title={t('quran.share_verse')}
                             >
-                                {copiedVerse === verse.verseNum ? <Check size={14} className="text-emerald-500" /> : <Share2 size={14} />}
+                                <Share2 size={14} />
                             </button>
                             <button
                                 onClick={() => toggleVerseBookmark({
@@ -407,6 +403,15 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                     </div>
                 ))}
                 </div>
+            )}
+            {shareTarget && (
+                <VerseShare
+                    surahName={surah.name}
+                    verseNum={shareTarget.verseNum}
+                    text={shareTarget.text}
+                    translation={shareTarget.translation}
+                    onClose={() => setShareTarget(null)}
+                />
             )}
         </div>
     );

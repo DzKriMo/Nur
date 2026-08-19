@@ -9,6 +9,7 @@ const quickLinks: { href: string; key: TranslationKey }[] = [
     { href: '/quran', key: 'nav.quran' },
     { href: '/hadith', key: 'nav.hadith' },
     { href: '/adhkar', key: 'nav.adhkar' },
+    { href: '/names', key: 'nav.names' },
     { href: '/prayer', key: 'nav.prayer' },
     { href: '/stories', key: 'nav.stories' },
     { href: '/learn', key: 'nav.learn' },

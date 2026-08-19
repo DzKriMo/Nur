@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { SurahMeta, SurahContent, HadithBook, AdhkarCategory, TranslationContent, HadithChapter, Hadith, BookInfo } from '@/types';
+import { SurahMeta, SurahContent, HadithBook, AdhkarCategory, TranslationContent, HadithChapter, Hadith, BookInfo, NameOfAllah } from '@/types';
 import { Riwaya } from '@/lib/riwaya';
 
 const DATA_DIR = path.join(process.cwd(), 'src/data');
@@ -201,4 +201,14 @@ export async function getAdhkar(filename: string): Promise<AdhkarCategory> {
     };
     setCache(key, result);
     return result;
+}
+
+let namesCache: NameOfAllah[] | null = null;
+
+export async function getNames(): Promise<NameOfAllah[]> {
+    if (namesCache) return namesCache;
+    const filePath = path.join(DATA_DIR, 'names.json');
+    const fileContent = await fs.readFile(filePath, 'utf-8');
+    namesCache = JSON.parse(fileContent) as NameOfAllah[];
+    return namesCache;
 }

@@ -1,6 +1,7 @@
 import { getAdhkarCategories } from '@/lib/data';
 import PageHeader from '@/components/layout/PageHeader';
 import AdhkarCategoryCard from '@/components/adhkar/AdhkarCategoryCard';
+import AdhkarReminder from '@/components/adhkar/AdhkarReminder';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -20,6 +21,10 @@ export default async function AdhkarPage() {
                     subtitleKey="adhkar.subtitle"
                     titleClassName="text-rose-800 dark:text-rose-400"
                 />
+
+                <div className="mb-8 max-w-2xl mx-auto">
+                    <AdhkarReminder />
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {categories.map((category) => (

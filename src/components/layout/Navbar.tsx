@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Book, Heart, MessageCircle, Info, Home, Moon, Sun, Menu, X, Clock, Scroll, GraduationCap } from 'lucide-react';
+import { Book, Heart, MessageCircle, Info, Home, Moon, Sun, Menu, X, Clock, Scroll, GraduationCap, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import NextPrayerWidget from '@/components/prayer/NextPrayerWidget';
@@ -23,6 +23,7 @@ export default function Navbar() {
         { href: '/quran', label: t('nav.quran'), icon: Book },
         { href: '/hadith', label: t('nav.hadith'), icon: MessageCircle },
         { href: '/adhkar', label: t('nav.adhkar'), icon: Heart },
+        { href: '/names', label: t('nav.names'), icon: Sparkles },
         { href: '/stories', label: t('nav.stories'), icon: Scroll },
         { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
         { href: '/prayer', label: t('nav.prayer'), icon: Clock },
@@ -39,6 +40,7 @@ export default function Navbar() {
     ];
 
     const extraLinks = [
+        { href: '/names', label: t('nav.names'), icon: Sparkles },
         { href: '/learn', label: t('nav.learn'), icon: GraduationCap },
         { href: '/stories', label: t('nav.stories'), icon: Scroll },
         { href: '/chat', label: t('nav.chat'), icon: MessageCircle },

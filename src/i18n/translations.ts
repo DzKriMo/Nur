@@ -9,9 +9,17 @@ export const translations = {
         'nav.quran': 'Quran',
         'nav.hadith': 'Hadith',
         'nav.adhkar': 'Adhkar',
+        'nav.names': 'Names of Allah',
         'nav.chat': 'AI Chat',
         'nav.about': 'About',
         'nav.prayer': 'Prayer',
+
+        // Names of Allah
+        'names.title': 'The 99 Names of Allah',
+        'names.subtitle': 'Memorize and reflect on the beautiful names of Allah',
+        'names.search': 'Search a name…',
+        'names.showing': 'Showing',
+        'names.no_results': 'No names match your search',
 
         // Home
         'home.hero.title': 'Nur',
@@ -24,6 +32,7 @@ export const translations = {
         'home.features.quran': 'Read & Listen to Quran',
         'home.features.hadith': 'Explore Hadith Collections',
         'home.features.adhkar': 'Daily Adhkar Reminders',
+        'home.features.names': 'The 99 Beautiful Names of Allah',
         'home.features.chat': 'Islamic AI Assistant',
         'home.features.prayer': 'Prayer Times',
 
@@ -259,6 +268,20 @@ export const translations = {
         'quran.global_review': 'Global Review',
         'quran.font_size': 'Arabic text size',
         'quran.words_to_strengthen': 'Words to strengthen',
+        'quran.share_image': 'Share verse image',
+        'quran.share_now': 'Share',
+        'quran.download': 'Download',
+        'quran.copy_text': 'Copy text',
+        'quran.share_error': 'Could not generate the image',
+
+        // Adhkar reminders
+        'adhkar.reminder': 'Daily reminders',
+        'adhkar.reminder_desc': 'Get a gentle notification at your adhkar time',
+        'adhkar.reminder_morning': 'Morning adhkar',
+        'adhkar.reminder_evening': 'Evening adhkar',
+        'adhkar.reminder_body_morning': 'Time for the morning adhkar — remember Allah',
+        'adhkar.reminder_body_evening': 'Time for the evening adhkar — remember Allah',
+        'adhkar.reminder_denied': 'Notifications are blocked in your browser settings',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'Search All Hadith',
@@ -343,9 +366,17 @@ export const translations = {
         'nav.quran': 'القرآن الكريم',
         'nav.hadith': 'الحديث الشريف',
         'nav.adhkar': 'الأذكار',
+        'nav.names': 'أسماء الله',
         'nav.chat': 'المساعد الذكي',
         'nav.about': 'عن التطبيق',
         'nav.prayer': 'أوقات الصلاة',
+
+        // Names of Allah
+        'names.title': 'أسماء الله الحسنى',
+        'names.subtitle': 'احفظ وتأمّل في أسماء الله الحسنى التسعة والتسعين',
+        'names.search': 'ابحث عن اسم…',
+        'names.showing': 'عدد الأسماء',
+        'names.no_results': 'لا توجد نتائج مطابقة لبحثك',
 
         // Home
         'home.hero.title': 'نور',
@@ -358,6 +389,7 @@ export const translations = {
         'home.features.quran': 'اقرأ واستمع للقرآن',
         'home.features.hadith': 'تصفح كتب الحديث',
         'home.features.adhkar': 'أذكار اليوم والليلة',
+        'home.features.names': 'أسماء الله الحسنى التسعة والتسعون',
         'home.features.chat': 'المساعد الإسلامي الذكي',
         'home.features.prayer': 'أوقات الصلاة',
 
@@ -593,6 +625,20 @@ export const translations = {
         'quran.global_review': 'مراجعة المحفوظ',
         'quran.font_size': 'حجم الخط العربي',
         'quran.words_to_strengthen': 'كلمات لتقويتها',
+        'quran.share_image': 'مشاركة الآية كصورة',
+        'quran.share_now': 'مشاركة',
+        'quran.download': 'تحميل',
+        'quran.copy_text': 'نسخ النص',
+        'quran.share_error': 'تعذّر إنشاء الصورة',
+
+        // Adhkar reminders
+        'adhkar.reminder': 'تذكير يومي',
+        'adhkar.reminder_desc': 'احصل على تنبيه لطيف عندما يحين وقت أذكارك',
+        'adhkar.reminder_morning': 'أذكار الصباح',
+        'adhkar.reminder_evening': 'أذكار المساء',
+        'adhkar.reminder_body_morning': 'حان وقت أذكار الصباح — اذكر الله',
+        'adhkar.reminder_body_evening': 'حان وقت أذكار المساء — اذكر الله',
+        'adhkar.reminder_denied': 'التنبيهات محظورة في إعدادات المتصفح',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'بحث شامل في الحديث',
