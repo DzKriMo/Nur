@@ -16,7 +16,7 @@ import {
     DEFAULT_MEMORIZATION_STATE, MEMORIZATION_STORAGE_KEY,
     normalizeArabicTokens, alignTokensMulti, recordVerse,
     getTodayVerses, getStreak, getTotalVerses, getSurahProgress,
-    getUnlockedMilestones, getNewlyUnlockedMilestones,
+    getUnlockedMilestones, getNewlyUnlockedMilestones, getSurahWeakWords,
     MemorizationState,
 } from '@/lib/memorization';
 
@@ -25,11 +25,23 @@ interface MemorizationModeProps {
     chapterId: string;
     riwaya?: Riwaya;
     onExit: () => void;
+    // Cross-surah review: a flat list of mastered verses from any surah.
+    // When provided, the session runs as a global review over these verses.
+    externalVerses?: MemorizationExternalVerse[];
+}
+
+export interface MemorizationExternalVerse {
+    verseNum: string;
+    text: string;
+    surahId: string;
+    surahName: string;
 }
 
 interface VerseItem {
     verseNum: string;
     text: string;
+    surahId?: string;
+    surahName?: string;
 }
 
 interface SpeechRecognitionAlternative {
@@ -86,7 +98,7 @@ interface RecitationResult {
     missing: string[];
 }
 
-export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', onExit }: MemorizationModeProps) {
+export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', onExit, externalVerses }: MemorizationModeProps) {
     const { t } = useLanguage();
     const [tab, setTab] = useState<'memorize' | 'listen'>('memorize');
     const [repeats, setRepeats] = useState(3);
@@ -151,11 +163,18 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const resultsCutoffRef = useRef(0);
 
     const verses = useMemo<VerseItem[]>(
-        () => Object.entries(surah.verse).map(([key, text]) => ({
-            verseNum: key.split('_')[1],
-            text,
-        })),
-        [surah.verse]
+        () => externalVerses && externalVerses.length > 0
+            ? externalVerses.map((v) => ({
+                verseNum: v.verseNum,
+                text: v.text,
+                surahId: v.surahId,
+                surahName: v.surahName,
+            }))
+            : Object.entries(surah.verse).map(([key, text]) => ({
+                verseNum: key.split('_')[1],
+                text,
+            })),
+        [surah.verse, externalVerses]
     );
 
     const rangeVerses = useMemo(
@@ -208,10 +227,23 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         setReviewSummary(null);
     }, [currentIdx, currentVerse?.verseNum, currentVerse, reviewActive]);
 
+    // Global review mode: initialize the session over the external verses.
+    const isGlobalReview = !!(externalVerses && externalVerses.length > 0);
+    useEffect(() => {
+        if (isGlobalReview) {
+            setReviewList(externalVerses ?? []);
+            setReviewActive(true);
+            reviewStrongRef.current = 0;
+            setReviewSummary(null);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const todayVerses = getTodayVerses(progress);
     const streak = getStreak(progress);
     const totalVerses = getTotalVerses(progress);
     const surahProgress = getSurahProgress(progress, chapterId);
+    const surahWeakWords = getSurahWeakWords(progress, chapterId);
     const unlockedMilestones = getUnlockedMilestones(totalVerses);
     const dailyGoal = progress.dailyGoal;
     const goalProgress = Math.min(100, Math.round((todayVerses / Math.max(1, dailyGoal)) * 100));
@@ -270,10 +302,11 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         };
     }, [stopSound, stopRecognition, stopHearing]);
 
-    const recordAttempt = useCallback((accuracy: number) => {
+    const recordAttempt = useCallback((accuracy: number, missing: string[] = []) => {
         const prev = progressRef.current;
         const prevTotal = getTotalVerses(prev);
-        const next = recordVerse(prev, chapterId, currentVerse.verseNum, accuracy);
+        const surahId = currentVerse.surahId ?? chapterId;
+        const next = recordVerse(prev, surahId, currentVerse.verseNum, accuracy, missing);
         setProgress(next);
         const newly = getNewlyUnlockedMilestones(prevTotal, getTotalVerses(next));
         if (newly.length > 0) {
@@ -302,7 +335,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         const total = target.length;
         const accuracy = total > 0 ? Math.round((revealed / total) * 100) : 0;
         const missing = target.slice(revealed);
-        recordAttempt(accuracy);
+        recordAttempt(accuracy, missing);
         setResult({ accuracy, revealed, total, missing });
         setCelebration(accuracy >= 85 ? 'verse_complete' : 'practice_more');
 
@@ -555,7 +588,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         if (total > 0) {
             const accuracy = Math.round((revealed / total) * 100);
             const missing = target.slice(revealed);
-            recordAttempt(accuracy);
+            recordAttempt(accuracy, missing);
             setResult({ accuracy, revealed, total, missing });
             if (accuracy >= 85) {
                 setCelebration('perfect');
@@ -624,7 +657,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             soundRef.current.unload();
         }
 
-        const padSurah = chapterId.padStart(3, '0');
+        const padSurah = (verse.surahId ?? chapterId).padStart(3, '0');
         const padVerse = verse.verseNum.padStart(3, '0');
         const src = riwaya === 'warsh'
             ? `/api/audio-warsh/${padSurah}/${padVerse}`
@@ -711,7 +744,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         if (!verse) return;
         stopRecognition();
 
-        const padSurah = chapterId.padStart(3, '0');
+        const padSurah = (verse.surahId ?? chapterId).padStart(3, '0');
         const padVerse = verse.verseNum.padStart(3, '0');
         const src = riwaya === 'warsh'
             ? `/api/audio-warsh/${padSurah}/${padVerse}`
@@ -782,7 +815,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 <div className="flex items-center gap-2">
                     <Brain size={20} className="text-violet-600 dark:text-violet-400" />
                     <h2 className="font-bold text-slate-900 dark:text-white text-lg font-arabic">
-                        {surah.name}
+                        {isGlobalReview ? t('quran.global_review') : surah.name}
                         <span className="inline-block ml-2 px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 text-[11px] font-medium align-middle">
                             {RIAWAYA_OPTIONS.find((r) => r.id === riwaya)?.labelAr ?? 'حفص'}
                         </span>
@@ -906,8 +939,12 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             >
                 {currentVerse ? (
                     <>
-                        <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-700 dark:text-violet-400 font-medium text-sm">
-                            {currentVerse.verseNum}
+                        <div className={cn(
+                            "flex items-center justify-center gap-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 font-medium text-sm px-3 py-1.5",
+                            !currentVerse.surahName && "w-10 h-10 px-0 py-0"
+                        )}>
+                            {currentVerse.surahName && <span className="font-arabic">{currentVerse.surahName}</span>}
+                            <span>{currentVerse.verseNum}</span>
                         </div>
 
                         {tab === 'memorize' ? (
@@ -1261,7 +1298,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                     </div>
                 </div>
 
-                {/* Surah mastery + milestones */}
+                {/* Surah mastery + milestones + weak words */}
+                {!isGlobalReview && (
                 <div className="rounded-xl bg-slate-50 dark:bg-night-800 p-3">
                     <div className="flex items-center justify-between mb-1.5">
                         <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('quran.surah_mastery')}</p>
@@ -1275,6 +1313,22 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             style={{ width: `${surahProgress.total > 0 ? Math.round((surahProgress.mastered / surahProgress.total) * 100) : 0}%` }}
                         />
                     </div>
+                    {surahWeakWords.length > 0 && (
+                        <div className="mt-3">
+                            <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 flex items-center gap-1">
+                                <AlertCircle size={11} />
+                                {t('quran.words_to_strengthen')}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                                {surahWeakWords.map(({ word, count }) => (
+                                    <span key={word} className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-[11px] font-medium">
+                                        <span className="font-arabic">{word}</span>
+                                        <span className="opacity-60">{count}×</span>
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     {unlockedMilestones.length > 0 && (
                         <div className="flex items-center gap-1.5 mt-3 flex-wrap">
                             {unlockedMilestones.map((m) => (
@@ -1295,6 +1349,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         </button>
                     )}
                 </div>
+                )}
             </div>
         </div>
     );

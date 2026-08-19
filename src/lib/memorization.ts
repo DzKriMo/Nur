@@ -8,6 +8,9 @@ export interface VerseRecord {
     mastered: boolean;
     lastAccuracy: number;
     updatedAt: number;
+    // Normalized Arabic words that were missed on this verse, with counts
+    // accumulated across attempts (used for "words to strengthen").
+    weakWords?: Record<string, number>;
 }
 
 export interface SurahProgress {
@@ -293,6 +296,37 @@ export function getSurahProgress(state: MemorizationState, surahId: string): { m
     return { mastered, total: Object.keys(surah).length };
 }
 
+/**
+ * Most-missed words across a surah's attempts, for "words to strengthen".
+ * Normalized Arabic words weighted by how often they were missed.
+ */
+export function getSurahWeakWords(state: MemorizationState, surahId: string, limit = 6): { word: string; count: number }[] {
+    const surah = state.surahs[surahId] ?? {};
+    const counts: Record<string, number> = {};
+    for (const v of Object.values(surah)) {
+        if (v.weakWords) {
+            for (const [word, c] of Object.entries(v.weakWords)) {
+                counts[word] = (counts[word] ?? 0) + c;
+            }
+        }
+    }
+    return Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([word, count]) => ({ word, count }));
+}
+
+/** All mastered verses across every surah (for cross-surah review). */
+export function getAllMasteredVerses(state: MemorizationState): { surahId: string; verseNum: string }[] {
+    const out: { surahId: string; verseNum: string }[] = [];
+    for (const [surahId, surah] of Object.entries(state.surahs)) {
+        for (const v of Object.values(surah)) {
+            if (v.mastered) out.push({ surahId, verseNum: v.verseNum });
+        }
+    }
+    return out;
+}
+
 export function getUnlockedMilestones(total: number): number[] {
     return MILESTONES.filter((m) => total >= m);
 }
@@ -305,11 +339,19 @@ export function recordVerse(
     state: MemorizationState,
     surahId: string,
     verseNum: string,
-    accuracy: number
+    accuracy: number,
+    missedWords: string[] = []
 ): MemorizationState {
     const surah = state.surahs[surahId] ?? {};
     const prev = surah[verseNum];
     const mastered = (prev?.mastered ?? false) || accuracy >= MASTERY_THRESHOLD;
+
+    const weakWords = { ...(prev?.weakWords ?? {}) };
+    for (const w of missedWords) {
+        const normalized = normalizeArabic(w);
+        if (normalized) weakWords[normalized] = (weakWords[normalized] ?? 0) + 1;
+    }
+
     const record: VerseRecord = {
         verseNum,
         bestAccuracy: Math.max(prev?.bestAccuracy ?? 0, accuracy),
@@ -317,6 +359,7 @@ export function recordVerse(
         mastered,
         lastAccuracy: accuracy,
         updatedAt: Date.now(),
+        weakWords,
     };
 
     const today = dayKey();

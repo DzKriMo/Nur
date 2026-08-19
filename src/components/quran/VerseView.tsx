@@ -7,9 +7,20 @@ import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
+import { useStoredState } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import { Riwaya, RIAWAYA_OPTIONS, setRiwayaCookie } from '@/lib/riwaya';
 import MemorizationMode from '@/components/quran/MemorizationMode';
+import { OrnamentDivider } from '@/components/layout/Ornament';
+
+const FONT_SIZE_KEY = 'nur-quran-font-size';
+const FONT_SIZES = {
+    sm: 'text-xl md:text-2xl',
+    md: 'text-2xl md:text-3xl',
+    lg: 'text-3xl md:text-4xl',
+    xl: 'text-4xl md:text-5xl',
+} as const;
+type FontSize = keyof typeof FONT_SIZES;
 
 interface VerseViewProps {
     surah: SurahContent;
@@ -26,6 +37,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     const [copiedVerse, setCopiedVerse] = useState<string | null>(null);
     const [activeJuz, setActiveJuz] = useState<string>('');
     const [memorizeMode, setMemorizeMode] = useState(false);
+    const [fontScale, setFontScale] = useStoredState<FontSize>(FONT_SIZE_KEY, 'md');
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
     const soundRef = useRef<Howl | null>(null);
@@ -229,6 +241,28 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             ))}
                         </select>
                     </label>
+                    <div
+                        className="flex items-center rounded-lg bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 overflow-hidden"
+                        title={t('quran.font_size')}
+                    >
+                        {(['sm', 'md', 'lg', 'xl'] as FontSize[]).map((s) => (
+                            <button
+                                key={s}
+                                onClick={() => setFontScale(s)}
+                                aria-label={`${t('quran.font_size')} ${s}`}
+                                className={cn(
+                                    "px-1.5 py-1.5 font-arabic text-emerald-600 dark:text-emerald-400 transition-colors",
+                                    fontScale === s
+                                        ? "bg-emerald-100 dark:bg-emerald-900/40"
+                                        : "opacity-50 hover:opacity-100"
+                                )}
+                            >
+                                <span className={cn(s === 'sm' && 'text-[10px]', s === 'md' && 'text-xs', s === 'lg' && 'text-sm', s === 'xl' && 'text-base')}>
+                                    أ
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                     {juzList.length > 1 && (
                         <select
                             value={activeJuz}
@@ -278,6 +312,17 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                 />
             ) : (
                 <div className="space-y-4">
+                    {chapterId !== '001' && chapterId !== '009' && (
+                        <div className="relative arch-top overflow-hidden bg-gradient-to-b from-emerald-50 via-emerald-50/60 to-transparent dark:from-emerald-900/25 dark:via-emerald-900/15 border border-emerald-100 dark:border-emerald-900/40 pt-10 pb-8 px-6 text-center">
+                            <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
+                            <p className="font-arabic text-3xl md:text-4xl text-emerald-800 dark:text-emerald-200 leading-relaxed">
+                                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                            </p>
+                            <div className="mt-5 max-w-xs mx-auto">
+                                <OrnamentDivider />
+                            </div>
+                        </div>
+                    )}
                     {verses.map((verse) => (
                     <div
                         key={verse.key}
@@ -287,15 +332,16 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             else verseRefs.current.delete(verse.verseNum);
                         }}
                         className={cn(
-                            "bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm border transition-all duration-300",
+                            "relative bg-white dark:bg-night-900 arch overflow-hidden p-5 shadow-sm border transition-all duration-300",
                             playingVerse === verse.verseNum
                                 ? "border-emerald-500 ring-1 ring-emerald-500/50 shadow-emerald-100 dark:shadow-none"
                                 : "border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800"
                         )}
                     >
+                        <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold-500/60 to-transparent" />
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-1.5">
-                                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-medium text-xs">
+                                <div className="w-8 h-8 rounded-full bg-gold-500/10 border border-gold-500/40 flex items-center justify-center text-gold-600 dark:text-gold-300 font-medium text-xs">
                                     {verse.verseNum}
                                 </div>
                                 <button
@@ -345,7 +391,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         </div>
 
                         <div className="text-right mb-5">
-                            <p className="text-2xl md:text-3xl leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic">
+                            <p className={cn(FONT_SIZES[fontScale], "leading-[2.2] text-slate-800 dark:text-slate-100 font-arabic")}>
                                 {verse.text}
                             </p>
                         </div>

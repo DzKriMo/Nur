@@ -256,6 +256,9 @@ export const translations = {
         'quran.review_mastered': 'Review memorized verses',
         'quran.review_complete': 'Review complete!',
         'quran.review_summary': 'Verses still strong',
+        'quran.global_review': 'Global Review',
+        'quran.font_size': 'Arabic text size',
+        'quran.words_to_strengthen': 'Words to strengthen',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'Search All Hadith',
@@ -587,6 +590,9 @@ export const translations = {
         'quran.review_mastered': 'مراجعة الآيات المحفوظة',
         'quran.review_complete': 'اكتملت المراجعة!',
         'quran.review_summary': 'آيات لا تزال متقنة',
+        'quran.global_review': 'مراجعة المحفوظ',
+        'quran.font_size': 'حجم الخط العربي',
+        'quran.words_to_strengthen': 'كلمات لتقويتها',
 
         // Hadith interactivity
         'hadith.search_all_hadiths': 'بحث شامل في الحديث',

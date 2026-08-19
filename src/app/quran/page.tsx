@@ -2,6 +2,7 @@ import { getSurahs } from '@/lib/data';
 import QuranList from '@/components/quran/QuranList';
 import PageHeader from '@/components/layout/PageHeader';
 import QuranViewToggle from '@/components/quran/QuranViewToggle';
+import GlobalReview from '@/components/quran/GlobalReview';
 import LocalizedText from '@/components/layout/LocalizedText';
 import Link from 'next/link';
 import { Search, BookMarked } from 'lucide-react';
@@ -45,6 +46,7 @@ export default async function QuranPage() {
                         <BookMarked size={15} />
                         <LocalizedText en="Saved Verses" ar="الآيات المحفوظة" />
                     </Link>
+                    <GlobalReview />
                 </div>
 
                 <QuranList surahs={surahs} />
