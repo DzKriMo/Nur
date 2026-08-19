@@ -42,8 +42,8 @@ export default async function JuzListPage() {
     const juzList = Array.from(juzMap.values()).filter(j => j.surahs.length > 0);
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 md:pt-16">
-            <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 sticky top-0 md:top-16 z-20">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pb-20 md:pt-16">
+            <div className="bg-white/80 dark:bg-night-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 sticky top-0 md:top-16 z-20">
                 <div className="max-w-4xl mx-auto px-4 h-14 md:h-16 flex items-center">
                     <Link
                         href="/quran"
@@ -62,7 +62,7 @@ export default async function JuzListPage() {
 
                 <div className="space-y-4">
                     {juzList.map((juz) => (
-                        <div key={juz.index} className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+                        <div key={juz.index} className="bg-white dark:bg-night-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
                             <div className="flex items-center gap-4 mb-4">
                                 <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold font-serif text-lg">
                                     {parseInt(juz.index)}

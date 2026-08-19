@@ -15,7 +15,7 @@ export default function ProphetStoryPage() {
 
     if (!prophet) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-parchment-50 dark:bg-night-950 flex items-center justify-center">
                 <p className="text-slate-500">{t('common.loading')}</p>
             </div>
         );
@@ -33,7 +33,7 @@ export default function ProphetStoryPage() {
     const nextProphet = currentIndex < prophetsStories.length - 1 ? prophetsStories[currentIndex + 1] : null;
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
             <ReadingProgress key={prophetId} storyId={prophetId} />
             <div className="max-w-3xl mx-auto">
                 <Link href="/stories/prophets" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 mb-6 transition-colors">
@@ -41,7 +41,7 @@ export default function ProphetStoryPage() {
                     {t('stories.back_to_stories')}
                 </Link>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div className="bg-white dark:bg-night-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
                     <div
                         className="h-48 flex items-center justify-center relative overflow-hidden"
                         style={{ backgroundColor: `${prophet.svgColor}20` }}
@@ -84,7 +84,7 @@ export default function ProphetStoryPage() {
                             </div>
                         )}
 
-                        <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div className="mt-8 p-4 bg-slate-50 dark:bg-night-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
                             <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
                                 <BookOpen size={16} className="text-emerald-600 dark:text-emerald-400" />
                                 {t('stories.references')}
@@ -117,7 +117,7 @@ export default function ProphetStoryPage() {
                     {prevProphet ? (
                         <Link
                             href={`/stories/prophets/${prevProphet.id}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
                         >
                             {dir === 'rtl' ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                             <span className="text-sm font-arabic">{isAr ? prevProphet.nameAr : prevProphet.name}</span>
@@ -126,7 +126,7 @@ export default function ProphetStoryPage() {
                     {nextProphet ? (
                         <Link
                             href={`/stories/prophets/${nextProphet.id}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
                         >
                             <span className="text-sm font-arabic">{isAr ? nextProphet.nameAr : nextProphet.name}</span>
                             {dir === 'rtl' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}

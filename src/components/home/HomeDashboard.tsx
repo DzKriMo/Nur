@@ -36,7 +36,7 @@ export default function HomeDashboard() {
                 {/* Verse of the day */}
                 <Link
                     href="/quran"
-                    className="group bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-emerald-100 dark:border-emerald-900/40 hover:shadow-lg transition-all duration-300 flex flex-col"
+                    className="group bg-white dark:bg-night-900 rounded-3xl p-6 shadow-sm border border-emerald-100 dark:border-emerald-900/40 hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
                     <div className="flex items-center justify-between mb-4">
                         <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-full">
@@ -54,7 +54,7 @@ export default function HomeDashboard() {
                 {/* Hadith of the day */}
                 <Link
                     href="/hadith"
-                    className="group bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-amber-100 dark:border-amber-900/40 hover:shadow-lg transition-all duration-300 flex flex-col"
+                    className="group bg-white dark:bg-night-900 rounded-3xl p-6 shadow-sm border border-amber-100 dark:border-amber-900/40 hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
                     <div className="flex items-center justify-between mb-4">
                         <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-full">
@@ -70,7 +70,7 @@ export default function HomeDashboard() {
                 </Link>
 
                 {/* Continue reading / saved */}
-                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-violet-100 dark:border-violet-900/40 flex flex-col gap-4">
+                <div className="bg-white dark:bg-night-900 rounded-3xl p-6 shadow-sm border border-violet-100 dark:border-violet-900/40 flex flex-col gap-4">
                     <div className="flex items-center justify-between mb-1">
                         <span className="inline-flex items-center gap-1.5 text-xs font-bold text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20 px-3 py-1.5 rounded-full">
                             <BookOpen size={12} />
@@ -123,7 +123,7 @@ export default function HomeDashboard() {
             </div>
 
             {/* Daily Adhkar strip */}
-            <div className="mt-5 bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-sm border border-rose-100 dark:border-rose-900/40">
+            <div className="mt-5 bg-white dark:bg-night-900 rounded-3xl p-5 shadow-sm border border-rose-100 dark:border-rose-900/40">
                 <div className="flex items-center justify-between mb-4">
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/20 px-3 py-1.5 rounded-full">
                         <Heart size={12} className="fill-rose-400 text-rose-400" />

@@ -98,7 +98,7 @@ export default function Qibla({ lat, lon }: QiblaProps) {
     const facing = heading != null ? directionFromHeading(heading) : null;
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-night-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
             <div className="flex items-center justify-center gap-2 mb-4">
                 <Compass size={18} className="text-violet-500" />
                 <h2 className="font-bold text-slate-900 dark:text-white">{t('prayer.qibla')}</h2>

@@ -10,7 +10,7 @@ export default function ProphetsPage() {
     const isAr = language === 'ar';
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
             <div className="max-w-4xl mx-auto">
                 <Link href="/stories" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 mb-6 transition-colors">
                     {dir === 'rtl' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -31,7 +31,7 @@ export default function ProphetsPage() {
                         <Link
                             key={prophet.id}
                             href={`/stories/prophets/${prophet.id}`}
-                            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 overflow-hidden group"
+                            className="bg-white dark:bg-night-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 overflow-hidden group"
                         >
                             <div
                                 className="h-32 flex items-center justify-center relative overflow-hidden"

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Amiri } from "next/font/google";
+import { Inter, Amiri, Reem_Kufi } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -9,6 +9,7 @@ import { SITE_URL, SITE_NAME, SITE_NAME_EN, SITE_DESCRIPTION, SITE_DESCRIPTION_E
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-amiri" });
+const reemKufi = Reem_Kufi({ subsets: ["arabic", "latin"], variable: "--font-reem-kufi" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -84,7 +85,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <body className={`${inter.variable} ${amiri.variable} antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50`}>
+      <body className={`${inter.variable} ${amiri.variable} ${reemKufi.variable} antialiased bg-parchment-50 dark:bg-night-950 text-slate-900 dark:text-slate-50`}>
         <ClientProviders>
           <Navbar />
           <main className="pb-16 md:pb-0">{children}</main>

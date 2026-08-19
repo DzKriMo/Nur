@@ -776,7 +776,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const showHints = progress.showHints ?? true;
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 p-5 md:p-6">
+        <div className="bg-white dark:bg-night-900 rounded-2xl shadow-md border border-slate-100 dark:border-slate-800 p-5 md:p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -790,20 +790,20 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 </div>
                 <button
                     onClick={onExitMode}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 dark:bg-night-800 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                 >
                     {t('common.close')}
                 </button>
             </div>
 
             {/* Tab switcher */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl mb-4">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-night-800 p-1 rounded-xl mb-4">
                 <button
                     onClick={() => { stopRecognition(); stopHearing(); setTab('memorize'); }}
                     className={cn(
                         "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         tab === 'memorize'
-                            ? "bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-400 shadow-sm"
+                            ? "bg-white dark:bg-night-900 text-violet-700 dark:text-violet-400 shadow-sm"
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                 >
@@ -815,7 +815,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                     className={cn(
                         "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         tab === 'listen'
-                            ? "bg-white dark:bg-slate-900 text-violet-700 dark:text-violet-400 shadow-sm"
+                            ? "bg-white dark:bg-night-900 text-violet-700 dark:text-violet-400 shadow-sm"
                             : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                     )}
                 >
@@ -850,7 +850,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             <select
                                 value={fromVerse}
                                 onChange={(e) => changeFrom(parseInt(e.target.value, 10))}
-                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
                             >
                                 {verses.map((v) => (
                                     <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
@@ -863,7 +863,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             <select
                                 value={toVerse}
                                 onChange={(e) => changeTo(parseInt(e.target.value, 10))}
-                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
                             >
                                 {verses.map((v) => (
                                     <option key={v.verseNum} value={parseInt(v.verseNum, 10)}>{v.verseNum}</option>
@@ -877,7 +877,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                 <select
                                     value={repeats}
                                     onChange={(e) => setRepeats(parseInt(e.target.value, 10))}
-                                    className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                    className="px-2 py-1.5 rounded-lg bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
                                 >
                                     {REPEAT_OPTIONS.map((r) => (
                                         <option key={r} value={r}>{r}×</option>
@@ -902,7 +902,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
             {/* Verse display */}
             <div
                 ref={versesRef}
-                className="min-h-[170px] rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center gap-4"
+                className="min-h-[170px] rounded-xl bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 p-6 flex flex-col items-center justify-center gap-4"
             >
                 {currentVerse ? (
                     <>
@@ -1015,7 +1015,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                 "flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors",
                                 isHearing
                                     ? "bg-violet-600 border-violet-600 text-white"
-                                    : "bg-white dark:bg-slate-800 border-violet-200 dark:border-violet-900 text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+                                    : "bg-white dark:bg-night-800 border-violet-200 dark:border-violet-900 text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20"
                             )}
                             title={t('quran.hear_then_recite')}
                         >
@@ -1025,7 +1025,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
 
                         <button
                             onClick={() => setProgress({ ...progress, showHints: !showHints })}
-                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium border transition-colors bg-white dark:bg-night-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                             title={t('quran.first_letters')}
                         >
                             {showHints ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -1192,14 +1192,14 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                                     </button>
                                     <button
                                         onClick={() => hearCurrentVerse(false)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-night-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                                     >
                                         <Volume2 size={15} />
                                         {t('quran.hear_again')}
                                     </button>
                                     <button
                                         onClick={skipVerse}
-                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-slate-100 text-slate-700 dark:bg-night-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                                     >
                                         <SkipForward size={15} />
                                         {t('quran.skip_verse')}
@@ -1223,7 +1223,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         <select
                             value={dailyGoal}
                             onChange={(e) => setProgress({ ...progress, dailyGoal: parseInt(e.target.value, 10) })}
-                            className="px-1.5 py-1 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
+                            className="px-1.5 py-1 rounded-md bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none"
                         >
                             {[1, 3, 5, 10, 20, 50].map((g) => (
                                 <option key={g} value={g}>{g}</option>
@@ -1233,7 +1233,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 </h3>
 
                 <div className="grid grid-cols-3 gap-3 mb-4">
-                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                    <div className="rounded-xl bg-slate-50 dark:bg-night-800 p-3 text-center">
                         <div className="flex items-center justify-center gap-1 text-amber-500 mb-1">
                             <Target size={14} />
                         </div>
@@ -1244,7 +1244,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         </div>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                    <div className="rounded-xl bg-slate-50 dark:bg-night-800 p-3 text-center">
                         <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
                             <Flame size={14} />
                         </div>
@@ -1252,7 +1252,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                         <p className="text-xs text-slate-500 dark:text-slate-400">{t('quran.streak')}</p>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
+                    <div className="rounded-xl bg-slate-50 dark:bg-night-800 p-3 text-center">
                         <div className="flex items-center justify-center gap-1 text-emerald-500 mb-1">
                             <CheckCircle2 size={14} />
                         </div>
@@ -1262,7 +1262,7 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                 </div>
 
                 {/* Surah mastery + milestones */}
-                <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                <div className="rounded-xl bg-slate-50 dark:bg-night-800 p-3">
                     <div className="flex items-center justify-between mb-1.5">
                         <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('quran.surah_mastery')}</p>
                         <p className="text-xs font-medium text-slate-600 dark:text-slate-300">

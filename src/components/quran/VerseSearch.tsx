@@ -61,7 +61,7 @@ export default function VerseSearch() {
                     value={query}
                     onChange={(e) => onQueryChange(e.target.value)}
                     placeholder={t('quran.verse_search_placeholder')}
-                    className="w-full ps-10 pe-4 py-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400 text-base shadow-sm"
+                    className="w-full ps-10 pe-4 py-3.5 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400 text-base shadow-sm"
                 />
             </div>
 
@@ -87,7 +87,7 @@ export default function VerseSearch() {
                 {results.map((r) => (
                     <div
                         key={`${r.surahId}-${r.verseNum}`}
-                        className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors"
+                        className="bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800 transition-colors"
                     >
                         <div className="flex justify-between items-center mb-3">
                             <Link

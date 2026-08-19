@@ -33,14 +33,14 @@ export default async function QuranPage() {
                 <div className="flex flex-wrap justify-center gap-3 mb-8">
                     <Link
                         href="/quran/search"
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-gold-500/50 hover:text-gold-600 dark:hover:text-gold-300 transition-colors"
                     >
                         <Search size={15} />
                         <LocalizedText en="Search Verses" ar="بحث في الآيات" />
                     </Link>
                     <Link
                         href="/saved"
-                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-full text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:border-gold-500/50 hover:text-gold-600 dark:hover:text-gold-300 transition-colors"
                     >
                         <BookMarked size={15} />
                         <LocalizedText en="Saved Verses" ar="الآيات المحفوظة" />

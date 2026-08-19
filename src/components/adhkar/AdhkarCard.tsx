@@ -68,11 +68,11 @@ export default function AdhkarCard({ item, index, categoryFilename, totalItems }
                     ? "border-emerald-400 dark:border-emerald-600 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-950/30 shadow-emerald-200/50 dark:shadow-emerald-900/20"
                     : justCompleted
                     ? "border-amber-400 dark:border-amber-600 bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-slate-900 scale-[1.02] shadow-lg"
-                    : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-rose-300 dark:hover:border-rose-700 hover:shadow-md active:scale-[0.98]"
+                    : "border-slate-200 dark:border-slate-800 bg-white dark:bg-night-900 hover:border-rose-300 dark:hover:border-rose-700 hover:shadow-md active:scale-[0.98]"
             )}
         >
             {/* Progress bar background */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-100 dark:bg-slate-800">
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-100 dark:bg-night-800">
                 <div
                     className={cn(
                         "h-full transition-all duration-500 ease-out rounded-full",

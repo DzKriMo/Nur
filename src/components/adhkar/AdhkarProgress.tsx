@@ -63,7 +63,7 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
             "rounded-2xl p-4 border-2 transition-all duration-500",
             allDone
                 ? "bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-950/30 border-emerald-300 dark:border-emerald-700"
-                : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+                : "bg-white dark:bg-night-900 border-slate-200 dark:border-slate-800"
         )}>
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export default function AdhkarProgress({ totalItems, categoryFilename }: AdhkarP
                     </span>
                 </div>
             </div>
-            <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-slate-100 dark:bg-night-800 rounded-full overflow-hidden">
                 <div
                     className={cn(
                         "h-full rounded-full transition-all duration-700 ease-out",

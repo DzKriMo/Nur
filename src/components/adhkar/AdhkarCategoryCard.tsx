@@ -21,7 +21,7 @@ export default function AdhkarCategoryCard({ category }: { category: AdhkarCateg
     return (
         <Link
             href={`/adhkar/${category.filename}`}
-            className="group relative bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 hover:-translate-y-1"
+            className="group relative bg-white dark:bg-night-900 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 hover:-translate-y-1"
         >
             <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform flex-shrink-0">

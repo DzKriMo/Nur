@@ -59,7 +59,7 @@ export default function Quiz({ quiz, onAnswer }: QuizProps) {
                                     ? 'bg-emerald-100 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-300'
                                     : answered && isSelected && !isCorrect
                                     ? 'bg-red-100 dark:bg-red-900/30 border-red-500 text-red-700 dark:text-red-300'
-                                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-600'
+                                    : 'bg-white dark:bg-night-800 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-600'
                             )}
                         >
                             <span className="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs flex-shrink-0">

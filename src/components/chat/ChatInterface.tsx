@@ -164,7 +164,7 @@ export default function ChatInterface() {
                                 <button
                                     key={i}
                                     onClick={() => sendMessage(s)}
-                                    className="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-700 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all"
+                                    className="w-full text-left px-4 py-3 rounded-xl bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-700 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-sm transition-all"
                                 >
                                     {s}
                                 </button>
@@ -184,7 +184,7 @@ export default function ChatInterface() {
                                     "max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap",
                                     msg.role === 'user'
                                         ? "bg-emerald-600 text-white rounded-br-md"
-                                        : "bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-bl-md"
+                                        : "bg-white dark:bg-night-900 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-bl-md"
                                 )}
                             >
                                 {msg.content}
@@ -208,7 +208,7 @@ export default function ChatInterface() {
                 )}
             </div>
 
-            <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+            <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-night-900/80 backdrop-blur-xl">
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mb-2">
                     {t('chat.verify')}
                 </p>
@@ -222,7 +222,7 @@ export default function ChatInterface() {
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={t('chat.placeholder')}
                         disabled={loading}
-                        className="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm text-slate-900 dark:text-white placeholder-slate-400 disabled:opacity-60"
+                        className="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm text-slate-900 dark:text-white placeholder-slate-400 disabled:opacity-60"
                     />
                     <button
                         type="submit"

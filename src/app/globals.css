@@ -5,6 +5,27 @@
 @theme inline {
   --font-sans: var(--font-inter);
   --font-arabic: var(--font-amiri);
+  --font-display: var(--font-reem-kufi);
+}
+
+/* ─── Nur heritage palette ───────────────────────────────────────────────
+   Warm parchment (light) + midnight-green ink (dark), accented with a
+   deep manuscript gold. These extend the default Tailwind palette so
+   utilities like `text-gold-500`, `bg-night-950`, `border-gold-400/40`
+   work everywhere. */
+@theme {
+  --color-gold-200: #f3e3b5;
+  --color-gold-300: #e8c877;
+  --color-gold-400: #d9ae4e;
+  --color-gold-500: #c8922a;
+  --color-gold-600: #a8731f;
+  --color-gold-700: #875a19;
+  --color-night-800: #131f36;
+  --color-night-900: #0d1526;
+  --color-night-950: #080e1b;
+  --color-parchment-50: #faf6ec;
+  --color-parchment-100: #f2ebd6;
+  --color-parchment-200: #e9dfc0;
 }
 
 body {
@@ -19,7 +40,31 @@ body {
   font-family: var(--font-amiri), serif;
 }
 
-/* Islamic geometric pattern background */
+.font-display {
+  font-family: var(--font-reem-kufi), var(--font-amiri), serif;
+}
+
+/* Gold gradient text (brand mark, big headings) */
+.text-gold-gradient {
+  background-image: linear-gradient(115deg, #a8731f 0%, #e8c877 40%, #c8922a 55%, #f3e3b5 80%, #a8731f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ─── Geometric patterns ───────────────────────────────────────────────── */
+
+/* Classic khatam (8-pointed star) tessellation — the app's signature motif */
+.pattern-khatam {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8922a' stroke-opacity='0.10' stroke-width='1'%3E%3Crect x='6' y='6' width='68' height='68'/%3E%3Cpath d='M40 24 L44.6 35.4 L56 40 L44.6 44.6 L40 56 L35.4 44.6 L24 40 L35.4 35.4 Z'/%3E%3Cpath d='M40 24 L56 40 L40 56 L24 40 Z'/%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Ccircle cx='74' cy='6' r='3'/%3E%3Ccircle cx='6' cy='74' r='3'/%3E%3Ccircle cx='74' cy='74' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+.dark .pattern-khatam {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e8c877' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='6' y='6' width='68' height='68'/%3E%3Cpath d='M40 24 L44.6 35.4 L56 40 L44.6 44.6 L40 56 L35.4 44.6 L24 40 L35.4 35.4 Z'/%3E%3Cpath d='M40 24 L56 40 L40 56 L24 40 Z'/%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Ccircle cx='74' cy='6' r='3'/%3E%3Ccircle cx='6' cy='74' r='3'/%3E%3Ccircle cx='74' cy='74' r='3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Existing emerald diamond + hero star patterns (kept for compatibility) */
 .islamic-pattern {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23059669' stroke-opacity='0.07' stroke-width='1'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3Cpath d='M30 10l20 20-20 20-20-20z'/%3E%3Cpath d='M30 20l10 10-10 10-10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-repeat: repeat;
@@ -29,19 +74,67 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%2334d399' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3Cpath d='M30 10l20 20-20 20-20-20z'/%3E%3Cpath d='M30 20l10 10-10 10-10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Islamic star pattern for hero */
-.islamic-star-bg {
-  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23059669' stroke-opacity='0.06' stroke-width='0.5'%3E%3Cpolygon points='60,5 70,40 110,40 78,62 88,97 60,75 32,97 42,62 10,40 50,40'/%3E%3Ccircle cx='60' cy='60' r='25'/%3E%3Ccircle cx='60' cy='60' r='45'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-repeat: repeat;
+/* ─── Ornaments ────────────────────────────────────────────────────────── */
+
+/* Ornamental divider: two fading gold lines around a khatam star */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-.dark .islamic-star-bg {
-  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%2334d399' stroke-opacity='0.04' stroke-width='0.5'%3E%3Cpolygon points='60,5 70,40 110,40 78,62 88,97 60,75 32,97 42,62 10,40 50,40'/%3E%3Ccircle cx='60' cy='60' r='25'/%3E%3Ccircle cx='60' cy='60' r='45'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+.ornament-divider::before,
+.ornament-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-image: linear-gradient(90deg, transparent, rgb(200 146 42 / 0.55), rgb(200 146 42 / 0.9));
 }
 
-/* Scrollbar styling */
+.ornament-divider::after {
+  background-image: linear-gradient(270deg, transparent, rgb(200 146 42 / 0.55), rgb(200 146 42 / 0.9));
+}
+
+.ornament-star {
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='%23c8922a'%3E%3Cpath d='M12 1 L15.18 8.82 L23 12 L15.18 15.18 L12 23 L8.82 15.18 L1 12 L8.82 8.82 Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Pointed Islamic arch (mihrab) shapes */
+.arch {
+  border-radius: 50% 50% 0.9rem 0.9rem / 34% 34% 0.9rem 0.9rem;
+}
+
+.arch-top {
+  border-radius: 999px 999px 0 0 / 60px 60px 0 0;
+}
+
+/* Gold shimmer for premium buttons */
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.gold-shimmer {
+  background-image: linear-gradient(120deg, #c8922a 0%, #e8c877 40%, #c8922a 60%, #a8731f 100%);
+  background-size: 200% 100%;
+  animation: goldShimmer 4s linear infinite;
+}
+
+/* Soft golden ambient glow used behind hero */
+.gold-glow {
+  background: radial-gradient(closest-side, rgb(200 146 42 / 0.28), transparent 70%);
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -49,23 +142,33 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 3px;
+  background: linear-gradient(#d9ae4e, #a8731f);
+  border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: linear-gradient(#8a6a2f, #5c4a1e);
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  color-scheme: light;
 }
 
-/* Selection color */
+.dark {
+  color-scheme: dark;
+}
+
+/* Selection color — gold manuscript ink */
 ::selection {
-  background-color: rgba(5, 150, 105, 0.2);
+  background-color: rgba(200, 146, 42, 0.22);
   color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(200 146 42 / 0.55);
+  outline-offset: 2px;
 }
 
 /* Adhkar completion animation */
@@ -76,9 +179,9 @@ html {
 }
 
 @keyframes completionGlow {
-  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(200, 146, 42, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(200, 146, 42, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(200, 146, 42, 0); }
 }
 
 .animate-completion {

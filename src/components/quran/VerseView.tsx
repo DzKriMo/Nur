@@ -188,7 +188,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap justify-between items-center gap-3 bg-white/95 dark:bg-slate-900/95 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 backdrop-blur-xl sticky top-[56px] md:top-[128px] z-30">
+            <div className="flex flex-wrap justify-between items-center gap-3 bg-white/95 dark:bg-night-900/95 p-3 rounded-xl shadow-md border border-slate-100 dark:border-slate-800 backdrop-blur-xl sticky top-[56px] md:top-[128px] z-30">
                 <div className="flex gap-1">
                     <button
                         onClick={() => setActiveTab('translation')}
@@ -214,7 +214,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                     </button>
                 </div>
                 <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 focus-within:ring-2 focus-within:ring-emerald-500" title={t('quran.riwaya')}>
+                    <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-400 focus-within:ring-2 focus-within:ring-emerald-500" title={t('quran.riwaya')}>
                         <BookOpenText size={14} className="text-slate-400" />
                         <select
                             value={riwaya}
@@ -233,7 +233,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                         <select
                             value={activeJuz}
                             onChange={(e) => jumpToJuz(e.target.value)}
-                            className="px-2 py-1.5 rounded-lg text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="px-2 py-1.5 rounded-lg text-sm bg-white dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                         >
                             <option value="">{t('quran.jump_to_juz')}</option>
                             {juzList.map(j => (
@@ -253,7 +253,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg text-sm",
                             memorizeMode
                                 ? "bg-violet-600 hover:bg-violet-700 text-white"
-                                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                : "bg-slate-100 dark:bg-night-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
                         )}
                     >
                         <Brain size={16} />
@@ -287,7 +287,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                             else verseRefs.current.delete(verse.verseNum);
                         }}
                         className={cn(
-                            "bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border transition-all duration-300",
+                            "bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm border transition-all duration-300",
                             playingVerse === verse.verseNum
                                 ? "border-emerald-500 ring-1 ring-emerald-500/50 shadow-emerald-100 dark:shadow-none"
                                 : "border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800"
@@ -304,7 +304,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                                         "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
                                         playingVerse === verse.verseNum
                                             ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                                            : "bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:bg-slate-800 dark:hover:bg-slate-700"
+                                            : "bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:bg-night-800 dark:hover:bg-slate-700"
                                     )}
                                 >
                                     {playingVerse === verse.verseNum ? <Pause size={14} /> : <Play size={14} />}

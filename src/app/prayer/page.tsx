@@ -177,7 +177,7 @@ export default function PrayerPage() {
                 />
 
                 {/* Controls */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 mb-8 space-y-4">
+                <div className="bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-800 mb-8 space-y-4">
                     <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
                         <div className="flex-1 w-full">
                             <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5 block">
@@ -193,10 +193,10 @@ export default function PrayerPage() {
                                     onChange={(e) => onCityQueryChange(e.target.value)}
                                     onBlur={() => setTimeout(() => setShowCityResults(false), 200)}
                                     placeholder={t('prayer.search_city')}
-                                    className="w-full ps-9 pe-4 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-white placeholder-slate-400"
+                                    className="w-full ps-9 pe-4 py-2.5 rounded-lg bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 text-slate-900 dark:text-white placeholder-slate-400"
                                 />
                                 {showCityResults && cityResults.length > 0 && (
-                                    <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-52 overflow-y-auto">
+                                    <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl max-h-52 overflow-y-auto">
                                         {cityResults.map((r, i) => (
                                             <button
                                                 key={i}
@@ -218,7 +218,7 @@ export default function PrayerPage() {
                             <select
                                 value={method}
                                 onChange={(e) => changeMethod(parseInt(e.target.value, 10))}
-                                className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                className="w-full px-3 py-2.5 rounded-lg bg-slate-50 dark:bg-night-800 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
                             >
                                 {PRAYER_METHODS.map((m) => (
                                     <option key={m.id} value={m.id}>{t(m.labelKey as TranslationKey)}</option>
@@ -280,7 +280,7 @@ export default function PrayerPage() {
                                 <div
                                     key={key}
                                     className={cn(
-                                        "bg-white dark:bg-slate-900 rounded-2xl p-5 md:p-6 border transition-all",
+                                        "bg-white dark:bg-night-900 rounded-2xl p-5 md:p-6 border transition-all",
                                         nextPrayer === key
                                             ? "border-violet-500 ring-1 ring-violet-500/50 shadow-lg"
                                             : "border-slate-100 dark:border-slate-800 shadow-sm"

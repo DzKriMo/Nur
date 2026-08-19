@@ -52,7 +52,7 @@ export default function ChapterList({ surahs, lastRead }: ChapterListProps) {
                     placeholder={t('quran.search_placeholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full ps-10 pe-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                    className="w-full ps-10 pe-4 py-3 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:focus:ring-emerald-400 transition-all text-slate-900 dark:text-white placeholder-slate-400"
                 />
             </div>
 
@@ -61,7 +61,7 @@ export default function ChapterList({ surahs, lastRead }: ChapterListProps) {
                     <Link
                         href={`/quran/${surah.index}`}
                         key={surah.index}
-                        className="group relative bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 hover:-translate-y-1"
+                        className="group relative bg-white dark:bg-night-900 rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-800 hover:-translate-y-1"
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">

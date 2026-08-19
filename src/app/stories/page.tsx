@@ -32,7 +32,7 @@ export default function StoriesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
                     <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">
@@ -51,7 +51,7 @@ export default function StoriesPage() {
                             <Link
                                 key={cat.href}
                                 href={cat.href}
-                                className={`bg-white dark:bg-slate-900 p-8 rounded-2xl border ${colors.border} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center group`}
+                                className={`bg-white dark:bg-night-900 p-8 rounded-2xl border ${colors.border} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center group`}
                             >
                                 <div className={`w-16 h-16 ${colors.bg} rounded-2xl flex items-center justify-center ${colors.icon} mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                                     <Icon size={32} />

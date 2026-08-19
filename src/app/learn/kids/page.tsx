@@ -54,7 +54,7 @@ export default function KidsPage() {
         const passedCount = lesson.steps.reduce((acc, s, i) => (s.quiz && quizResults[i] ? acc + 1 : acc), 0);
 
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+            <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
                 <div className="max-w-2xl mx-auto">
                     <button
                         onClick={resetView}
@@ -64,7 +64,7 @@ export default function KidsPage() {
                         {t('learn.back_to_topics')}
                     </button>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                    <div className="bg-white dark:bg-night-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
                         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800" style={{ backgroundColor: `${lesson.color}15` }}>
                             <div className="flex items-center justify-between">
                                 <span className="text-sm font-medium" style={{ color: lesson.color }}>
@@ -117,7 +117,7 @@ export default function KidsPage() {
                                 </div>
                             )}
 
-                            <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <div className="mt-6 p-4 bg-slate-50 dark:bg-night-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
                                 <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3">{t('learn.references')}</h3>
                                 <ul className="space-y-1">
                                     {(isAr ? lesson.referencesAr : lesson.references).map((ref, i) => (
@@ -163,7 +163,7 @@ export default function KidsPage() {
     const completedCount = kidsLessons.filter(l => learnProgress[l.id]?.completed).length;
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
             <div className="max-w-3xl mx-auto">
                 <Link href="/learn" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 mb-6 transition-colors">
                     {dir === 'rtl' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -192,7 +192,7 @@ export default function KidsPage() {
                             <button
                                 key={lesson.id}
                                 onClick={() => setSelectedLesson(lesson.id)}
-                                className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 text-left relative"
+                                className="bg-white dark:bg-night-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 text-left relative"
                                 style={{ borderColor: done ? lesson.color : `${lesson.color}30` }}
                             >
                                 {done && (

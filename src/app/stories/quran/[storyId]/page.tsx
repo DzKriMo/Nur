@@ -15,7 +15,7 @@ export default function QuranStoryPage() {
 
     if (!story) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-parchment-50 dark:bg-night-950 flex items-center justify-center">
                 <p className="text-slate-500">{t('common.loading')}</p>
             </div>
         );
@@ -34,7 +34,7 @@ export default function QuranStoryPage() {
     const nextStory = currentIndex < quranStories.length - 1 ? quranStories[currentIndex + 1] : null;
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-20 md:pt-24 px-4 pb-16">
+        <div className="min-h-screen bg-parchment-50 dark:bg-night-950 pt-20 md:pt-24 px-4 pb-16">
             <ReadingProgress key={storyId} storyId={storyId} />
             <div className="max-w-3xl mx-auto">
                 <Link href="/stories/quran" className="flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 mb-6 transition-colors">
@@ -42,7 +42,7 @@ export default function QuranStoryPage() {
                     {t('stories.back_to_stories')}
                 </Link>
 
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div className="bg-white dark:bg-night-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
                     <div
                         className="h-48 flex items-center justify-center relative overflow-hidden"
                         style={{ backgroundColor: `${story.svgColor}20` }}
@@ -98,7 +98,7 @@ export default function QuranStoryPage() {
                             </div>
                         )}
 
-                        <div className="mt-6 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div className="mt-6 p-4 bg-slate-50 dark:bg-night-900/50 rounded-xl border border-slate-200 dark:border-slate-800">
                             <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-3 flex items-center gap-2">
                                 <BookOpen size={16} className="text-violet-600 dark:text-violet-400" />
                                 {t('stories.references')}
@@ -129,7 +129,7 @@ export default function QuranStoryPage() {
                     {prevStory ? (
                         <Link
                             href={`/stories/quran/${prevStory.id}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                         >
                             {dir === 'rtl' ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
                             <span className="text-sm font-arabic">{isAr ? prevStory.titleAr : prevStory.title}</span>
@@ -138,7 +138,7 @@ export default function QuranStoryPage() {
                     {nextStory ? (
                         <Link
                             href={`/stories/quran/${nextStory.id}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-night-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-600 dark:text-slate-400 hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
                         >
                             <span className="text-sm font-arabic">{isAr ? nextStory.titleAr : nextStory.title}</span>
                             {dir === 'rtl' ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
