@@ -4,8 +4,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { SurahContent, TranslationContent } from '@/types';
 import { Play, Pause, Share2, ListMusic, BookMarked, Brain, BookOpenText, ScrollText, Palette } from 'lucide-react';
 import { annotateTajweed, TajweedRule } from '@/lib/tajweed';
-import { Howl } from 'howler';
 import { cn } from '@/lib/utils';
+import { playTrack, stopTrack, preloadTrack, setTrackMetadata, setTrackPlaybackState, setTrackActionHandler } from '@/lib/player';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBookmarks } from '@/contexts/BookmarksContext';
 import { useStoredState } from '@/lib/storage';
@@ -38,11 +38,11 @@ interface VerseViewProps {
     tafseer: TranslationContent;
     chapterId: string;
     riwaya: Riwaya;
+    surahTitleAr?: string;
 }
 
-export default function VerseView({ surah, translation, tafseer, chapterId, riwaya }: VerseViewProps) {
+export default function VerseView({ surah, translation, tafseer, chapterId, riwaya, surahTitleAr }: VerseViewProps) {
     const [playingVerse, setPlayingVerse] = useState<string | null>(null);
-    const [, setSound] = useState<Howl | null>(null);
     const [activeTab, setActiveTab] = useState<'translation' | 'tafseer'>('translation');
     const [activeJuz, setActiveJuz] = useState<string>('');
     const [memorizeMode, setMemorizeMode] = useState(false);
@@ -52,7 +52,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     const [tajweed, setTajweed] = useStoredState<boolean>(TAJWEED_KEY, false);
     const autoPlayRef = useRef(false);
     const verseRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-    const soundRef = useRef<Howl | null>(null);
+    const currentVerseRef = useRef<string | null>(null);
     const lastSavedRef = useRef<string>('');
     const { t } = useLanguage();
     const { isVerseBookmarked, toggleVerseBookmark, saveLastRead } = useBookmarks();
@@ -74,6 +74,7 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
             tafseer: tafseer.verse[key] || ''
         };
     });
+    const versesLengthRef = useRef(verses.length);
 
     const juzList = surah.juz || [];
 
@@ -114,52 +115,67 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     };
 
     const stopSound = useCallback(() => {
-        if (soundRef.current) {
-            soundRef.current.stop();
-            soundRef.current.unload();
-            soundRef.current = null;
-        }
-        setSound(null);
+        currentVerseRef.current = null;
+        stopTrack();
+        setTrackPlaybackState('none');
         setPlayingVerse(null);
     }, []);
 
-    function playVerse(verseNum: string) {
-        if (soundRef.current) {
-            soundRef.current.stop();
-            soundRef.current.unload();
-        }
-
+    const getAudioSrc = useCallback((verseNum: string) => {
         const padSurah = chapterId.padStart(3, '0');
         const padVerse = verseNum.padStart(3, '0');
-        const src = riwaya === 'warsh'
+        return riwaya === 'warsh'
             ? `/api/audio-warsh/${padSurah}/${padVerse}`
             : `/audio/${padSurah}/${padVerse}.mp3`;
+    }, [chapterId, riwaya]);
 
-        const newSound = new Howl({
-            src: [src],
-            html5: true,
-            onend: () => {
+    const getTrackMeta = useCallback((verseNum: string) => ({
+        title: `سورة ${surahTitleAr || surah.name} — آية ${verseNum}`,
+        artist: riwaya === 'warsh' ? 'ورش · نور' : 'حفص · نور',
+        album: surah.name,
+    }), [riwaya, surah.name, surahTitleAr]);
+
+    const playVerseRef = useRef<(verseNum: string) => void>(() => {});
+    const stopSoundRef = useRef<() => void>(() => {});
+
+    const playVerse = useCallback((verseNum: string) => {
+        currentVerseRef.current = verseNum;
+        setPlayingVerse(verseNum);
+        setTrackMetadata(getTrackMeta(verseNum));
+        setTrackPlaybackState('playing');
+        playTrack(getAudioSrc(verseNum), {
+            onEnd: () => {
                 setPlayingVerse(null);
                 if (autoPlayRef.current) {
                     const nextVerseNum = (parseInt(verseNum) + 1).toString();
-                    if (parseInt(nextVerseNum) <= verses.length) {
-                        setTimeout(() => playVerse(nextVerseNum), 300);
+                    if (parseInt(nextVerseNum) <= versesLengthRef.current) {
+                        setTimeout(() => playVerseRef.current(nextVerseNum), 300);
                     } else {
                         autoPlayRef.current = false;
+                        setTrackPlaybackState('none');
                     }
+                } else {
+                    setTrackPlaybackState('paused');
                 }
             },
-            onloaderror: () => {
+            onError: () => {
                 setPlayingVerse(null);
                 autoPlayRef.current = false;
+                setTrackPlaybackState('none');
             }
         });
+        if (autoPlayRef.current) {
+            const nextVerseNum = (parseInt(verseNum) + 1).toString();
+            if (parseInt(nextVerseNum) <= versesLengthRef.current) {
+                preloadTrack(getAudioSrc(nextVerseNum));
+            }
+        }
+    }, [getAudioSrc, getTrackMeta]);
 
-        soundRef.current = newSound;
-        setSound(newSound);
-        setPlayingVerse(verseNum);
-        newSound.play();
-    }
+    useEffect(() => {
+        playVerseRef.current = playVerse;
+        stopSoundRef.current = stopSound;
+    });
 
     const togglePlay = (verseNum: string) => {
         if (playingVerse === verseNum) {
@@ -182,11 +198,29 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
     };
 
     useEffect(() => {
+        setTrackActionHandler('play', () => {
+            if (currentVerseRef.current) playVerseRef.current(currentVerseRef.current);
+        });
+        setTrackActionHandler('pause', () => stopSoundRef.current());
+        setTrackActionHandler('previoustrack', () => {
+            const cur = currentVerseRef.current;
+            if (!cur) return;
+            const prev = (parseInt(cur) - 1).toString();
+            if (parseInt(prev) >= 1) playVerseRef.current(prev);
+        });
+        setTrackActionHandler('nexttrack', () => {
+            const cur = currentVerseRef.current;
+            if (!cur) return;
+            const next = (parseInt(cur) + 1).toString();
+            if (parseInt(next) <= versesLengthRef.current) playVerseRef.current(next);
+        });
         return () => {
-            if (soundRef.current) {
-                soundRef.current.stop();
-                soundRef.current.unload();
-            }
+            setTrackActionHandler('play', null);
+            setTrackActionHandler('pause', null);
+            setTrackActionHandler('previoustrack', null);
+            setTrackActionHandler('nexttrack', null);
+            setTrackPlaybackState('none');
+            stopTrack();
         };
     }, []);
 
@@ -340,11 +374,12 @@ export default function VerseView({ surah, translation, tafseer, chapterId, riwa
                     surah={surah}
                     chapterId={chapterId}
                     riwaya={riwaya}
+                    surahTitleAr={surahTitleAr}
                     onExit={() => setMemorizeMode(false)}
                 />
             ) : (
                 <div className="space-y-4">
-                    {chapterId !== '001' && chapterId !== '009' && (
+                    {chapterId !== '009' && !verses[0]?.text.trim().startsWith('بِسْمِ') && (
                         <div className="relative overflow-hidden bg-gradient-to-b from-emerald-50 via-emerald-50/60 to-transparent dark:from-emerald-900/25 dark:via-emerald-900/15 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl pt-10 pb-8 px-6 text-center">
                             <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-gold-500/70 to-transparent" />
                             <p className="font-arabic text-3xl md:text-4xl text-emerald-800 dark:text-emerald-200 leading-relaxed">

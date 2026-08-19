@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { Howl } from 'howler';
 import { SurahContent } from '@/types';
+import { playTrack, stopTrack, setTrackMetadata, setTrackPlaybackState } from '@/lib/player';
 import {
     Brain, Play, Pause, Mic, MicOff, ChevronLeft, ChevronRight,
     CheckCircle2, XCircle, AlertCircle, Flame, Target, Trophy, SkipForward,
@@ -27,6 +28,7 @@ interface MemorizationModeProps {
     chapterId: string;
     riwaya?: Riwaya;
     onExit: () => void;
+    surahTitleAr?: string;
     // Cross-surah review: a flat list of mastered verses from any surah.
     // When provided, the session runs as a global review over these verses.
     externalVerses?: MemorizationExternalVerse[];
@@ -100,7 +102,7 @@ interface RecitationResult {
     missing: string[];
 }
 
-export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', onExit, externalVerses }: MemorizationModeProps) {
+export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', onExit, surahTitleAr, externalVerses }: MemorizationModeProps) {
     const { t } = useLanguage();
     const [tab, setTab] = useState<'memorize' | 'listen'>('memorize');
     const [repeats, setRepeats] = useState(3);
@@ -135,7 +137,6 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         progressRef.current = progress;
     }, [progress]);
 
-    const soundRef = useRef<Howl | null>(null);
     const repeatCountRef = useRef(0);
     const currentIdxRef = useRef(0);
     const isPlayingRef = useRef(false);
@@ -254,11 +255,8 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
     const goalProgress = Math.min(100, Math.round((todayVerses / Math.max(1, dailyGoal)) * 100));
 
     const stopSound = useCallback(() => {
-        if (soundRef.current) {
-            soundRef.current.stop();
-            soundRef.current.unload();
-            soundRef.current = null;
-        }
+        stopTrack();
+        setTrackPlaybackState('none');
         isPlayingRef.current = false;
         setIsPlaying(false);
     }, []);
@@ -658,24 +656,26 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
         const verse = activeVerses[idx];
         if (!verse) return;
 
-        if (soundRef.current) {
-            soundRef.current.stop();
-            soundRef.current.unload();
-        }
-
         const padSurah = (verse.surahId ?? chapterId).padStart(3, '0');
         const padVerse = verse.verseNum.padStart(3, '0');
         const src = riwaya === 'warsh'
             ? `/api/audio-warsh/${padSurah}/${padVerse}`
             : `/audio/${padSurah}/${padVerse}.mp3`;
 
-        const sound = new Howl({
-            src: [src],
-            html5: true,
-            onend: () => {
+        setTrackMetadata({
+            title: verse.surahName
+                ? `${verse.surahName} — آية ${verse.verseNum}`
+                : `سورة ${surahTitleAr || ''} — آية ${verse.verseNum}`,
+            artist: riwaya === 'warsh' ? 'ورش · نور' : 'حفص · نور',
+            album: verse.surahName,
+        });
+        setTrackPlaybackState('playing');
+
+        playTrack(src, {
+            onEnd: () => {
                 repeatCountRef.current += 1;
                 if (repeatCountRef.current < repeats) {
-                    sound.play();
+                    playVerse(idx);
                 } else {
                     repeatCountRef.current = 0;
                     const nextIdx = idx + 1;
@@ -686,19 +686,17 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                     }
                 }
             },
-            onloaderror: () => {
+            onError: () => {
                 setError('audio_missing');
                 stopSound();
             },
         });
 
-        soundRef.current = sound;
         currentIdxRef.current = idx;
         setCurrentIdx(idx);
         isPlayingRef.current = true;
         setIsPlaying(true);
-        sound.play();
-    }, [chapterId, activeVerses, repeats, stopSound, riwaya]);
+    }, [chapterId, activeVerses, repeats, stopSound, riwaya, surahTitleAr]);
 
     const togglePlay = useCallback(() => {
         if (isPlayingRef.current) {

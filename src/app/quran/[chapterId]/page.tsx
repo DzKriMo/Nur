@@ -33,6 +33,8 @@ export default async function ChapterPage({ params }: PageProps) {
     const surah = await getSurah(chapterId, riwaya);
     const translation = await getTranslation(chapterId, 'en');
     const tafseer = await getTranslation(chapterId, 'ar');
+    const surahs = await getSurahs(riwaya);
+    const surahTitleAr = surahs.find(s => s.index === chapterId.padStart(3, '0'))?.titleAr ?? surah.name;
 
     const prevId = parseInt(chapterId) > 1 ? (parseInt(chapterId) - 1).toString() : null;
     const nextId = parseInt(chapterId) < 114 ? (parseInt(chapterId) + 1).toString() : null;
@@ -67,6 +69,7 @@ export default async function ChapterPage({ params }: PageProps) {
                     tafseer={tafseer}
                     chapterId={chapterId}
                     riwaya={riwaya}
+                    surahTitleAr={surahTitleAr}
                 />
 
                 <div className="flex justify-between mt-8">
