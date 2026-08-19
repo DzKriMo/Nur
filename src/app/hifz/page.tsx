@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { cookies } from 'next/headers';
+import { Brain } from 'lucide-react';
 import { getSurahs } from '@/lib/data';
 import { getRiwayaFromCookie } from '@/lib/riwaya';
 import HifzDashboard from '@/components/hifz/HifzDashboard';
@@ -40,6 +42,16 @@ export default async function HifzPage() {
 
                 <div className="max-w-3xl mx-auto mb-8">
                     <HifzReminder />
+                </div>
+
+                <div className="max-w-3xl mx-auto mb-8 flex justify-center">
+                    <Link
+                        href="/quiz"
+                        className="flex items-center gap-2 px-6 py-3 rounded-full bg-gold-500 text-white text-sm font-bold hover:bg-gold-600 transition-colors shadow-sm"
+                    >
+                        <Brain size={16} />
+                        Nur Quiz
+                    </Link>
                 </div>
 
                 <HifzDashboard surahs={surahs} />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { Howl } from 'howler';
 import { SurahContent } from '@/types';
 import {
@@ -1378,6 +1379,13 @@ export default function MemorizationMode({ surah, chapterId, riwaya = 'hafs', on
                             >
                                 {t('quran.review_all')} ({surahProgress.mastered})
                             </button>
+                            <Link
+                                href={`/quiz?surah=${chapterId}`}
+                                className="mt-1.5 w-full flex items-center justify-center gap-1.5 text-xs font-medium text-slate-400 hover:text-gold-600 dark:hover:text-gold-400 transition-colors"
+                            >
+                                <Brain size={13} />
+                                {t('quiz.quick')}
+                            </Link>
                         </>
                     )}
                 </div>

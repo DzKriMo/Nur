@@ -8,6 +8,7 @@ import { KhatamStar, OrnamentDivider } from '@/components/layout/Ornament';
 const quickLinks: { href: string; key: TranslationKey }[] = [
     { href: '/quran', key: 'nav.quran' },
     { href: '/hifz', key: 'nav.hifz' },
+    { href: '/quiz', key: 'nav.quiz' },
     { href: '/hadith', key: 'nav.hadith' },
     { href: '/adhkar', key: 'nav.adhkar' },
     { href: '/names', key: 'nav.names' },

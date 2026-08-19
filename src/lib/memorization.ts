@@ -453,6 +453,34 @@ export function getWeakWordsGlobal(state: MemorizationState, limit = 10): { word
         .map(([word, count]) => ({ word, count }));
 }
 
+/**
+ * Bump the weak-word counts for a verse without touching mastery or the
+ * spaced-repetition schedule (used by quizzes and other passive drills).
+ */
+export function addWeakWords(
+    state: MemorizationState,
+    surahId: string,
+    verseNum: string,
+    missedWords: string[]
+): MemorizationState {
+    if (missedWords.length === 0) return state;
+    const surah = state.surahs[surahId];
+    const record = surah?.[verseNum];
+    if (!record) return state;
+    const weakWords = { ...(record.weakWords ?? {}) };
+    for (const w of missedWords) {
+        const normalized = normalizeArabic(w);
+        if (normalized) weakWords[normalized] = (weakWords[normalized] ?? 0) + 1;
+    }
+    return {
+        ...state,
+        surahs: {
+            ...state.surahs,
+            [surahId]: { ...surah, [verseNum]: { ...record, weakWords } },
+        },
+    };
+}
+
 export function getUnlockedMilestones(total: number): number[] {
     return MILESTONES.filter((m) => total >= m);
 }
